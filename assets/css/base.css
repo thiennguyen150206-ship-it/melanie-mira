@@ -1,0 +1,136 @@
+:root {
+  --color-primary: #111111;
+  --color-secondary: #c08b75;
+  --color-accent: #b85c5c;
+  --color-bg: #fffaf7;
+  --color-light: #f7f2ee;
+  --color-border: #e7ddd7;
+  --color-text: #222222;
+  --color-muted: #777777;
+  --color-white: #ffffff;
+
+  --font-main: Arial, sans-serif;
+
+  --section-space: 70px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+
+  --shadow-soft: 0 8px 25px rgba(0, 0, 0, 0.08);
+  --transition-fast: 0.25s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-main);
+  color: var(--color-text);
+  background-color: var(--color-white);
+  line-height: 1.6;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+  margin-bottom: 0;
+  padding-left: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+.section {
+  padding: var(--section-space) 0;
+}
+
+.section-heading {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 42px;
+}
+
+.section-heading span {
+  display: inline-block;
+  color: var(--color-secondary);
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+}
+
+.section-heading h2 {
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 12px;
+}
+
+.section-heading p {
+  color: var(--color-muted);
+  font-size: 16px;
+}
+
+.btn-main {
+  display: inline-block;
+  padding: 13px 30px;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border-radius: 999px;
+  font-weight: 600;
+  border: 1px solid var(--color-primary);
+  transition: var(--transition-fast);
+}
+
+.btn-main:hover {
+  background-color: var(--color-secondary);
+  border-color: var(--color-secondary);
+  color: var(--color-white);
+}
+
+.btn-outline-main {
+  display: inline-block;
+  padding: 11px 24px;
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  border-radius: 999px;
+  font-weight: 600;
+  transition: var(--transition-fast);
+}
+
+.btn-outline-main:hover {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+@media screen and (max-width: 768px) {
+  :root {
+    --section-space: 45px;
+  }
+
+  .section-heading h2 {
+    font-size: 26px;
+  }
+
+  .section-heading p {
+    font-size: 15px;
+  }
+}

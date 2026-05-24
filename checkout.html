@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thanh toán - Melanie Mira</title>
+
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/layout.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+  </head>
+  <body>
+    <div class="top-bar">
+      <div class="container">
+        <span>Design your own vibes</span>
+      </div>
+    </div>
+
+    <header class="main-header">
+      <div class="container header-inner">
+        <a href="index.html" class="brand">
+          <img src="assets/images/logo/logo.png" alt="Melanie Mira" />
+          <span>Melanie Mira</span>
+        </a>
+
+        <form class="search-box" autocomplete="off">
+          <input type="text" placeholder="Tìm váy, áo, phụ kiện..." />
+          <button type="button">Tìm kiếm</button>
+        </form>
+
+        <div class="header-actions">
+          <div class="account-menu">
+            <a href="#" class="account-toggle">Tài khoản</a>
+            <div class="account-dropdown">
+              <a href="login.html">Đăng nhập</a>
+              <a href="register.html">Đăng ký</a>
+              <a href="#">Tra cứu đơn hàng</a>
+            </div>
+          </div>
+
+          <a href="cart.html" class="cart-link">
+            Giỏ hàng
+            <span id="cartCount">0</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <nav class="main-nav">
+      <div class="container">
+        <ul class="nav-list">
+          <li><a href="index.html">Trang chủ</a></li>
+          <li><a href="products.html">Sản phẩm</a></li>
+          <li><a href="collections.html">Bộ sưu tập</a></li>
+          <li><a href="about.html">Giới thiệu</a></li>
+          <li><a href="contact.html">Liên hệ</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <main class="checkout-section">
+      <div class="container">
+        <div class="row g-4">
+          <div class="col-lg-7">
+            <div class="checkout-box">
+              <h2>Thông tin nhận hàng</h2>
+              <p>Nhập thông tin để hoàn tất đơn hàng.</p>
+
+              <form id="checkoutForm">
+                <div class="form-group-custom">
+                  <label for="customerName">Họ và tên</label>
+                  <input
+                    type="text"
+                    id="customerName"
+                    placeholder="Nhập họ tên"
+                  />
+                  <span class="form-error" id="errCustomerName"></span>
+                </div>
+
+                <div class="form-group-custom">
+                  <label for="customerPhone">Số điện thoại</label>
+                  <input
+                    type="text"
+                    id="customerPhone"
+                    placeholder="Ví dụ: 0912345678"
+                  />
+                  <span class="form-error" id="errCustomerPhone"></span>
+                </div>
+
+                <div class="form-group-custom">
+                  <label for="customerEmail">Email</label>
+                  <input
+                    type="text"
+                    id="customerEmail"
+                    placeholder="Nhập email"
+                  />
+                  <span class="form-error" id="errCustomerEmail"></span>
+                </div>
+
+                <div class="form-group-custom">
+                  <label for="customerAddress">Địa chỉ nhận hàng</label>
+                  <input
+                    type="text"
+                    id="customerAddress"
+                    placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành"
+                  />
+                  <span class="form-error" id="errCustomerAddress"></span>
+                </div>
+
+                <div class="form-group-custom">
+                  <label for="paymentMethod">Phương thức thanh toán</label>
+                  <select id="paymentMethod">
+                    <option value="">-- Chọn phương thức --</option>
+                    <option value="Thanh toán khi nhận hàng">
+                      Thanh toán khi nhận hàng
+                    </option>
+                    <option value="Chuyển khoản ngân hàng">
+                      Chuyển khoản ngân hàng
+                    </option>
+                  </select>
+                  <span class="form-error" id="errPaymentMethod"></span>
+                </div>
+
+                <div class="form-group-custom">
+                  <label for="orderNote">Ghi chú</label>
+                  <textarea
+                    id="orderNote"
+                    rows="4"
+                    placeholder="Ghi chú cho shop nếu có"
+                  ></textarea>
+                </div>
+
+                <button type="submit" class="btn-main w-100 text-center">
+                  Xác nhận đặt hàng
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div class="col-lg-5">
+            <div class="order-summary-box">
+              <h2>Đơn hàng</h2>
+              <div id="checkoutSummary"></div>
+              <hr />
+              <div class="d-flex justify-content-between">
+                <strong>Tổng tiền</strong>
+                <strong class="cart-total" id="checkoutTotal">0đ</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="main-footer">
+      <div class="container">
+        <div class="footer-bottom">
+          <p>© 2026 Melanie Mira. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="assets/js/jquery-4.0.0.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/pages/checkout.js"></script>
+  </body>
+</html>

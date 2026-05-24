@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Giỏ hàng - Melanie Mira</title>
+
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/layout.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+  </head>
+  <body>
+    <div class="top-bar">
+      <div class="container">
+        <span>Design your own vibes</span>
+      </div>
+    </div>
+
+    <header class="main-header">
+      <div class="container header-inner">
+        <a href="index.html" class="brand">
+          <img src="assets/img/logo/Logo.jpg" alt="Melanie Mira" />
+          <span>Melanie Mira</span>
+        </a>
+
+        <form class="search-box" autocomplete="off">
+          <div class="search-wrapper">
+            <input type="text" id="searchInput" placeholder="Tìm kiếm..." />
+
+            <div id="searchSuggest" class="search-suggest"></div>
+          </div>
+
+          <button type="button" id="btnSearch">Tìm kiếm</button>
+        </form>
+
+        <div class="header-actions">
+          <div class="account-menu">
+            <a href="#" class="account-toggle">Tài khoản</a>
+            <div class="account-dropdown">
+              <a href="login.html">Đăng nhập</a>
+              <a href="register.html">Đăng ký</a>
+              <a href="#">Tra cứu đơn hàng</a>
+            </div>
+          </div>
+
+          <a href="cart.html" class="cart-link">
+            Giỏ hàng
+            <span id="cartCount">0</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <nav class="main-nav">
+      <div class="container">
+        <ul class="nav-list">
+          <li>
+            <a href="index.html">Trang chủ</a>
+          </li>
+
+          <li class="has-dropdown small-dropdown">
+            <a href="products.html">Sản phẩm</a>
+
+            <div class="dropdown-menu-custom small-menu">
+              <a href="products.html?category=set-quan-ao">Set quần áo</a>
+              <a href="products.html?category=vay-ngan">Váy ngắn</a>
+              <a href="products.html?category=ao">Áo</a>
+            </div>
+          </li>
+
+          <li>
+            <a href="about.html">Giới thiệu</a>
+          </li>
+
+          <li>
+            <a href="contact.html">Liên hệ</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <main class="cart-section">
+      <div class="container">
+        <div class="cart-box">
+          <h2>Giỏ hàng của bạn</h2>
+          <p>Kiểm tra sản phẩm trước khi tiến hành thanh toán.</p>
+
+          <div id="cartContent"></div>
+
+          <div
+            class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-3"
+          >
+            <a href="products.html" class="btn-outline-main"
+              >Tiếp tục mua hàng</a
+            >
+
+            <div>
+              <span class="me-2">Tổng tiền:</span>
+              <span class="cart-total" id="cartTotal">0đ</span>
+            </div>
+
+            <a href="checkout.html" class="btn-main">Thanh toán</a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="main-footer">
+      <div class="container">
+        <div class="footer-bottom">
+          <p>© 2026 Melanie Mira. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="assets/js/jquery-4.0.0.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/data/products-data.js"></script>
+    <script src="assets/js/pages/cart.js"></script>
+  </body>
+</html>

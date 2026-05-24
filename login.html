@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng nhập - Melanie Mira</title>
+
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/layout.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+  </head>
+  <body>
+    <div class="top-bar">
+      <div class="container">
+        <span>Design your own vibes</span>
+      </div>
+    </div>
+
+    <header class="main-header">
+      <div class="container header-inner">
+        <a href="index.html" class="brand">
+          <img src="assets/images/logo/logo.png" alt="Melanie Mira" />
+          <span>Melanie Mira</span>
+        </a>
+
+        <form class="search-box" autocomplete="off">
+          <input type="text" placeholder="Tìm váy, áo, phụ kiện..." />
+          <button type="button">Tìm kiếm</button>
+        </form>
+
+        <div class="header-actions">
+          <div class="account-menu">
+            <a href="#" class="account-toggle">Tài khoản</a>
+            <div class="account-dropdown">
+              <a href="login.html">Đăng nhập</a>
+              <a href="register.html">Đăng ký</a>
+              <a href="#">Tra cứu đơn hàng</a>
+            </div>
+          </div>
+
+          <a href="cart.html" class="cart-link">
+            Giỏ hàng
+            <span id="cartCount">0</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <nav class="main-nav">
+      <div class="container">
+        <ul class="nav-list">
+          <li><a href="index.html">Trang chủ</a></li>
+          <li><a href="products.html">Sản phẩm</a></li>
+          <li><a href="collections.html">Bộ sưu tập</a></li>
+          <li><a href="about.html">Giới thiệu</a></li>
+          <li><a href="contact.html">Liên hệ</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <main class="auth-section">
+      <div class="container">
+        <div class="auth-box">
+          <h2>Đăng nhập</h2>
+          <p>Đăng nhập để theo dõi đơn hàng và lưu thông tin mua sắm.</p>
+
+          <form id="loginForm">
+            <div class="form-group-custom">
+              <label for="loginEmail">Email</label>
+              <input type="text" id="loginEmail" placeholder="Nhập email" />
+              <span class="form-error" id="errLoginEmail"></span>
+            </div>
+
+            <div class="form-group-custom">
+              <label for="loginPassword">Mật khẩu</label>
+              <input
+                type="password"
+                id="loginPassword"
+                placeholder="Nhập mật khẩu"
+              />
+              <span class="form-error" id="errLoginPassword"></span>
+            </div>
+
+            <button type="submit" class="btn-main w-100 text-center">
+              Đăng nhập
+            </button>
+
+            <p class="text-center mt-3 mb-0">
+              Chưa có tài khoản?
+              <a href="register.html" class="auth-link">Đăng ký ngay</a>
+            </p>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <footer class="main-footer">
+      <div class="container">
+        <div class="footer-bottom">
+          <p>© 2026 Melanie Mira. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="assets/js/jquery-4.0.0.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/pages/auth.js"></script>
+  </body>
+</html>
