@@ -135,6 +135,35 @@ $(document).ready(function () {
   renderFeaturedProducts();
   updateCartCount();
 
+  $("#btnOpenMenu").click(function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    $("#sideMenu").toggleClass("active");
+  });
+
+  $("#btnCloseMenu").click(function () {
+    $("#sideMenu").removeClass("active");
+  });
+
+  $("#btnProductMenu").click(function (e) {
+    e.preventDefault();
+
+    $("#productSubMenu").toggleClass("active");
+  });
+
+  $(document).click(function (e) {
+    if (!$(e.target).closest(".mobile-menu").length) {
+      $("#sideMenu").removeClass("active");
+    }
+  });
+
+  $("#btnOpenSearch").click(function (e) {
+    e.preventDefault();
+    $(".search-box-dropdown").toggleClass("active");
+    $("#searchInput").focus();
+  });
+
   $("#searchInput").keyup(function (e) {
     showSearchSuggest();
 
@@ -151,38 +180,41 @@ $(document).ready(function () {
   });
 
   $(document).click(function (e) {
-    if (!$(e.target).closest(".search-box").length) {
+    if (!$(e.target).closest(".header-search").length) {
+      $(".search-box-dropdown").removeClass("active");
       $("#searchSuggest").hide();
     }
+
+    if (!$(e.target).closest(".mobile-menu").length) {
+      $("#sideMenu").removeClass("active");
+    }
   });
-});
+  function showSearchSuggest() {
+    let keyword = $("#searchInput").val().trim().toLowerCase();
 
-function showSearchSuggest() {
-  let keyword = $("#searchInput").val().trim().toLowerCase();
+    if (keyword === "") {
+      $("#searchSuggest").hide();
+      return;
+    }
 
-  if (keyword === "") {
-    $("#searchSuggest").hide();
-    return;
-  }
+    let result = products.filter(function (product) {
+      return (
+        product.name.toLowerCase().includes(keyword) ||
+        product.category.toLowerCase().includes(keyword)
+      );
+    });
 
-  let result = products.filter(function (product) {
-    return (
-      product.name.toLowerCase().includes(keyword) ||
-      product.category.toLowerCase().includes(keyword)
-    );
-  });
+    let html = "";
 
-  let html = "";
-
-  if (result.length === 0) {
-    html = `
+    if (result.length === 0) {
+      html = `
             <div class="suggest-empty">
                 Không tìm thấy sản phẩm phù hợp
             </div>
         `;
-  } else {
-    for (let i = 0; i < result.length; i++) {
-      html += `
+    } else {
+      for (let i = 0; i < result.length; i++) {
+        html += `
                 <div class="suggest-item" onclick="goToProductDetail(${result[i].id})">
                     <img src="${result[i].image}" alt="${result[i].name}">
 
@@ -192,13 +224,14 @@ function showSearchSuggest() {
                     </div>
                 </div>
             `;
+      }
     }
+
+    $("#searchSuggest").html(html);
+    $("#searchSuggest").show();
   }
 
-  $("#searchSuggest").html(html);
-  $("#searchSuggest").show();
-}
-
-function goToProductDetail(productId) {
-  window.location.href = "product-detail.html?id=" + productId;
-}
+  function goToProductDetail(productId) {
+    window.location.href = "product-detail.html?id=" + productId;
+  }
+});

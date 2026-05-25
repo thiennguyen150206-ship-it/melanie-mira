@@ -32,13 +32,11 @@
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-width: 210px;
 }
 
 .brand img {
-  width: 48px;
-  height: 48px;
+  width: 65px;
+  height: 65px;
   object-fit: cover;
   border-radius: 50%;
 }
@@ -303,5 +301,52 @@
 
   .dropdown-menu-custom {
     display: none;
+  }
+}
+
+.hero-font-cormorant .hero-subtitle {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 22px;
+  letter-spacing: 2px;
+}
+
+.hero-font-cormorant h1 {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  letter-spacing: 4px;
+}
+
+.hero-font-cormorant .hero-desc {
+  font-family: Arial, sans-serif;
+}
+
+.top-bar-marquee {
+  background-color: #111111;
+  color: #fffaf7;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 9px 0;
+  font-family: "Cormorant Garamond", serif;
+}
+
+.top-bar-track {
+  display: inline-flex;
+  gap: 55px;
+  animation: topBarMove 18s linear infinite;
+}
+
+.top-bar-track span {
+  font-size: 18px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+@keyframes topBarMove {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(-100%);
   }
 }
