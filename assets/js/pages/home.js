@@ -132,37 +132,7 @@ function searchProduct() {
 }
 
 $(document).ready(function () {
-  renderFeaturedProducts();
   updateCartCount();
-
-  $("#btnOpenMenu").click(function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-
-    $("#sideMenu").toggleClass("active");
-  });
-
-  $("#btnCloseMenu").click(function () {
-    $("#sideMenu").removeClass("active");
-  });
-
-  $("#btnProductMenu").click(function (e) {
-    e.preventDefault();
-
-    $("#productSubMenu").toggleClass("active");
-  });
-
-  $(document).click(function (e) {
-    if (!$(e.target).closest(".mobile-menu").length) {
-      $("#sideMenu").removeClass("active");
-    }
-  });
-
-  $("#btnOpenSearch").click(function (e) {
-    e.preventDefault();
-    $(".search-box-dropdown").toggleClass("active");
-    $("#searchInput").focus();
-  });
 
   $("#searchInput").keyup(function (e) {
     showSearchSuggest();
@@ -215,7 +185,7 @@ $(document).ready(function () {
     } else {
       for (let i = 0; i < result.length; i++) {
         html += `
-                <div class="suggest-item" onclick="goToProductDetail(${result[i].id})">
+                <div class="suggest-item" data-id="${result[i].id}">
                     <img src="${result[i].image}" alt="${result[i].name}">
 
                     <div class="suggest-info">
@@ -231,7 +201,37 @@ $(document).ready(function () {
     $("#searchSuggest").show();
   }
 
-  function goToProductDetail(productId) {
+  $(document).on("click", ".suggest-item", function () {
+    let productId = $(this).data("id");
     window.location.href = "product-detail.html?id=" + productId;
+  });
+
+  let currentCategoryIndex = 1;
+
+  function updateCategoryCarousel() {
+    let cards = $(".category-carousel-card");
+    let total = cards.length;
+
+    cards.removeClass("is-active is-left is-right");
+
+    let leftIndex = (currentCategoryIndex - 1 + total) % total;
+    let rightIndex = (currentCategoryIndex + 1) % total;
+
+    cards.eq(currentCategoryIndex).addClass("is-active");
+    cards.eq(leftIndex).addClass("is-left");
+    cards.eq(rightIndex).addClass("is-right");
   }
+
+  $(".category-carousel-card").click(function () {
+    let clickedIndex = Number($(this).attr("data-index"));
+
+    if (clickedIndex === currentCategoryIndex) {
+      return;
+    }
+
+    currentCategoryIndex = clickedIndex;
+    updateCategoryCarousel();
+  });
+
+  updateCategoryCarousel();
 });

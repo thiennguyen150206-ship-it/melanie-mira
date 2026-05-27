@@ -41,6 +41,10 @@ $(document).ready(function () {
     $("#searchInput").focus();
   });
 
+  $(".menu-contact-link").click(function () {
+    $("#sideMenu").removeClass("active");
+  });
+
   $(document).click(function (e) {
     if (!$(e.target).closest(".mobile-menu").length) {
       $("#sideMenu").removeClass("active");
@@ -51,4 +55,33 @@ $(document).ready(function () {
       $("#searchSuggest").hide();
     }
   });
+});
+
+$("#btnOpenMenu").click(function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+
+  $("#sideMenu").toggleClass("active");
+});
+
+$("#btnCloseMenu").click(function () {
+  $("#sideMenu").removeClass("active");
+});
+
+$("#btnProductMenu").click(function (e) {
+  e.preventDefault();
+
+  $("#productSubMenu").toggleClass("active");
+});
+
+$(document).click(function (e) {
+  if (!$(e.target).closest(".mobile-menu").length) {
+    $("#sideMenu").removeClass("active");
+  }
+});
+
+$("#btnOpenSearch").click(function (e) {
+  e.preventDefault();
+  $(".search-box-dropdown").toggleClass("active");
+  $("#searchInput").focus();
 });
