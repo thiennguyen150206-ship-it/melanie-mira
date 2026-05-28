@@ -29,8 +29,10 @@ $(document).ready(function () {
 
   $("#btnProductMenu").click(function (e) {
     e.preventDefault();
+    e.stopPropagation();
 
     $("#productSubMenu").toggleClass("active");
+    $(this).toggleClass("active");
   });
 
   $("#btnOpenSearch").click(function (e) {

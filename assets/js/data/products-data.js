@@ -6,10 +6,19 @@ const products = [
     categorySlug: "vay-ngan",
     price: 488500,
     oldPrice: 520000,
-    image: "assets/img/products/ARUL/arul1.jpg",
+    image: "assets/img/products/ARUL/arul.jpg",
+    images: [
+      "assets/img/products/ARUL/arul1.jpg",
+      "assets/img/products/ARUL/arul2.jpg",
+      "assets/img/products/ARUL/arul3.jpg",
+      "assets/img/products/ARUL/arul4.jpg",
+      "assets/img/products/ARUL/arul5.jpg",
+      "assets/img/products/ARUL/arul6.jpg",
+    ],
     badge: "New",
     description: "Thiết kế dáng xòe thanh lịch, phù hợp đi tiệc và chụp ảnh.",
   },
+
   {
     id: 2,
     name: "Đầm Nữ Đỏ LUNA Hai Dây Lụa Cao Cấp Melanie Mira Official – Phối Ren, Xếp Ly Tầng Quyến Rũ",
@@ -17,10 +26,19 @@ const products = [
     categorySlug: "vay-ngan",
     price: 471500,
     oldPrice: 650000,
-    image: "assets/img/products/LUNA/luna1.jpg",
+    image: "assets/img/products/LUNA/luna.jpg",
+    images: [
+      "assets/img/products/LUNA/luna1.jpg",
+      "assets/img/products/LUNA/luna2.jpg",
+      "assets/img/products/LUNA/luna3.jpg",
+      "assets/img/products/LUNA/luna4.jpg",
+      "assets/img/products/LUNA/luna5.jpg",
+      "assets/img/products/LUNA/luna6.jpg",
+    ],
     badge: "New",
     description: "Chất liệu lụa mềm mại, phối ren nữ tính và nổi bật.",
   },
+
   {
     id: 3,
     name: "CAMI - Đầm Trắng Cúp Ngực Tafta Cao Cấp Melanie Mira Official - Phối Voan Dáng Xòe Tôn Dáng",
@@ -28,10 +46,19 @@ const products = [
     categorySlug: "vay-ngan",
     price: 489562,
     oldPrice: 520000,
-    image: "assets/img/products/CAMI/cami1.jpg",
+    image: "assets/img/products/CAMI/cami.jpg",
+    images: [
+      "assets/img/products/CAMI/cami1.jpg",
+      "assets/img/products/CAMI/cami2.jpg",
+      "assets/img/products/CAMI/cami3.jpg",
+      "assets/img/products/CAMI/cami4.jpg",
+      "assets/img/products/CAMI/cami5.jpg",
+      "assets/img/products/CAMI/cami6.jpg",
+    ],
     badge: "New",
     description: "Dáng váy nhẹ nhàng, tôn dáng, phù hợp đi chơi và dự tiệc.",
   },
+
   {
     id: 4,
     name: "DONNA - Váy Xòe Nhiều Lớp Xếp Tầng Melanie Mira Official - Đầm Dự Tiệc Ánh Kim Dây Nơ Tháo Rời",
@@ -39,10 +66,19 @@ const products = [
     categorySlug: "vay-ngan",
     price: 478895,
     oldPrice: 560000,
-    image: "assets/img/products/DONNA/donna1.jpg",
+    image: "assets/img/products/DONNA/donna.jpg",
+    images: [
+      "assets/img/products/DONNA/donna1.jpg",
+      "assets/img/products/DONNA/donna2.jpg",
+      "assets/img/products/DONNA/donna3.jpg",
+      "assets/img/products/DONNA/donna4.jpg",
+      "assets/img/products/DONNA/donna5.jpg",
+      "assets/img/products/DONNA/donna6.jpg",
+    ],
     badge: "Sale",
     description: "Thiết kế xếp tầng bồng bềnh, phù hợp phong cách nổi bật.",
   },
+
   {
     id: 5,
     name: "IVY - Áo Ren Cổ Vuông Tay Phồng Melanie Mira Official - Áo Ôm Body Form Corset Tay Dài Thanh Lịch",
@@ -50,10 +86,19 @@ const products = [
     categorySlug: "ao",
     price: 335187,
     oldPrice: 390000,
-    image: "assets/img/products/IVY/ivy1.jpg",
+    image: "assets/img/products/IVY/ivy.jpg",
+    images: [
+      "assets/img/products/IVY/ivy1.jpg",
+      "assets/img/products/IVY/ivy2.jpg",
+      "assets/img/products/IVY/ivy3.jpg",
+      "assets/img/products/IVY/ivy4.jpg",
+      "assets/img/products/IVY/ivy5.jpg",
+      "assets/img/products/IVY/ivy6.jpg",
+    ],
     badge: "Hot",
     description: "Áo ren nữ tính, dễ phối với chân váy hoặc quần dài.",
   },
+
   {
     id: 6,
     name: "LIA - Áo Thun Trễ Vai Tay Dài Melanie Mira Official Ôm Body Cao Cấp - Co Giãn Mềm Mịn Thanh Lịch",
@@ -61,10 +106,19 @@ const products = [
     categorySlug: "ao",
     price: 297687,
     oldPrice: 330000,
-    image: "assets/img/products/LIA/lia1.jpg",
+    image: "assets/img/products/LIA/lia.jpg",
+    images: [
+      "assets/img/products/LIA/lia1.jpg",
+      "assets/img/products/LIA/lia2.jpg",
+      "assets/img/products/LIA/lia3.jpg",
+      "assets/img/products/LIA/lia4.jpg",
+      "assets/img/products/LIA/lia5.jpg",
+      "assets/img/products/LIA/lia6.jpg",
+    ],
     badge: "New",
     description: "Chất vải co giãn, form ôm nhẹ, phù hợp mặc hằng ngày.",
   },
+
   {
     id: 7,
     name: "CHARVI SET - Set Gile Linen Cổ Yếm Melanie Mira Cao Cấp Kèm Quần Ống Rộng - Thoáng Mát Thanh Lịch",
@@ -72,11 +126,19 @@ const products = [
     categorySlug: "set-quan-ao",
     price: 145250,
     oldPrice: 215000,
-    image: "assets/img/products/CHARVI SET/charvi1.jpg",
+    image: "assets/img/products/CHARVI SET/charvi.jpg",
+    images: [
+      "assets/img/products/CHARVI SET/charvi1.jpg",
+      "assets/img/products/CHARVI SET/charvi2.jpg",
+      "assets/img/products/CHARVI SET/charvi3.jpg",
+      "assets/img/products/CHARVI SET/charvi4.jpg",
+      "assets/img/products/CHARVI SET/charvi5.jpg",
+      "assets/img/products/CHARVI SET/charvi6.jpg",
+    ],
     badge: "Office",
-    description:
-      "Mẫu váy công sở thanh lịch, phù hợp đi làm hoặc gặp khách hàng.",
+    description: "Set quần áo thanh lịch, phù hợp đi làm hoặc gặp khách hàng.",
   },
+
   {
     id: 8,
     name: "Áo Ống Croptop Nữ Melanie Mira Official Thun Cotton 100% - Co Giãn 4 Chiều - Form Ôm Có Mút Ngực",
@@ -84,8 +146,17 @@ const products = [
     categorySlug: "ao",
     price: 389000,
     oldPrice: 450000,
-    image: "assets/img/products/CROPTOP/croptop1.jpg",
+    image: "assets/img/products/CROPTOP/croptop.jpg",
+    images: [
+      "assets/img/products/CROPTOP/croptop1.jpg",
+      "assets/img/products/CROPTOP/croptop2.jpg",
+      "assets/img/products/CROPTOP/croptop3.jpg",
+      "assets/img/products/CROPTOP/croptop4.jpg",
+      "assets/img/products/CROPTOP/croptop5.jpg",
+      "assets/img/products/CROPTOP/croptop6.jpg",
+    ],
     badge: "New",
-    description: "Họa tiết nhẹ nhàng, phù hợp đi chơi, hẹn hò hoặc dạo phố.",
+    description:
+      "Áo croptop co giãn, dễ phối đồ, phù hợp đi chơi hoặc dạo phố.",
   },
 ];
