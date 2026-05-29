@@ -23,7 +23,7 @@ function createProductImages(product) {
     return product.images;
   }
 
-  return [product.image, product.image, product.image];
+  return [product.image];
 }
 
 function renderProductImages(product) {
@@ -42,15 +42,14 @@ function renderProductImages(product) {
 }
 
 function renderProductInfo(product) {
-  $("#breadcrumbProductName").text(product.name);
   $("#detailName").text(product.name);
   $("#detailPrice").text(formatMoney(product.price));
 
   $("#detailInfoList").html(`
     <li>${product.description}</li>
     <li>Danh mục: ${product.category}</li>
-    <li>Thiết kế phù hợp với phong cách nữ tính và thanh lịch</li>
-    <li>Dễ phối với nhiều phụ kiện và hoàn cảnh sử dụng</li>
+    <li>Thiết kế phù hợp với phong cách nữ tính và thanh lịch.</li>
+    <li>Dễ phối với nhiều phụ kiện và hoàn cảnh sử dụng.</li>
   `);
 }
 
@@ -137,9 +136,17 @@ $(document).ready(function () {
     }
   });
 
-  $("#btnSizeGuide").click(function () {
-    alert(
-      "Gợi ý nhanh: S dưới 45kg, M 45-52kg, L 52-60kg, XL trên 60kg. Bạn có thể liên hệ shop để được tư vấn kỹ hơn.",
-    );
+  $("#btnToggleDetail").click(function () {
+    if (window.innerWidth > 768) {
+      return;
+    }
+
+    $(".product-detail-accordion").toggleClass("active");
+
+    if ($(".product-detail-accordion").hasClass("active")) {
+      $(".detail-toggle-icon").text("-");
+    } else {
+      $(".detail-toggle-icon").text("+");
+    }
   });
 });
