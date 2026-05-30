@@ -550,58 +550,6 @@
 }
 
 @media screen and (max-width: 768px) {
-  .featured-slider {
-    height: 470px;
-  }
-
-  .featured-slide img {
-    object-fit: cover;
-    object-position: center top;
-  }
-
-  .featured-content {
-    left: 24px;
-    right: 24px;
-    max-width: none;
-  }
-
-  .featured-content span {
-    font-size: 17px;
-    letter-spacing: 2px;
-  }
-
-  .featured-content h3 {
-    font-size: 44px;
-    letter-spacing: 4px;
-  }
-
-  .featured-content p {
-    font-size: 16px;
-    line-height: 1.5;
-    margin-bottom: 22px;
-  }
-
-  .featured-content button {
-    padding: 11px 24px;
-    font-size: 14px;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .featured-slider {
-    height: 430px;
-  }
-
-  .featured-content h3 {
-    font-size: 38px;
-  }
-
-  .featured-content p {
-    font-size: 15px;
-  }
-}
-
-@media screen and (max-width: 768px) {
   .section {
     padding: 34px 0 0;
   }
@@ -762,22 +710,24 @@
   }
 }
 
-.category-carousel-card.is-left {
-  width: 54%;
-  transform: translateX(-132%) scale(0.82);
-}
+@media screen and (min-width: 769px) and (max-width: 992px) {
+  .category-carousel-card.is-left {
+    width: 54%;
+    transform: translateX(-132%) scale(0.82);
+  }
 
-.category-carousel-card.is-right {
-  width: 54%;
-  transform: translateX(32%) scale(0.82);
-}
+  .category-carousel-card.is-right {
+    width: 54%;
+    transform: translateX(32%) scale(0.82);
+  }
 
-.category-carousel-content h3 {
-  font-size: 34px;
-}
+  .category-carousel-content h3 {
+    font-size: 34px;
+  }
 
-.category-carousel-content p {
-  font-size: 14px;
+  .category-carousel-content p {
+    font-size: 14px;
+  }
 }
 
 /* Product detail responsive */
