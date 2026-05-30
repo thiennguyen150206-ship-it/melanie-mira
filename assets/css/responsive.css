@@ -495,9 +495,16 @@
     height: 470px;
   }
 
-  .best-seller-slide img {
+  .best-seller-slide picture {
+    width: 100%;
+    height: 100%;
+  }
+
+  .best-seller-slide picture img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    object-position: center top;
+    object-position: center center;
   }
 
   .best-seller-content {
@@ -667,37 +674,48 @@
   }
 }
 
-@media screen and (max-width: 480px) {
-  .category-banner-item {
-    height: 400px;
-  }
-
-  .category-banner-content h3 {
-    font-size: 38px;
-  }
-
-  .category-banner-content p {
-    font-size: 15px;
-  }
-}
-
+/* Product category carousel mobile */
 @media screen and (max-width: 768px) {
+  .category-carousel-section {
+    padding-bottom: 44px;
+  }
+
   .category-carousel {
-    height: 430px;
+    display: flex;
+    gap: 14px;
+    height: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0 16px 8px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
   }
 
-  .category-carousel-card.is-active {
-    width: 72%;
+  .category-carousel::-webkit-scrollbar {
+    display: none;
   }
 
-  .category-carousel-card.is-left {
-    width: 50%;
-    transform: translateX(-126%) scale(0.84);
-  }
-
+  .category-carousel-card,
+  .category-carousel-card.is-active,
+  .category-carousel-card.is-left,
   .category-carousel-card.is-right {
-    width: 50%;
-    transform: translateX(26%) scale(0.84);
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 82%;
+    min-width: 82%;
+    height: 560px;
+    flex: 0 0 82%;
+    opacity: 1;
+    filter: none;
+    transform: none;
+    border-radius: 22px;
+    scroll-snap-align: center;
+  }
+
+  .category-carousel-card:not(.is-active) .category-carousel-content {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .category-carousel-card img {
@@ -708,23 +726,18 @@
   .category-carousel-content {
     left: 24px;
     right: 24px;
-    max-width: none;
+    bottom: 26px;
   }
 
   .category-carousel-content span {
-    font-size: 15px;
+    font-size: 14px;
     letter-spacing: 2px;
   }
 
   .category-carousel-content h3 {
-    font-size: 40px;
+    font-size: 42px;
     letter-spacing: 3px;
-  }
-
-  .category-carousel-content p {
-    font-size: 15px;
-    line-height: 1.5;
-    margin-bottom: 20px;
+    margin-bottom: 14px;
   }
 
   .category-carousel-link {
@@ -734,31 +747,37 @@
 }
 
 @media screen and (max-width: 480px) {
-  .category-carousel {
-    height: 390px;
-  }
-
-  .category-carousel-card.is-active {
-    width: 78%;
-  }
-
-  .category-carousel-card.is-left {
-    width: 54%;
-    transform: translateX(-132%) scale(0.82);
-  }
-
+  .category-carousel-card,
+  .category-carousel-card.is-active,
+  .category-carousel-card.is-left,
   .category-carousel-card.is-right {
-    width: 54%;
-    transform: translateX(32%) scale(0.82);
+    width: 86%;
+    min-width: 86%;
+    flex-basis: 86%;
+    height: 500px;
   }
 
   .category-carousel-content h3 {
-    font-size: 34px;
+    font-size: 36px;
   }
+}
 
-  .category-carousel-content p {
-    font-size: 14px;
-  }
+.category-carousel-card.is-left {
+  width: 54%;
+  transform: translateX(-132%) scale(0.82);
+}
+
+.category-carousel-card.is-right {
+  width: 54%;
+  transform: translateX(32%) scale(0.82);
+}
+
+.category-carousel-content h3 {
+  font-size: 34px;
+}
+
+.category-carousel-content p {
+  font-size: 14px;
 }
 
 /* Product detail responsive */
@@ -900,5 +919,94 @@
 
   .size-option {
     height: 42px;
+  }
+}
+
+/* Hero banner mobile */
+@media screen and (max-width: 768px) {
+  .hero-banner-responsive {
+    height: auto;
+    min-height: auto;
+  }
+
+  .hero-banner-responsive picture {
+    height: auto;
+  }
+
+  .hero-banner-responsive picture img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    object-position: center top;
+  }
+
+  .hero-banner-responsive .hero-content {
+    left: 50%;
+    bottom: 26px;
+    transform: translateX(-50%);
+  }
+
+  .hero-banner-responsive .hero-btn {
+    padding: 11px 28px;
+    font-size: 14px;
+  }
+}
+/* Best seller slider mobile */
+@media screen and (max-width: 768px) {
+  .best-seller-slider {
+    height: 470px;
+  }
+
+  .best-seller-slide picture {
+    width: 100%;
+    height: 100%;
+  }
+
+  .best-seller-slide picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+  }
+
+  .best-seller-content {
+    left: 24px;
+    right: 24px;
+    max-width: none;
+  }
+
+  .best-seller-content span {
+    font-size: 17px;
+    letter-spacing: 2px;
+  }
+
+  .best-seller-content h3 {
+    font-size: 44px;
+    letter-spacing: 4px;
+  }
+
+  .best-seller-content p {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 22px;
+  }
+
+  .best-seller-content button {
+    padding: 11px 24px;
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .best-seller-slider {
+    height: 430px;
+  }
+
+  .best-seller-content h3 {
+    font-size: 38px;
+  }
+
+  .best-seller-content p {
+    font-size: 15px;
   }
 }

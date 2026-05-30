@@ -154,29 +154,28 @@
         </div>
       </div>
     </header>
-
-    <!-- Hero -->
-    <section class="hero-section hero-font-cormorant">
-      <img src="assets/img/banners/banners.jpg" alt="Melanie Mira Collection" />
+    <!-- Hero banner -->
+    <section class="hero-section hero-banner-responsive">
+      <picture>
+        <source
+          media="(max-width: 768px)"
+          srcset="assets/img/banners/banners-mobile.jpg"
+        />
+        <img
+          src="assets/img/banners/banners-desktop.jpg"
+          alt="Melanie Mira Collection"
+        />
+      </picture>
 
       <div class="hero-content">
-        <p class="hero-subtitle">Tháng 5 này</p>
-        <h1>NEW ITEM</h1>
-        <p class="hero-desc">
-          by Melanie Mira - Những thiết kế mới nhất dành cho phong cách nữ tính,
-          thanh lịch và dễ phối đồ.
-        </p>
-        <a href="products.html" class="btn-main">Order Now</a>
+        <a href="products.html" class="btn-main hero-btn">Xem thêm</a>
       </div>
     </section>
-
     <!-- Best seller products -->
     <section class="section best-seller-section">
       <div class="container">
         <div class="section-heading">
           <h2>Best Seller</h2>
-
-          <p>Những sản phẩm được khách hàng yêu thích tại Melanie Mira.</p>
         </div>
       </div>
 
@@ -184,7 +183,16 @@
         <div class="best-seller-track">
           <!-- CAMI -->
           <a href="product-detail.html?id=3" class="best-seller-slide">
-            <img src="assets/img/categories/cateCAMI.jpg" alt="CAMI" />
+            <picture>
+              <source
+                media="(max-width: 768px)"
+                srcset="assets/img/categories/cateCAMI-mobile.jpg"
+              />
+              <img
+                src="assets/img/categories/cateCAMI-desktop.jpg"
+                alt="CAMI"
+              />
+            </picture>
 
             <div class="best-seller-content">
               <span>Best Seller</span>
@@ -196,7 +204,13 @@
 
           <!-- IVY -->
           <a href="product-detail.html?id=5" class="best-seller-slide">
-            <img src="assets/img/categories/cateIVY.jpg" alt="IVY" />
+            <picture>
+              <source
+                media="(max-width: 768px)"
+                srcset="assets/img/categories/cateIVY-mobile.jpg"
+              />
+              <img src="assets/img/categories/cateIVY-desktop.jpg" alt="IVY" />
+            </picture>
 
             <div class="best-seller-content">
               <span>Hot Item</span>
@@ -208,7 +222,13 @@
 
           <!-- LIA -->
           <a href="product-detail.html?id=6" class="best-seller-slide">
-            <img src="assets/img/categories/cateLIA.jpg" alt="LIA" />
+            <picture>
+              <source
+                media="(max-width: 768px)"
+                srcset="assets/img/categories/cateLIA-mobile.jpg"
+              />
+              <img src="assets/img/categories/cateLIA-desktop.jpg" alt="LIA" />
+            </picture>
 
             <div class="best-seller-content">
               <span>New Arrival</span>
@@ -221,73 +241,18 @@
       </div>
     </section>
 
-    <!-- Featured products -->
-    <section class="section featured-banner-section">
-      <div class="container">
-        <div class="section-heading">
-          <h2>Sản phẩm nổi bật</h2>
-          <p>
-            Mẫu sản phẩm được chọn lọc dành cho phong cách nữ tính và hiện đại.
-          </p>
-        </div>
-      </div>
-
-      <div class="featured-slider">
-        <div class="featured-track">
-          <!-- DONNA -->
-          <a href="product-detail.html?id=4" class="featured-slide">
-            <img src="assets/img/products/DONNA/donna1.png" alt="DONNA" />
-
-            <div class="featured-content">
-              <span>Featured Item</span>
-              <h3>DONNA</h3>
-              <p>Váy xòe nhiều lớp xếp tầng, nổi bật và nữ tính.</p>
-              <button type="button">Xem chi tiết</button>
-            </div>
-          </a>
-
-          <!-- CHARVI SET -->
-          <a href="product-detail.html?id=7" class="featured-slide">
-            <img
-              src="assets/img/products/CHARVI SET/charvi1.png"
-              alt="CHARVI SET"
-            />
-
-            <div class="featured-content">
-              <span>Elegant Set</span>
-              <h3>CHARVI SET</h3>
-              <p>Set gile linen cổ yếm phối quần ống rộng thanh lịch.</p>
-              <button type="button">Xem chi tiết</button>
-            </div>
-          </a>
-
-          <!-- ARUL -->
-          <a href="product-detail.html?id=1" class="featured-slide">
-            <img src="assets/img/products/ARUL/baneARUL.jpg" alt="ARUL" />
-
-            <div class="featured-content">
-              <span>New Collection</span>
-              <h3>ARUL</h3>
-              <p>Váy đen hai dây tafta phồng xòe, form ôm tôn dáng.</p>
-              <button type="button">Xem chi tiết</button>
-            </div>
-          </a>
-        </div>
-      </div>
-    </section>
-
     <!-- Product category carousel -->
     <section class="section category-carousel-section">
       <div class="container">
         <div class="section-heading">
           <h2>Danh mục sản phẩm</h2>
-          <p>Khám phá nhanh các nhóm sản phẩm chính tại Melanie Mira.</p>
         </div>
       </div>
 
       <div class="category-carousel">
-        <button
-          type="button"
+        <!-- Set -->
+        <a
+          href="products.html?category=set-quan-ao"
           class="category-carousel-card is-left"
           data-index="0"
         >
@@ -296,16 +261,13 @@
           <div class="category-carousel-content">
             <span>Melanie Mira Collection</span>
             <h3>Bộ</h3>
-            <p>
-              Những set đồ thanh lịch, dễ phối và phù hợp cho nhiều dịp khác
-              nhau.
-            </p>
-            <div class="category-carousel-link">Khám phá ngay</div>
+            <div class="category-carousel-link">Xem thêm</div>
           </div>
-        </button>
+        </a>
 
-        <button
-          type="button"
+        <!-- Dress -->
+        <a
+          href="products.html?category=vay-ngan"
           class="category-carousel-card is-active"
           data-index="1"
         >
@@ -314,16 +276,13 @@
           <div class="category-carousel-content">
             <span>Feminine Style</span>
             <h3>Váy</h3>
-            <p>
-              Các mẫu váy nữ tính, trẻ trung, phù hợp đi chơi, đi tiệc và chụp
-              ảnh.
-            </p>
-            <div class="category-carousel-link">Khám phá ngay</div>
+            <div class="category-carousel-link">Xem thêm</div>
           </div>
-        </button>
+        </a>
 
-        <button
-          type="button"
+        <!-- Top -->
+        <a
+          href="products.html?category=ao"
           class="category-carousel-card is-right"
           data-index="2"
         >
@@ -332,12 +291,9 @@
           <div class="category-carousel-content">
             <span>Daily Outfit</span>
             <h3>Áo</h3>
-            <p>
-              Áo kiểu, áo ren và áo thun dễ mặc, dễ phối với nhiều phong cách.
-            </p>
-            <div class="category-carousel-link">Khám phá ngay</div>
+            <div class="category-carousel-link">Xem thêm</div>
           </div>
-        </button>
+        </a>
       </div>
     </section>
 
@@ -404,30 +360,43 @@
     <!-- Footer / Contact -->
     <footer class="main-footer" id="footer-contact">
       <div class="container">
-        <div class="row g-4">
+        <div class="row g-4 align-items-start">
+          <!-- Footer brand -->
           <div class="col-lg-4 col-md-6">
-            <h3>Melanie Mira</h3>
-            <p>
-              Shop thời trang nữ hướng đến phong cách thanh lịch, nữ tính và
-              hiện đại. Melanie Mira luôn mong muốn mang đến trải nghiệm mua sắm
-              nhẹ nhàng, chỉn chu và đáng tin cậy cho khách hàng.
-            </p>
+            <div class="footer-brand">
+              <h3>Melanie Mira</h3>
+
+              <img
+                src="assets/img/logo/logo.jpg"
+                alt="Melanie Mira"
+                class="footer-brand-img"
+              />
+            </div>
           </div>
 
-          <div class="col-lg-2 col-md-6">
-            <h4>Danh mục</h4>
-            <a href="products.html?category=set-quan-ao">Bộ</a>
-            <a href="products.html?category=vay-ngan">Váy</a>
-            <a href="products.html?category=ao">Áo</a>
+          <!-- Footer links -->
+          <div class="col-lg-4 col-md-6">
+            <div class="footer-links">
+              <h4>Thông tin</h4>
+
+              <a href="about.html">Giới thiệu</a>
+
+              <div class="footer-link-group">
+                <span>Sản phẩm</span>
+
+                <div class="footer-product-links">
+                  <a href="products.html?category=ao">Áo</a>
+                  <a href="products.html?category=vay-ngan">Váy</a>
+                  <a href="products.html?category=set-quan-ao">Set</a>
+                </div>
+              </div>
+
+              <a href="#">Chính sách đổi trả</a>
+            </div>
           </div>
 
-          <div class="col-lg-3 col-md-6">
-            <h4>Chính sách</h4>
-            <a href="#">Chính sách đổi trả</a>
-            <a href="#">Hướng dẫn đổi trả</a>
-          </div>
-
-          <div class="col-lg-3 col-md-6">
+          <!-- Footer contact -->
+          <div class="col-lg-4 col-md-12">
             <h4>Liên hệ</h4>
 
             <!-- Social links -->
