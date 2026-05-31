@@ -52,6 +52,52 @@ function renderProductInfo(product) {
     <li>Dễ phối với nhiều phụ kiện và hoàn cảnh sử dụng.</li>
   `);
 }
+function renderRecommendProducts(product) {
+  let maxRecommend = 4;
+
+  /* Ưu tiên lấy sản phẩm cùng nhóm */
+  let sameCategoryProducts = products.filter(function (item) {
+    return item.id !== product.id && item.categorySlug === product.categorySlug;
+  });
+
+  let suggestProducts = [];
+
+  /* Nếu cùng nhóm có sản phẩm thì lấy trước */
+  for (let i = 0; i < sameCategoryProducts.length; i++) {
+    if (suggestProducts.length < maxRecommend) {
+      suggestProducts.push(sameCategoryProducts[i]);
+    }
+  }
+
+  /* Nếu chưa đủ thì lấy thêm sản phẩm nhóm khác */
+  if (suggestProducts.length < maxRecommend) {
+    let otherProducts = products.filter(function (item) {
+      return (
+        item.id !== product.id && item.categorySlug !== product.categorySlug
+      );
+    });
+
+    for (let i = 0; i < otherProducts.length; i++) {
+      if (suggestProducts.length < maxRecommend) {
+        suggestProducts.push(otherProducts[i]);
+      }
+    }
+  }
+
+  let html = "";
+
+  for (let i = 0; i < suggestProducts.length; i++) {
+    html += `
+      <a href="product-detail.html?id=${suggestProducts[i].id}" class="recommend-item">
+        <img src="${suggestProducts[i].image}" alt="${suggestProducts[i].name}" />
+        <h4>${suggestProducts[i].name}</h4>
+        <p>${formatMoney(suggestProducts[i].price)}</p>
+      </a>
+    `;
+  }
+
+  $("#recommendProducts").html(html);
+}
 
 function renderProductDetail() {
   let productId = getProductIdFromUrl();
@@ -73,6 +119,7 @@ function renderProductDetail() {
 
   renderProductImages(currentProduct);
   renderProductInfo(currentProduct);
+  renderRecommendProducts(currentProduct);
 }
 
 function addProductToCart() {

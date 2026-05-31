@@ -154,18 +154,51 @@
         </div>
       </div>
     </header>
-    <!-- Hero banner -->
-    <section class="hero-section hero-banner-responsive">
-      <picture>
-        <source
-          media="(max-width: 768px)"
-          srcset="assets/img/banners/banners-mobile.jpg"
-        />
-        <img
-          src="assets/img/banners/banners-desktop.jpg"
-          alt="Melanie Mira Collection"
-        />
-      </picture>
+    <!-- Hero banner slider -->
+    <section class="hero-section hero-banner-responsive hero-slider">
+      <div class="hero-track" id="heroTrack">
+        <!-- Banner 1 -->
+        <div class="hero-slide">
+          <picture>
+            <source
+              media="(max-width: 768px)"
+              srcset="assets/img/banners/banners-mobile.jpg"
+            />
+            <img
+              src="assets/img/banners/banners-desktop.jpg"
+              alt="Melanie Mira Collection"
+            />
+          </picture>
+        </div>
+
+        <!-- Banner 2 -->
+        <div class="hero-slide">
+          <picture>
+            <source
+              media="(max-width: 768px)"
+              srcset="assets/img/banners/banners2-mobile.jpg"
+            />
+            <img
+              src="assets/img/banners/banners2-desktop.jpg"
+              alt="Melanie Mira New Collection"
+            />
+          </picture>
+        </div>
+
+        <!-- Banner 1 clone: dùng để tạo hiệu ứng cuộn liên tục -->
+        <div class="hero-slide hero-slide-clone">
+          <picture>
+            <source
+              media="(max-width: 768px)"
+              srcset="assets/img/banners/banners-mobile.jpg"
+            />
+            <img
+              src="assets/img/banners/banners-desktop.jpg"
+              alt="Melanie Mira Collection"
+            />
+          </picture>
+        </div>
+      </div>
 
       <div class="hero-content">
         <a href="products.html" class="btn-main hero-btn">Xem thêm</a>
@@ -202,20 +235,23 @@
             </div>
           </a>
 
-          <!-- IVY -->
-          <a href="product-detail.html?id=5" class="best-seller-slide">
+          <!-- ARUL -->
+          <a href="product-detail.html?id=1" class="best-seller-slide">
             <picture>
               <source
                 media="(max-width: 768px)"
-                srcset="assets/img/categories/cateIVY-mobile.jpg"
+                srcset="assets/img/categories/cateARUL-mobile.jpg"
               />
-              <img src="assets/img/categories/cateIVY-desktop.jpg" alt="IVY" />
+              <img
+                src="assets/img/categories/cateARUL-desktop.jpg"
+                alt="ARUL"
+              />
             </picture>
 
             <div class="best-seller-content">
               <span>Hot Item</span>
-              <h3>IVY</h3>
-              <p>Áo Ren Cổ Vuông Tay Phồng Thanh Lịch</p>
+              <h3>ARUL</h3>
+              <p>Váy Đen Hai Dây Tafta Phồng Xòe Cao Cấp</p>
               <button type="button">Xem chi tiết</button>
             </div>
           </a>
@@ -296,17 +332,75 @@
         </a>
       </div>
     </section>
+    <!-- Fabric materials -->
+    <section class="section fabric-section">
+      <div class="container">
+        <div class="section-heading fabric-heading">
+          <h2>Đa dạng chất liệu & mẫu mã</h2>
+          <div class="fabric-heading-line"></div>
+        </div>
 
+        <div class="fabric-grid">
+          <!-- Lụa -->
+          <button type="button" class="fabric-card" data-fabric="lua">
+            <img src="assets/img/fabrics/lua.jpg" alt="Lụa" />
+            <span>LỤA</span>
+          </button>
+
+          <!-- Linen -->
+          <button type="button" class="fabric-card" data-fabric="linen">
+            <img src="assets/img/fabrics/linen.jpg" alt="Linen" />
+            <span>LINEN</span>
+          </button>
+
+          <!-- Cotton -->
+          <button type="button" class="fabric-card" data-fabric="cotton">
+            <img src="assets/img/fabrics/cotton.jpg" alt="Cotton" />
+            <span>COTTON</span>
+          </button>
+
+          <!-- Denim -->
+          <button type="button" class="fabric-card" data-fabric="denim">
+            <img src="assets/img/fabrics/denim.jpg" alt="Denim" />
+            <span>DENIM</span>
+          </button>
+
+          <!-- Ren -->
+          <button type="button" class="fabric-card" data-fabric="ren">
+            <img src="assets/img/fabrics/ren.jpg" alt="Ren" />
+            <span>REN</span>
+          </button>
+
+          <!-- Mix -->
+          <button type="button" class="fabric-card" data-fabric="mix">
+            <img src="assets/img/fabrics/mix.jpg" alt="Mix" />
+            <span>MIX</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Fabric popup -->
+    <div class="fabric-popup" id="fabricPopup">
+      <div class="fabric-popup-content">
+        <button type="button" class="fabric-popup-close" id="btnCloseFabric">
+          &times;
+        </button>
+
+        <img id="fabricPopupImage" src="" alt="" />
+
+        <div class="fabric-popup-info">
+          <h3 id="fabricPopupTitle"></h3>
+          <p id="fabricPopupDesc"></p>
+          <ul id="fabricPopupList"></ul>
+        </div>
+      </div>
+    </div>
     <!-- Policy -->
     <section class="policy-section">
       <div class="container">
         <div class="section-heading">
-          <span>Chính sách</span>
           <h2>Chính sách đổi trả sản phẩm</h2>
-          <p>
-            Melanie Mira hỗ trợ đổi sản phẩm theo đúng điều kiện và quy trình
-            của shop.
-          </p>
         </div>
 
         <div class="row g-3">
@@ -364,10 +458,12 @@
           <!-- Footer brand -->
           <div class="col-lg-4 col-md-6">
             <div class="footer-brand">
-              <h3>Melanie Mira</h3>
+              <h2>Melanie Mira</h2>
+
+              <p class="footer-slogan">"Design your own vibes"</p>
 
               <img
-                src="assets/img/logo/logo.jpg"
+                src="assets/img/banners/footer-banner.jpg"
                 alt="Melanie Mira"
                 class="footer-brand-img"
               />
@@ -377,28 +473,28 @@
           <!-- Footer links -->
           <div class="col-lg-4 col-md-6">
             <div class="footer-links">
-              <h4>Thông tin</h4>
+              <a href="about.html" class="footer-main-link">Giới thiệu</a>
 
-              <a href="about.html">Giới thiệu</a>
+              <a href="#" class="footer-main-link">Chính sách</a>
 
-              <div class="footer-link-group">
-                <span>Sản phẩm</span>
+              <a href="products.html" class="footer-main-link">Sản phẩm</a>
 
-                <div class="footer-product-links">
-                  <a href="products.html?category=ao">Áo</a>
-                  <a href="products.html?category=vay-ngan">Váy</a>
-                  <a href="products.html?category=set-quan-ao">Set</a>
-                </div>
+              <div class="footer-product-links">
+                <a href="products.html?category=ao">Áo</a>
+                <a href="products.html?category=vay-ngan">Váy</a>
+                <a href="products.html?category=set-quan-ao">Bộ</a>
               </div>
-
-              <a href="#">Chính sách đổi trả</a>
             </div>
           </div>
 
           <!-- Footer contact -->
           <div class="col-lg-4 col-md-12">
-            <h4>Liên hệ</h4>
-
+            <a
+              href="#footer-contact"
+              class="footer-main-link footer-contact-title"
+            >
+              Liên hệ
+            </a>
             <!-- Social links -->
             <div class="footer-socials">
               <!-- Facebook -->
