@@ -285,8 +285,8 @@
 
 .fabric-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 26px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
 }
 
 .fabric-card {
@@ -1285,7 +1285,7 @@
   transform: translateX(-50%) scale(1);
 }
 
-/* Left hidden-part card */
+/* Left card */
 .category-carousel-card.is-left {
   width: 30%;
   z-index: 2;
@@ -1294,7 +1294,7 @@
   transform: translateX(-126%) scale(0.9);
 }
 
-/* Right hidden-part card */
+/* Right card */
 .category-carousel-card.is-right {
   width: 30%;
   z-index: 2;
@@ -1353,6 +1353,88 @@
 .category-carousel-link:hover {
   background-color: var(--color-secondary);
   color: var(--color-white);
+}
+
+/* Category carousel mobile: same style as desktop */
+@media screen and (max-width: 768px) {
+  .category-carousel-section {
+    padding-bottom: 42px;
+  }
+
+  .category-carousel {
+    height: 520px;
+    overflow: hidden;
+  }
+
+  .category-carousel-card {
+    border-radius: 22px;
+  }
+
+  .category-carousel-card.is-active {
+    width: 68%;
+    transform: translateX(-50%) scale(1);
+  }
+
+  .category-carousel-card.is-left {
+    width: 58%;
+    opacity: 0.58;
+    filter: brightness(0.75);
+    transform: translateX(-108%) scale(0.86);
+  }
+
+  .category-carousel-card.is-right {
+    width: 58%;
+    opacity: 0.58;
+    filter: brightness(0.75);
+    transform: translateX(8%) scale(0.86);
+  }
+
+  .category-carousel-content {
+    left: 22px;
+    right: 22px;
+    bottom: 24px;
+  }
+
+  .category-carousel-content span {
+    font-size: 13px;
+    letter-spacing: 1.8px;
+    margin-bottom: 6px;
+  }
+
+  .category-carousel-content h3 {
+    font-size: 42px;
+    letter-spacing: 3px;
+    margin-bottom: 14px;
+  }
+
+  .category-carousel-link {
+    padding: 9px 22px;
+    font-size: 13px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .category-carousel {
+    height: 470px;
+  }
+
+  .category-carousel-card.is-active {
+    width: 72%;
+  }
+
+  .category-carousel-card.is-left {
+    width: 62%;
+    transform: translateX(-106%) scale(0.85);
+  }
+
+  .category-carousel-card.is-right {
+    width: 62%;
+    transform: translateX(6%) scale(0.85);
+  }
+
+  .category-carousel-content h3 {
+    font-size: 36px;
+  }
 }
 
 /* =========================

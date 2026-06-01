@@ -150,7 +150,7 @@ function initBestSellerSlider() {
    Product category carousel
    ========================= */
 
-let currentCategoryIndex = 0;
+let currentCategoryIndex = 1;
 let categoryCarouselTimer = null;
 
 function updateCategoryCarousel() {
@@ -183,23 +183,77 @@ function goToNextCategory() {
   updateCategoryCarousel();
 }
 
+function goToPrevCategory() {
+  let cards = $(".category-carousel-card");
+  let total = cards.length;
+
+  if (total === 0) {
+    return;
+  }
+
+  currentCategoryIndex = (currentCategoryIndex - 1 + total) % total;
+  updateCategoryCarousel();
+}
+
 function startCategoryAutoSlide() {
-  clearInterval(categoryCarouselTimer);
+  stopCategoryAutoSlide();
 
   categoryCarouselTimer = setInterval(function () {
     goToNextCategory();
   }, 3500);
 }
 
+function stopCategoryAutoSlide() {
+  clearInterval(categoryCarouselTimer);
+}
+
+function initCategoryCarouselSwipe() {
+  let startX = 0;
+  let endX = 0;
+
+  $(".category-carousel").on("touchstart", function (e) {
+    startX = e.originalEvent.touches[0].clientX;
+  });
+
+  $(".category-carousel").on("touchmove", function (e) {
+    endX = e.originalEvent.touches[0].clientX;
+  });
+
+  $(".category-carousel").on("touchend", function () {
+    let distance = endX - startX;
+
+    if (Math.abs(distance) < 50) {
+      return;
+    }
+
+    if (distance < 0) {
+      goToNextCategory();
+    } else {
+      goToPrevCategory();
+    }
+
+    startX = 0;
+    endX = 0;
+  });
+}
+
 function initCategoryCarousel() {
-  let isMobile = window.innerWidth <= 768;
-
-  if (isMobile) {
-    return;
-  }
-
   updateCategoryCarousel();
-  startCategoryAutoSlide();
+
+  if (window.innerWidth > 768) {
+    startCategoryAutoSlide();
+
+    $(".category-carousel").mouseenter(function () {
+      stopCategoryAutoSlide();
+    });
+
+    $(".category-carousel").mouseleave(function () {
+      startCategoryAutoSlide();
+    });
+  } else {
+    stopCategoryAutoSlide();
+    initCategoryCarouselSwipe();
+  }
 }
 /* =========================
    Fabric popup
@@ -239,17 +293,7 @@ let fabricData = {
       "Phù hợp nhiều dáng người",
     ],
   },
-  denim: {
-    title: "Denim",
-    image: "assets/img/fabrics/denim-detail.jpg",
-    desc: "Chất vải cá tính, chắc form, phù hợp với phong cách năng động và hiện đại.",
-    details: [
-      "Dày dặn, bền",
-      "Giữ form tốt",
-      "Dễ phối với áo hoặc phụ kiện",
-      "Phù hợp mặc đi chơi",
-    ],
-  },
+
   ren: {
     title: "Ren",
     image: "assets/img/fabrics/ren-detail.jpg",
@@ -259,17 +303,6 @@ let fabricData = {
       "Tạo cảm giác nhẹ nhàng",
       "Phù hợp thiết kế nữ tính",
       "Dễ tạo điểm nhấn trang phục",
-    ],
-  },
-  mix: {
-    title: "Mix",
-    image: "assets/img/fabrics/mix-detail.jpg",
-    desc: "Sự kết hợp nhiều chất liệu giúp trang phục có form dáng đẹp và phù hợp nhiều hoàn cảnh.",
-    details: [
-      "Linh hoạt trong thiết kế",
-      "Tạo form tốt hơn",
-      "Phù hợp nhiều phong cách",
-      "Dễ ứng dụng hằng ngày",
     ],
   },
 };
@@ -336,8 +369,11 @@ function goToNextHeroSlide() {
   updateHeroSlider(true);
 
   /*
-    Nếu đang ở slide clone cuối cùng,
-    sau khi trượt xong thì nhảy âm thầm về slide thật đầu tiên.
+    total gồm:
+    Banner 1, Banner 2, Banner 3, Banner 1 clone
+
+    Khi chạy tới Banner 1 clone,
+    JS sẽ nhảy âm thầm về Banner 1 thật.
   */
   if (currentHeroIndex === total - 1) {
     heroIsResetting = true;
@@ -346,10 +382,6 @@ function goToNextHeroSlide() {
       currentHeroIndex = 0;
       updateHeroSlider(false);
 
-      /*
-        Ép trình duyệt nhận trạng thái không transition trước,
-        rồi bật lại transition cho lần trượt tiếp theo.
-      */
       setTimeout(function () {
         $("#heroTrack").css("transition", "transform 0.75s ease");
         heroIsResetting = false;
