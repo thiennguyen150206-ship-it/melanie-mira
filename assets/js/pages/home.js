@@ -262,7 +262,7 @@ function initCategoryCarousel() {
 let fabricData = {
   lua: {
     title: "Lụa",
-    image: "assets/img/fabrics/lua-detail.jpg",
+    image: "assets/img/fabrics/lua.jpg",
     desc: "Chất vải có độ bóng nhẹ và đứng form, phù hợp cho các thiết kế sang trọng, cao cấp, đi tiệc.",
     details: [
       "Nhẹ, thoáng mát",
@@ -271,20 +271,20 @@ let fabricData = {
       "Ít nhăn, dễ giặt ủi",
     ],
   },
-  linen: {
-    title: "Linen",
-    image: "assets/img/fabrics/linen-detail.jpg",
-    desc: "Chất vải thoáng nhẹ, phù hợp với phong cách thanh lịch, tự nhiên và mặc hằng ngày.",
+  tafta: {
+    title: "Tafta",
+    image: "assets/img/fabrics/tafta.jpg",
+    desc: "Chất vải có độ đứng form, bề mặt hơi bóng nhẹ, thường dùng cho các thiết kế váy đầm sang trọng và nổi bật.",
     details: [
-      "Thoáng khí, dễ chịu",
-      "Bề mặt vải tự nhiên",
-      "Phù hợp thời tiết nóng",
-      "Mang cảm giác nhẹ nhàng",
+      "Đứng form, tạo dáng tốt",
+      "Bề mặt vải có độ bóng nhẹ",
+      "Phù hợp váy dự tiệc, đầm xòe",
+      "Tạo cảm giác thanh lịch và cao cấp",
     ],
   },
   cotton: {
     title: "Cotton",
-    image: "assets/img/fabrics/cotton-detail.jpg",
+    image: "assets/img/fabrics/cotton.jpg",
     desc: "Chất liệu mềm mại, co giãn và dễ mặc, phù hợp cho các thiết kế cơ bản hằng ngày.",
     details: [
       "Mềm, thấm hút tốt",
@@ -296,7 +296,7 @@ let fabricData = {
 
   ren: {
     title: "Ren",
-    image: "assets/img/fabrics/ren-detail.jpg",
+    image: "assets/img/fabrics/ren.jpg",
     desc: "Chất liệu nữ tính, tạo điểm nhấn mềm mại và quyến rũ cho các thiết kế váy áo.",
     details: [
       "Họa tiết tinh tế",

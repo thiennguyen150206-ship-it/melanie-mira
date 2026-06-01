@@ -1,7 +1,7 @@
 const products = [
   {
     id: 1,
-    name: "ARUL - Váy Đen Hai Dây Tafta Phồng Xòe Melanie Mira Official Cao Cấp Kèm Bowtie - Form Ôm Tôn Dáng",
+    name: "ARUL - Váy Đen Hai Dây Tafta",
     category: "Váy ngắn",
     categorySlug: "vay-ngan",
     price: 488500,
@@ -21,7 +21,7 @@ const products = [
 
   {
     id: 2,
-    name: "Đầm Nữ Đỏ LUNA Hai Dây Lụa Cao Cấp Melanie Mira Official – Phối Ren, Xếp Ly Tầng Quyến Rũ",
+    name: "Đầm Nữ Đỏ LUNA Hai Dây Lụa",
     category: "Váy ngắn",
     categorySlug: "vay-ngan",
     price: 471500,
@@ -41,7 +41,7 @@ const products = [
 
   {
     id: 3,
-    name: "CAMI - Đầm Trắng Cúp Ngực Tafta Cao Cấp Melanie Mira Official - Phối Voan Dáng Xòe Tôn Dáng",
+    name: "CAMI - Đầm Trắng Cúp Ngực Tafta",
     category: "Váy ngắn",
     categorySlug: "vay-ngan",
     price: 489562,
@@ -61,7 +61,7 @@ const products = [
 
   {
     id: 4,
-    name: "DONNA - Váy Xòe Nhiều Lớp Xếp Tầng Melanie Mira Official - Đầm Dự Tiệc Ánh Kim Dây Nơ Tháo Rời",
+    name: "DONNA - Váy Xòe Nhiều Lớp Xếp Tầng",
     category: "Váy ngắn",
     categorySlug: "vay-ngan",
     price: 478895,
@@ -81,7 +81,7 @@ const products = [
 
   {
     id: 5,
-    name: "IVY - Áo Ren Cổ Vuông Tay Phồng Melanie Mira Official - Áo Ôm Body Form Corset Tay Dài Thanh Lịch",
+    name: "IVY - Áo Ren Cổ Vuông Tay Phồng",
     category: "Áo",
     categorySlug: "ao",
     price: 335187,
@@ -101,7 +101,7 @@ const products = [
 
   {
     id: 6,
-    name: "LIA - Áo Thun Trễ Vai Tay Dài Melanie Mira Official Ôm Body Cao Cấp - Co Giãn Mềm Mịn Thanh Lịch",
+    name: "LIA - Áo Thun Trễ Vai Tay Dài",
     category: "Áo",
     categorySlug: "ao",
     price: 297687,
@@ -121,7 +121,7 @@ const products = [
 
   {
     id: 7,
-    name: "CHARVI SET - Set Gile Linen Cổ Yếm Melanie Mira Cao Cấp Kèm Quần Ống Rộng - Thoáng Mát Thanh Lịch",
+    name: "CHARVI SET - Set Gile Linen Cổ Yếm",
     category: "Set quần áo",
     categorySlug: "set-quan-ao",
     price: 145250,
@@ -141,7 +141,7 @@ const products = [
 
   {
     id: 8,
-    name: "Áo Ống Croptop Nữ Melanie Mira Official Thun Cotton 100% - Co Giãn 4 Chiều - Form Ôm Có Mút Ngực",
+    name: "Áo Ống Croptop Nữ",
     category: "Áo",
     categorySlug: "ao",
     price: 389000,
