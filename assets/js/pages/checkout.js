@@ -2,69 +2,72 @@
    CHECKOUT PAGE - MELANIE MIRA
    ========================= */
 
-/* Format money */
 function formatMoney(price) {
   return price.toLocaleString("vi-VN") + "đ";
 }
 
-/* Get cart from localStorage */
 function getCart() {
   return JSON.parse(localStorage.getItem("cart")) || [];
 }
 
-/* Save cart */
 function saveCart(cart) {
   localStorage.setItem("cart", JSON.stringify(cart));
 }
 
-/* Render checkout products */
 function renderCheckoutSummary() {
   let cart = getCart();
   let html = "";
-  let total = 0;
+  let subtotal = 0;
+  let shipping = 0;
 
   if (cart.length === 0) {
     $("#checkoutSummary").html(`
-      <div class="empty-cart">
+      <div class="checkout-empty">
         Giỏ hàng đang trống.
         <br />
-        <a href="products.html" class="btn-main mt-3">Mua sắm ngay</a>
+        <a href="products.html">Mua sắm ngay</a>
       </div>
     `);
 
+    $("#checkoutSubtotal").text(formatMoney(0));
+    $("#checkoutShipping").text(formatMoney(0));
     $("#checkoutTotal").text(formatMoney(0));
     return;
   }
 
   for (let i = 0; i < cart.length; i++) {
     let itemTotal = cart[i].price * cart[i].quantity;
-    total += itemTotal;
+    subtotal += itemTotal;
 
     html += `
-      <div class="checkout-item">
-        <div class="checkout-item-img">
+      <div class="checkout-summary-item">
+        <div class="checkout-summary-img">
           <img src="${cart[i].image}" alt="${cart[i].name}" />
         </div>
 
-        <div class="checkout-item-info">
-          <h4>${cart[i].name}</h4>
+        <div class="checkout-summary-info">
+          <div class="checkout-summary-top">
+            <h4>${cart[i].name}</h4>
+            <strong>${formatMoney(itemTotal)}</strong>
+          </div>
+
           <p>Size: ${cart[i].size}</p>
-          <p>Số lượng: ${cart[i].quantity}</p>
-          <strong>${formatMoney(itemTotal)}</strong>
+          <p>Qty: ${cart[i].quantity}</p>
         </div>
       </div>
     `;
   }
 
   $("#checkoutSummary").html(html);
-  $("#checkoutTotal").text(formatMoney(total));
+  $("#checkoutSubtotal").text(formatMoney(subtotal));
+  $("#checkoutShipping").text(formatMoney(shipping));
+  $("#checkoutTotal").text(formatMoney(subtotal + shipping));
 }
 
-/* Validate checkout form */
 function validateCheckoutForm() {
   let isValid = true;
 
-  let name = $("#customerName").val().trim();
+  let firstName = $("#customerFirstName").val().trim();
   let phone = $("#customerPhone").val().trim();
   let email = $("#customerEmail").val().trim();
   let address = $("#customerAddress").val().trim();
@@ -72,8 +75,8 @@ function validateCheckoutForm() {
 
   $(".form-error").text("");
 
-  if (name === "") {
-    $("#errCustomerName").text("Vui lòng nhập họ tên.");
+  if (firstName === "") {
+    $("#errCustomerName").text("Vui lòng nhập tên.");
     isValid = false;
   }
 
@@ -81,9 +84,7 @@ function validateCheckoutForm() {
     $("#errCustomerPhone").text("Vui lòng nhập số điện thoại.");
     isValid = false;
   } else if (!/^0\d{9}$/.test(phone)) {
-    $("#errCustomerPhone").text(
-      "Số điện thoại phải gồm 10 số và bắt đầu bằng 0.",
-    );
+    $("#errCustomerPhone").text("Số điện thoại gồm 10 số và bắt đầu bằng 0.");
     isValid = false;
   }
 
@@ -108,7 +109,6 @@ function validateCheckoutForm() {
   return isValid;
 }
 
-/* Submit order */
 function submitOrder() {
   let cart = getCart();
 
@@ -123,7 +123,6 @@ function submitOrder() {
 
   alert("Đặt hàng thành công! Cảm ơn bạn đã mua hàng tại Melanie Mira.");
 
-  /* Xóa giỏ hàng sau khi đặt */
   saveCart([]);
 
   if (typeof updateCartCount === "function") {
@@ -133,12 +132,15 @@ function submitOrder() {
   window.location.href = "index.html";
 }
 
-/* Document ready */
 $(document).ready(function () {
   renderCheckoutSummary();
 
   $("#checkoutForm").submit(function (e) {
     e.preventDefault();
     submitOrder();
+  });
+
+  $("#btnApplyDiscount").click(function () {
+    alert("Mã giảm giá hiện chưa được áp dụng trong bản demo.");
   });
 });

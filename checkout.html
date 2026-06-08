@@ -59,96 +59,177 @@
       </div>
     </nav>
 
-    <main class="checkout-section">
+    <!-- Checkout page -->
+    <main class="checkout-page">
       <div class="container">
-        <div class="row g-4">
-          <div class="col-lg-7">
-            <div class="checkout-box">
-              <h2>Thông tin nhận hàng</h2>
-              <p>Nhập thông tin để hoàn tất đơn hàng.</p>
+        <div class="checkout-layout">
+          <!-- Left: shipping information -->
+          <section class="checkout-left">
+            <div class="checkout-title-row">
+              <h2>SHIPPING ADDRESS</h2>
+              <p>Already have an account? <a href="login.html">Log in</a></p>
+            </div>
 
-              <form id="checkoutForm">
-                <div class="form-group-custom">
-                  <label for="customerName">Họ và tên</label>
+            <form id="checkoutForm">
+              <div class="checkout-field">
+                <input
+                  type="text"
+                  id="customerEmail"
+                  placeholder="Email Address"
+                />
+                <span class="form-error" id="errCustomerEmail"></span>
+              </div>
+
+              <label class="checkout-checkbox">
+                <input type="checkbox" checked />
+                <span>Email me with news & offers</span>
+              </label>
+
+              <div class="checkout-field">
+                <select id="customerCountry">
+                  <option value="Vietnam">Vietnam</option>
+                </select>
+              </div>
+
+              <div class="checkout-field">
+                <input
+                  type="text"
+                  id="customerAddress"
+                  placeholder="Street Address*"
+                />
+                <span class="form-error" id="errCustomerAddress"></span>
+              </div>
+
+              <div class="checkout-field">
+                <input
+                  type="text"
+                  id="customerAddressMore"
+                  placeholder="Apartment, suite, unit, building, floor, etc.*"
+                />
+              </div>
+
+              <div class="checkout-two-cols">
+                <div class="checkout-field">
                   <input
                     type="text"
-                    id="customerName"
-                    placeholder="Nhập họ tên"
+                    id="customerFirstName"
+                    placeholder="First Name*"
                   />
                   <span class="form-error" id="errCustomerName"></span>
                 </div>
 
-                <div class="form-group-custom">
-                  <label for="customerPhone">Số điện thoại</label>
+                <div class="checkout-field">
+                  <input
+                    type="text"
+                    id="customerLastName"
+                    placeholder="Last Name*"
+                  />
+                </div>
+              </div>
+
+              <div class="checkout-two-cols">
+                <div class="checkout-field">
+                  <input
+                    type="text"
+                    id="customerWard"
+                    placeholder="Ward/Commune*"
+                  />
+                </div>
+
+                <div class="checkout-field">
+                  <input
+                    type="text"
+                    id="customerPostal"
+                    placeholder="Postal Code"
+                  />
+                </div>
+              </div>
+
+              <div class="checkout-two-cols">
+                <div class="checkout-field">
+                  <select id="customerProvince">
+                    <option value="">Please select State/Province.</option>
+                    <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
+                    <option value="Hà Nội">Hà Nội</option>
+                    <option value="Đà Nẵng">Đà Nẵng</option>
+                    <option value="Khác">Khác</option>
+                  </select>
+                </div>
+
+                <div class="checkout-field">
                   <input
                     type="text"
                     id="customerPhone"
-                    placeholder="Ví dụ: 0912345678"
+                    placeholder="Phone Number*"
                   />
                   <span class="form-error" id="errCustomerPhone"></span>
                 </div>
+              </div>
 
-                <div class="form-group-custom">
-                  <label for="customerEmail">Email</label>
-                  <input
-                    type="text"
-                    id="customerEmail"
-                    placeholder="Nhập email"
-                  />
-                  <span class="form-error" id="errCustomerEmail"></span>
-                </div>
+              <div class="checkout-field">
+                <textarea id="orderNote" rows="3" placeholder="Note"></textarea>
+              </div>
 
-                <div class="form-group-custom">
-                  <label for="customerAddress">Địa chỉ nhận hàng</label>
-                  <input
-                    type="text"
-                    id="customerAddress"
-                    placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành"
-                  />
-                  <span class="form-error" id="errCustomerAddress"></span>
-                </div>
+              <label class="checkout-checkbox">
+                <input type="checkbox" checked />
+                <span>My billing and shipping address are the same</span>
+              </label>
 
-                <div class="form-group-custom">
-                  <label for="paymentMethod">Phương thức thanh toán</label>
-                  <select id="paymentMethod">
-                    <option value="">-- Chọn phương thức --</option>
-                    <option value="Thanh toán khi nhận hàng">
-                      Thanh toán khi nhận hàng
-                    </option>
-                    <option value="Chuyển khoản ngân hàng">
-                      Chuyển khoản ngân hàng
-                    </option>
-                  </select>
-                  <span class="form-error" id="errPaymentMethod"></span>
-                </div>
+              <div class="checkout-field">
+                <select id="paymentMethod">
+                  <option value="">Payment method</option>
+                  <option value="Thanh toán khi nhận hàng">
+                    Thanh toán khi nhận hàng
+                  </option>
+                  <option value="Chuyển khoản ngân hàng">
+                    Chuyển khoản ngân hàng
+                  </option>
+                </select>
+                <span class="form-error" id="errPaymentMethod"></span>
+              </div>
 
-                <div class="form-group-custom">
-                  <label for="orderNote">Ghi chú</label>
-                  <textarea
-                    id="orderNote"
-                    rows="4"
-                    placeholder="Ghi chú cho shop nếu có"
-                  ></textarea>
-                </div>
+              <button type="submit" class="checkout-submit-btn">
+                PLACE ORDER
+              </button>
+            </form>
+          </section>
 
-                <button type="submit" class="btn-main w-100 text-center">
-                  Xác nhận đặt hàng
+          <!-- Right: order summary -->
+          <aside class="checkout-right">
+            <div class="checkout-summary" id="checkoutSummary"></div>
+
+            <div class="checkout-discount">
+              <h3>DISCOUNT</h3>
+
+              <div class="checkout-discount-row">
+                <input
+                  type="text"
+                  id="discountCode"
+                  placeholder="Discount code"
+                />
+                <button type="button" id="btnApplyDiscount">
+                  Apply Discount
                 </button>
-              </form>
-            </div>
-          </div>
-
-          <div class="col-lg-5">
-            <div class="order-summary-box">
-              <h2>Đơn hàng</h2>
-              <div id="checkoutSummary"></div>
-              <hr />
-              <div class="d-flex justify-content-between">
-                <strong>Tổng tiền</strong>
-                <strong class="cart-total" id="checkoutTotal">0đ</strong>
               </div>
             </div>
-          </div>
+
+            <div class="checkout-money">
+              <div class="checkout-money-row">
+                <span>Subtotal</span>
+                <strong id="checkoutSubtotal">0đ</strong>
+              </div>
+
+              <div class="checkout-money-row">
+                <span>Shipping & Handling</span>
+                <strong id="checkoutShipping">0đ</strong>
+              </div>
+
+              <div class="checkout-money-row checkout-total-row">
+                <span>Order Total</span>
+                <strong id="checkoutTotal">0đ</strong>
+              </div>
+            </div>
+          </aside>
         </div>
       </div>
     </main>
@@ -163,7 +244,7 @@
 
     <script src="assets/js/jquery-4.0.0.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
-    <script src="assets/js/pages/checkout.js"></script>
     <script src="assets/js/core/header.js"></script>
+    <script src="assets/js/pages/checkout.js"></script>
   </body>
 </html>
