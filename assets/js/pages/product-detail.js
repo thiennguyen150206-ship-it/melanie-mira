@@ -122,7 +122,7 @@ function renderProductDetail() {
   renderRecommendProducts(currentProduct);
 }
 
-function addProductToCart() {
+function addProductToCart(showModal) {
   if (!currentProduct) {
     return;
   }
@@ -158,10 +158,167 @@ function addProductToCart() {
   }
 
   $("#sizeMessage").text("Đã thêm size " + selectedSize + " vào giỏ hàng.");
+
+  if (showModal) {
+    openCartModal();
+  }
+}
+function renderCartModal() {
+  let cart = getCart();
+  let html = "";
+  let total = 0;
+
+  if (cart.length === 0) {
+    $("#cartModalList").html(`
+      <div class="cart-modal-empty">
+        Giỏ hàng đang trống.
+      </div>
+    `);
+
+    $("#cartModalTotal").text(formatMoney(0));
+    return;
+  }
+
+  for (let i = 0; i < cart.length; i++) {
+    let itemTotal = cart[i].price * cart[i].quantity;
+    total += itemTotal;
+
+    html += `
+      <div class="cart-modal-item">
+        <div class="cart-modal-img">
+          <img src="${cart[i].image}" alt="${cart[i].name}" />
+        </div>
+
+        <div class="cart-modal-info">
+          <div class="cart-modal-name-price">
+            <h4>${cart[i].name}</h4>
+            <span>${formatMoney(cart[i].price)}</span>
+          </div>
+
+          <button
+            type="button"
+            class="cart-modal-remove"
+            data-index="${i}"
+          >
+            Remove
+          </button>
+
+          <div class="cart-modal-quantity">
+            <button type="button" class="cart-qty-minus" data-index="${i}">
+              −
+            </button>
+
+            <span>${cart[i].quantity}</span>
+
+            <button type="button" class="cart-qty-plus" data-index="${i}">
+              +
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  $("#cartModalList").html(html);
+  $("#cartModalTotal").text(formatMoney(total));
 }
 
+function openCartModal() {
+  renderCartModal();
+
+  $("#cartModalOverlay").addClass("active");
+  $("#cartSideModal").addClass("active");
+}
+
+function closeCartModal() {
+  $("#cartModalOverlay").removeClass("active");
+  $("#cartSideModal").removeClass("active");
+}
+
+function changeCartQuantity(index, type) {
+  let cart = getCart();
+
+  if (!cart[index]) {
+    return;
+  }
+
+  if (type === "plus") {
+    cart[index].quantity += 1;
+  }
+
+  if (type === "minus") {
+    cart[index].quantity -= 1;
+
+    if (cart[index].quantity <= 0) {
+      cart.splice(index, 1);
+    }
+  }
+
+  saveCart(cart);
+  renderCartModal();
+
+  if (typeof updateCartCount === "function") {
+    updateCartCount();
+  }
+}
+
+function removeCartItem(index) {
+  let cart = getCart();
+
+  cart.splice(index, 1);
+
+  saveCart(cart);
+  renderCartModal();
+
+  if (typeof updateCartCount === "function") {
+    updateCartCount();
+  }
+}
+
+function clearCartModal() {
+  saveCart([]);
+  renderCartModal();
+
+  if (typeof updateCartCount === "function") {
+    updateCartCount();
+  }
+}
+
+function initCartModalEvents() {
+  $("#btnCloseCartModal").click(function () {
+    closeCartModal();
+  });
+
+  $("#cartModalOverlay").click(function () {
+    closeCartModal();
+  });
+
+  $("#btnClearCartModal").click(function () {
+    clearCartModal();
+  });
+
+  $("#btnCartCheckout").click(function () {
+    window.location.href = "checkout.html";
+  });
+
+  $(document).on("click", ".cart-qty-plus", function () {
+    let index = Number($(this).data("index"));
+    changeCartQuantity(index, "plus");
+  });
+
+  $(document).on("click", ".cart-qty-minus", function () {
+    let index = Number($(this).data("index"));
+    changeCartQuantity(index, "minus");
+  });
+
+  $(document).on("click", ".cart-modal-remove", function () {
+    let index = Number($(this).data("index"));
+    removeCartItem(index);
+  });
+}
 $(document).ready(function () {
   renderProductDetail();
+  initCartModalEvents();
 
   $(".size-option").click(function () {
     $(".size-option").removeClass("active");
@@ -172,14 +329,14 @@ $(document).ready(function () {
   });
 
   $("#btnAddToCartDetail").click(function () {
-    addProductToCart();
+    addProductToCart(true);
   });
 
   $("#btnBuyNow").click(function () {
-    addProductToCart();
+    addProductToCart(false);
 
     if (selectedSize !== "") {
-      window.location.href = "cart.html";
+      window.location.href = "checkout.html";
     }
   });
 

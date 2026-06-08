@@ -266,5 +266,31 @@
         </aside>
       </section>
     </main>
+    <!-- Cart side modal -->
+    <div class="cart-modal-overlay" id="cartModalOverlay"></div>
+
+    <div class="cart-side-modal" id="cartSideModal">
+      <div class="cart-modal-header">
+        <h3>SHOPPING CART</h3>
+        <button type="button" id="btnCloseCartModal">Close ×</button>
+      </div>
+
+      <button type="button" class="cart-clear-btn" id="btnClearCartModal">
+        Clear all
+      </button>
+
+      <div class="cart-modal-list" id="cartModalList"></div>
+
+      <div class="cart-modal-bottom">
+        <div class="cart-modal-total">
+          <span>SUBTOTAL</span>
+          <strong id="cartModalTotal">0đ</strong>
+        </div>
+
+        <button type="button" class="cart-modal-checkout" id="btnCartCheckout">
+          Checkout
+        </button>
+      </div>
+    </div>    
   </body>
 </html>

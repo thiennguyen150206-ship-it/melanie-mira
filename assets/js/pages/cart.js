@@ -80,17 +80,4 @@ $(document).ready(function () {
     }
   });
 });
-function getCart() {
-  return JSON.parse(localStorage.getItem("cart")) || [];
-}
 
-function updateCartCount() {
-  let cart = getCart();
-  let total = 0;
-
-  for (let i = 0; i < cart.length; i++) {
-    total += cart[i].quantity;
-  }
-
-  $("#cartCount").text(total);
-}
