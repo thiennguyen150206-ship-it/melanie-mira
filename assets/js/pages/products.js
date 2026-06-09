@@ -40,11 +40,11 @@ function createProductItem(product) {
     <div class="col-lg-3 col-md-4 col-6">
       <a href="product-detail.html?id=${product.id}" class="shop-product-item">
         <div class="shop-product-image">
-          <img src="${product.image}" alt="${product.name}" />
+          <img src="${product.image}" alt="${getProductName(product)}" />
         </div>
 
         <div class="shop-product-info">
-          <h3>${product.name}</h3>
+          <h3>${getProductName(product)}</h3>
           <p>${formatMoney(product.price)}</p>
         </div>
       </a>

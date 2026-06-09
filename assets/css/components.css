@@ -2053,7 +2053,7 @@
 /* Hero banner responsive */
 .hero-banner-responsive {
   position: relative;
-  height: calc(100vh - 90px);
+  height: calc(100vh - 24px);
   min-height: 680px;
   overflow: hidden;
   background-color: var(--color-white);

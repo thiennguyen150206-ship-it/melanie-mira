@@ -1,3 +1,4 @@
+
 let currentProduct = null;
 let selectedSize = "";
 
@@ -42,14 +43,18 @@ function renderProductImages(product) {
 }
 
 function renderProductInfo(product) {
-  $("#detailName").text(product.name);
+  let name = getProductName(product);
+  let description = getProductDescription(product);
+  let category = getProductCategory(product);
+
+  $("#detailName").text(name);
   $("#detailPrice").text(formatMoney(product.price));
 
   $("#detailInfoList").html(`
-    <li>${product.description}</li>
-    <li>Danh mục: ${product.category}</li>
-    <li>Thiết kế phù hợp với phong cách nữ tính và thanh lịch.</li>
-    <li>Dễ phối với nhiều phụ kiện và hoàn cảnh sử dụng.</li>
+    <li>${description}</li>
+    <li>${t("product.category")}: ${category}</li>
+    <li>${t("product.defaultDetail1")}</li>
+    <li>${t("product.defaultDetail2")}</li>
   `);
 }
 function renderRecommendProducts(product) {
@@ -89,8 +94,11 @@ function renderRecommendProducts(product) {
   for (let i = 0; i < suggestProducts.length; i++) {
     html += `
       <a href="product-detail.html?id=${suggestProducts[i].id}" class="recommend-item">
-        <img src="${suggestProducts[i].image}" alt="${suggestProducts[i].name}" />
-        <h4>${suggestProducts[i].name}</h4>
+       <img
+  src="${suggestProducts[i].image}"
+  alt="${getProductName(suggestProducts[i])}"
+/>
+<h4>${getProductName(suggestProducts[i])}</h4>
         <p>${formatMoney(suggestProducts[i].price)}</p>
       </a>
     `;
@@ -108,12 +116,12 @@ function renderProductDetail() {
 
   if (!currentProduct) {
     $(".product-detail-page").html(`
-      <div class="container py-5 text-center">
-        <h2>Không tìm thấy sản phẩm</h2>
-        <p>Sản phẩm này có thể đã bị xóa hoặc chưa được cập nhật.</p>
-        <a href="products.html" class="btn-main">Quay lại sản phẩm</a>
-      </div>
-    `);
+  <div class="container py-5 text-center">
+    <h2>${t("product.notFound")}</h2>
+    <p>${t("product.notFoundDesc")}</p>
+    <a href="products.html" class="btn-main">${t("product.backToProducts")}</a>
+  </div>
+`);
     return;
   }
 
@@ -128,7 +136,11 @@ function addProductToCart(showModal) {
   }
 
   if (selectedSize === "") {
-    $("#sizeMessage").text("Bạn cần chọn size trước khi thêm vào giỏ.");
+    if (getCurrentLanguage() === "en") {
+      $("#sizeMessage").text("Please select a size before adding to cart.");
+    } else {
+      $("#sizeMessage").text("Bạn cần chọn size trước khi thêm vào giỏ.");
+    }
     return;
   }
 
@@ -143,7 +155,7 @@ function addProductToCart(showModal) {
   } else {
     cart.push({
       id: currentProduct.id,
-      name: currentProduct.name,
+      name: getProductName(currentProduct),
       price: currentProduct.price,
       image: currentProduct.image,
       size: selectedSize,
@@ -157,7 +169,11 @@ function addProductToCart(showModal) {
     updateCartCount();
   }
 
-  $("#sizeMessage").text("Đã thêm size " + selectedSize + " vào giỏ hàng.");
+  if (getCurrentLanguage() === "en") {
+    $("#sizeMessage").text("Size " + selectedSize + " has been added to cart.");
+  } else {
+    $("#sizeMessage").text("Đã thêm size " + selectedSize + " vào giỏ hàng.");
+  }
 
   if (showModal) {
     openCartModal();
@@ -325,7 +341,11 @@ $(document).ready(function () {
     $(this).addClass("active");
 
     selectedSize = $(this).data("size");
-    $("#sizeMessage").text("Bạn đã chọn size " + selectedSize + ".");
+    if (getCurrentLanguage() === "en") {
+      $("#sizeMessage").text("You selected size " + selectedSize + ".");
+    } else {
+      $("#sizeMessage").text("Bạn đã chọn size " + selectedSize + ".");
+    }
   });
 
   $("#btnAddToCartDetail").click(function () {

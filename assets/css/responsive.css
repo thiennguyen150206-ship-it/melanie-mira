@@ -113,14 +113,13 @@
     padding: 7px 0;
   }
 
-  .top-bar-track {
-    gap: 35px;
-    animation-duration: 14s;
+  .top-bar-marquee {
+    padding: 4px 0;
   }
 
   .top-bar-track span {
-    font-size: 15px;
-    letter-spacing: 1.4px;
+    font-size: 12px;
+    letter-spacing: 1.2px;
   }
 
   /* Header */
@@ -1378,5 +1377,25 @@
     .recommend-item img {
       height: 210px;
     }
+  }
+}
+/* Home overlay header mobile */
+@media screen and (max-width: 768px) {
+  .home-header-overlay {
+    top: 22px;
+    padding: 8px 0;
+  }
+
+  .home-header-overlay .brand img {
+    width: 52px;
+    height: 52px;
+  }
+
+  .language-select {
+    font-size: 12px;
+  }
+
+  .home-header-overlay .search-box-dropdown {
+    top: 76px;
   }
 }

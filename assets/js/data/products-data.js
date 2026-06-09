@@ -1,8 +1,10 @@
 const products = [
   {
     id: 1,
-    name: "ARUL - Váy Đen Hai Dây Tafta",
-    category: "Váy ngắn",
+    nameVi: "ARUL - Váy Đen Hai Dây Tafta",
+    nameEn: "ARUL - Black Tafta Strappy Dress",
+    categoryVi: "Váy ngắn",
+    categoryEn: "Mini Dress",
     categorySlug: "vay-ngan",
     price: 488500,
     oldPrice: 520000,
@@ -16,13 +18,17 @@ const products = [
       "assets/img/products/ARUL/arul6.jpg",
     ],
     badge: "New",
-    description: "Thiết kế dáng xòe thanh lịch, phù hợp đi tiệc và chụp ảnh.",
+    descriptionVi: "Thiết kế dáng xòe thanh lịch, phù hợp đi tiệc và chụp ảnh.",
+    descriptionEn:
+      "An elegant flared design, perfect for parties and photoshoots.",
   },
 
   {
     id: 2,
-    name: "Đầm Nữ Đỏ LUNA Hai Dây Lụa",
-    category: "Váy ngắn",
+    nameVi: "Đầm Nữ Đỏ LUNA Hai Dây Lụa",
+    nameEn: "LUNA - Red Silk Strappy Dress",
+    categoryVi: "Váy ngắn",
+    categoryEn: "Mini Dress",
     categorySlug: "vay-ngan",
     price: 471500,
     oldPrice: 650000,
@@ -36,13 +42,17 @@ const products = [
       "assets/img/products/LUNA/luna6.jpg",
     ],
     badge: "New",
-    description: "Chất liệu lụa mềm mại, phối ren nữ tính và nổi bật.",
+    descriptionVi: "Chất liệu lụa mềm mại, phối ren nữ tính và nổi bật.",
+    descriptionEn:
+      "Soft silk fabric with feminine lace details for a standout look.",
   },
 
   {
     id: 3,
-    name: "CAMI - Đầm Trắng Cúp Ngực Tafta",
-    category: "Váy ngắn",
+    nameVi: "CAMI - Đầm Trắng Cúp Ngực Tafta",
+    nameEn: "CAMI - White Tafta Bustier Dress",
+    categoryVi: "Váy ngắn",
+    categoryEn: "Mini Dress",
     categorySlug: "vay-ngan",
     price: 489562,
     oldPrice: 520000,
@@ -56,13 +66,17 @@ const products = [
       "assets/img/products/CAMI/cami6.jpg",
     ],
     badge: "New",
-    description: "Dáng váy nhẹ nhàng, tôn dáng, phù hợp đi chơi và dự tiệc.",
+    descriptionVi: "Dáng váy nhẹ nhàng, tôn dáng, phù hợp đi chơi và dự tiệc.",
+    descriptionEn:
+      "A soft and flattering dress style, suitable for outings and parties.",
   },
 
   {
     id: 4,
-    name: "DONNA - Váy Xòe Nhiều Lớp Xếp Tầng",
-    category: "Váy ngắn",
+    nameVi: "DONNA - Váy Xòe Nhiều Lớp Xếp Tầng",
+    nameEn: "DONNA - Layered Flared Mini Dress",
+    categoryVi: "Váy ngắn",
+    categoryEn: "Mini Dress",
     categorySlug: "vay-ngan",
     price: 478895,
     oldPrice: 560000,
@@ -76,13 +90,17 @@ const products = [
       "assets/img/products/DONNA/donna6.jpg",
     ],
     badge: "Sale",
-    description: "Thiết kế xếp tầng bồng bềnh, phù hợp phong cách nổi bật.",
+    descriptionVi: "Thiết kế xếp tầng bồng bềnh, phù hợp phong cách nổi bật.",
+    descriptionEn:
+      "A layered flared design for a bold, feminine and eye-catching style.",
   },
 
   {
     id: 5,
-    name: "IVY - Áo Ren Cổ Vuông Tay Phồng",
-    category: "Áo",
+    nameVi: "IVY - Áo Ren Cổ Vuông Tay Phồng",
+    nameEn: "IVY - Square Neck Lace Puff Sleeve Top",
+    categoryVi: "Áo",
+    categoryEn: "Top",
     categorySlug: "ao",
     price: 335187,
     oldPrice: 390000,
@@ -96,13 +114,17 @@ const products = [
       "assets/img/products/IVY/ivy6.jpg",
     ],
     badge: "Hot",
-    description: "Áo ren nữ tính, dễ phối với chân váy hoặc quần dài.",
+    descriptionVi: "Áo ren nữ tính, dễ phối với chân váy hoặc quần dài.",
+    descriptionEn:
+      "A feminine lace top that pairs easily with skirts or trousers.",
   },
 
   {
     id: 6,
-    name: "LIA - Áo Thun Trễ Vai Tay Dài",
-    category: "Áo",
+    nameVi: "LIA - Áo Thun Trễ Vai Tay Dài",
+    nameEn: "LIA - Off-Shoulder Long Sleeve Top",
+    categoryVi: "Áo",
+    categoryEn: "Top",
     categorySlug: "ao",
     price: 297687,
     oldPrice: 330000,
@@ -116,13 +138,17 @@ const products = [
       "assets/img/products/LIA/lia6.jpg",
     ],
     badge: "New",
-    description: "Chất vải co giãn, form ôm nhẹ, phù hợp mặc hằng ngày.",
+    descriptionVi: "Chất vải co giãn, form ôm nhẹ, phù hợp mặc hằng ngày.",
+    descriptionEn:
+      "Stretchy fabric with a lightly fitted shape, suitable for everyday wear.",
   },
 
   {
     id: 7,
-    name: "CHARVI SET - Set Gile Linen Cổ Yếm",
-    category: "Set quần áo",
+    nameVi: "CHARVI SET - Set Gile Linen Cổ Yếm",
+    nameEn: "CHARVI SET - Linen Halter Vest Set",
+    categoryVi: "Set quần áo",
+    categoryEn: "Set",
     categorySlug: "set-quan-ao",
     price: 145250,
     oldPrice: 215000,
@@ -136,13 +162,18 @@ const products = [
       "assets/img/products/CHARVI SET/charvi6.jpg",
     ],
     badge: "Office",
-    description: "Set quần áo thanh lịch, phù hợp đi làm hoặc gặp khách hàng.",
+    descriptionVi:
+      "Set quần áo thanh lịch, phù hợp đi làm hoặc gặp khách hàng.",
+    descriptionEn:
+      "An elegant set, suitable for work, meetings or polished daily outfits.",
   },
 
   {
     id: 8,
-    name: "Áo Ống Croptop Nữ",
-    category: "Áo",
+    nameVi: "Áo Ống Croptop Nữ",
+    nameEn: "Women's Tube Croptop",
+    categoryVi: "Áo",
+    categoryEn: "Top",
     categorySlug: "ao",
     price: 389000,
     oldPrice: 450000,
@@ -156,7 +187,16 @@ const products = [
       "assets/img/products/CROPTOP/croptop6.jpg",
     ],
     badge: "New",
-    description:
+    descriptionVi:
       "Áo croptop co giãn, dễ phối đồ, phù hợp đi chơi hoặc dạo phố.",
+    descriptionEn:
+      "A stretchy croptop that is easy to style for casual outings or streetwear looks.",
   },
 ];
+
+/* Giữ lại các field cũ để code hiện tại không bị lỗi */
+for (let i = 0; i < products.length; i++) {
+  products[i].name = products[i].nameVi;
+  products[i].category = products[i].categoryVi;
+  products[i].description = products[i].descriptionVi;
+}

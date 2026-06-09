@@ -52,13 +52,11 @@
             </div>
 
             <ul class="side-menu-list">
-              <li>
-                <a href="index.html">Trang chủ</a>
-              </li>
+              <li><a href="index.html" data-i18n="nav.home">Trang chủ</a></li>
 
               <li class="side-has-dropdown">
                 <div class="side-menu-product-row">
-                  <a href="products.html">Sản phẩm</a>
+                  <a href="products.html" data-i18n="nav.products">Sản phẩm</a>
 
                   <button
                     type="button"
@@ -71,34 +69,48 @@
 
                 <ul class="side-submenu" id="productSubMenu">
                   <li>
-                    <a href="products.html?category=set-quan-ao">Bộ</a>
+                    <a
+                      href="products.html?category=set-quan-ao"
+                      data-i18n="category.set"
+                    >
+                      Bộ
+                    </a>
                   </li>
                   <li>
-                    <a href="products.html?category=vay-ngan">Váy</a>
+                    <a
+                      href="products.html?category=vay-ngan"
+                      data-i18n="category.dress"
+                    >
+                      Váy
+                    </a>
                   </li>
                   <li>
-                    <a href="products.html?category=ao">Áo</a>
+                    <a
+                      href="products.html?category=ao"
+                      data-i18n="category.top"
+                    >
+                      Áo
+                    </a>
                   </li>
                 </ul>
               </li>
 
               <li>
-                <a href="about.html">Giới thiệu</a>
+                <a href="about.html" data-i18n="nav.about">Giới thiệu</a>
               </li>
 
               <li>
-                <a href="index.html#footer-contact" class="menu-contact-link">
+                <a
+                  href="#footer-contact"
+                  class="menu-contact-link"
+                  data-i18n="nav.contact"
+                >
                   Liên hệ
                 </a>
               </li>
             </ul>
           </div>
         </div>
-
-        <!-- Logo -->
-        <a href="index.html" class="brand">
-          <img src="assets/img/logo/Logo.jpg" alt="Melanie Mira" />
-        </a>
 
         <!-- Header icons -->
         <div class="header-actions">
@@ -118,11 +130,14 @@
                   type="text"
                   id="searchInput"
                   placeholder="Tìm kiếm sản phẩm..."
+                  data-i18n-placeholder="search.placeholder"
                 />
                 <div id="searchSuggest" class="search-suggest"></div>
               </div>
 
-              <button type="button" id="btnSearch">Tìm</button>
+              <button type="button" id="btnSearch" data-i18n="search.button">
+                Tìm
+              </button>
             </form>
           </div>
 
@@ -137,8 +152,8 @@
             </a>
 
             <div class="account-dropdown">
-              <a href="login.html">Đăng nhập</a>
-              <a href="register.html">Đăng ký</a>
+              <a href="login.html" data-i18n="account.login">Đăng nhập</a>
+              <a href="register.html" data-i18n="account.register">Đăng ký</a>
             </div>
           </div>
 
@@ -155,6 +170,26 @@
             </svg>
             <span id="cartCount">0</span>
           </a>
+
+          <!-- Language selector -->
+          <div class="language-box">
+            <button type="button" class="language-current" id="btnLanguage">
+              <span class="language-badge" id="currentLanguageBadge">VI</span>
+              <span class="language-arrow">⌄</span>
+            </button>
+
+            <div class="language-dropdown" id="languageDropdown">
+              <button type="button" class="language-option" data-lang="vi">
+                <span class="language-badge">VI</span>
+                <span>Tiếng Việt</span>
+              </button>
+
+              <button type="button" class="language-option" data-lang="en">
+                <span class="language-badge">EN</span>
+                <span>English</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </header>
@@ -291,6 +326,156 @@
           Checkout
         </button>
       </div>
-    </div>    
+    </div>
+    <!-- Footer / Contact -->
+    <footer class="main-footer" id="footer-contact">
+      <div class="container">
+        <div class="row g-4 align-items-start">
+          <!-- Footer brand -->
+          <div class="col-lg-4 col-md-6">
+            <div class="footer-brand">
+              <h2>Melanie Mira</h2>
+
+              <p class="footer-slogan">"Design your own vibes"</p>
+
+              <img
+                src="assets/img/banners/footer-banner.jpg"
+                alt="Melanie Mira"
+                class="footer-brand-img"
+              />
+            </div>
+          </div>
+
+          <!-- Footer links -->
+          <div class="col-lg-4 col-md-6">
+            <div class="footer-links">
+              <a
+                href="about.html"
+                class="footer-main-link"
+                data-i18n="footer.about"
+              >
+                Giới thiệu
+              </a>
+
+              <a href="#" class="footer-main-link" data-i18n="footer.policy">
+                Chính sách
+              </a>
+
+              <a
+                href="products.html"
+                class="footer-main-link"
+                data-i18n="footer.products"
+              >
+                Sản phẩm
+              </a>
+
+              <div class="footer-product-links">
+                <a href="products.html?category=ao" data-i18n="category.top">
+                  Áo
+                </a>
+
+                <a
+                  href="products.html?category=vay-ngan"
+                  data-i18n="category.dress"
+                >
+                  Váy
+                </a>
+
+                <a
+                  href="products.html?category=set-quan-ao"
+                  data-i18n="category.set"
+                >
+                  Bộ
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer contact -->
+          <div class="col-lg-4 col-md-12">
+            <a
+              href="#footer-contact"
+              class="footer-main-link footer-contact-title"
+              data-i18n="footer.contact"
+            >
+              Liên hệ
+            </a>
+
+            <div class="footer-socials">
+              <a
+                href="#"
+                target="_blank"
+                class="footer-social-icon"
+                title="Facebook"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M22 12a10 10 0 1 0-11.5 9.9v-7H8v-2.9h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.5V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12"
+                  />
+                </svg>
+              </a>
+
+              <a
+                href="#"
+                target="_blank"
+                class="footer-social-icon"
+                title="TikTok"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M16 3c.4 2.5 1.8 4.1 4.2 4.4v3.1c-1.5 0-2.9-.5-4.1-1.3v6.2A5.6 5.6 0 1 1 10.5 9.8c.3 0 .6 0 .9.1v3.3a2.4 2.4 0 1 0 1.4 2.2V3h3.2z"
+                  />
+                </svg>
+              </a>
+
+              <a
+                href="https://www.instagram.com/melaniemira.studio"
+                target="_blank"
+                class="footer-social-icon"
+                title="Instagram"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7m5 3.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 0 1 12 7.5m0 2A2.5 2.5 0 1 0 14.5 12 2.5 2.5 0 0 0 12 9.5M17.8 6.8a1 1 0 1 1-1 1 1 1 0 0 1 1-1"
+                  />
+                </svg>
+              </a>
+            </div>
+
+            <div class="footer-contact-list">
+              <div class="footer-contact-item">
+                <span class="footer-contact-icon">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.8-.4 1.2-.3 1.3.4 2.6.6 4 .6.7 0 1.2.5 1.2 1.2v3.5c0 .7-.5 1.2-1.2 1.2C10.3 21.4 2.6 13.7 2.6 3.4c0-.7.5-1.2 1.2-1.2h3.5c.7 0 1.2.5 1.2 1.2 0 1.4.2 2.7.6 4 .1.4 0 .9-.3 1.2l-2.2 2.2z"
+                    />
+                  </svg>
+                </span>
+
+                <span>033 964 1151</span>
+              </div>
+
+              <div class="footer-contact-item">
+                <span class="footer-contact-icon">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2m0 4-8 5-8-5V6l8 5 8-5v2z"
+                    />
+                  </svg>
+                </span>
+
+                <span>melaniemira.studio@gmail.com</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p data-i18n="footer.copyright">
+            © 2026 Melanie Mira. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>
