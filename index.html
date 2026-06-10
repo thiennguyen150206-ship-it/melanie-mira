@@ -142,20 +142,17 @@
           </div>
 
           <!-- Account icon -->
-          <div class="account-menu">
-            <a class="header-icon-btn account-toggle" title="Tài khoản">
-              <svg viewBox="0 0 24 24">
-                <path
-                  d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4m0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5z"
-                />
-              </svg>
-            </a>
-
-            <div class="account-dropdown">
-              <a href="login.html" data-i18n="account.login">Đăng nhập</a>
-              <a href="register.html" data-i18n="account.register">Đăng ký</a>
-            </div>
-          </div>
+          <a
+            href="login.html"
+            class="header-icon-btn account-toggle"
+            title="Tài khoản"
+          >
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4m0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5z"
+              />
+            </svg>
+          </a>
 
           <!-- Cart icon -->
           <a
@@ -267,7 +264,7 @@
     <section class="section best-seller-section">
       <div class="container">
         <div class="section-heading">
-          <h2>Best Seller</h2>
+          <h2 data-i18n="home.bestSeller">Best Seller</h2>
         </div>
       </div>
 
@@ -290,7 +287,9 @@
               <span>Best Seller</span>
               <h3>CAMI</h3>
               <p>Đầm Trắng Cúp Ngực Tafta Cao Cấp</p>
-              <button type="button">Xem chi tiết</button>
+              <button type="button" data-i18n="button.viewDetail">
+                Xem chi tiết
+              </button>
             </div>
           </a>
 
@@ -311,7 +310,9 @@
               <span>Hot Item</span>
               <h3>ARUL</h3>
               <p>Váy Đen Hai Dây Tafta Phồng Xòe Cao Cấp</p>
-              <button type="button">Xem chi tiết</button>
+              <button type="button" data-i18n="button.viewDetail">
+                Xem chi tiết
+              </button>
             </div>
           </a>
 
@@ -329,7 +330,9 @@
               <span>New Arrival</span>
               <h3>LIA</h3>
               <p>Áo Thun Trễ Vai Tay Dài Ôm Body Cao Cấp</p>
-              <button type="button">Xem chi tiết</button>
+              <button type="button" data-i18n="button.viewDetail">
+                Xem chi tiết
+              </button>
             </div>
           </a>
         </div>
@@ -409,25 +412,25 @@
           <!-- Lụa -->
           <button type="button" class="fabric-card" data-fabric="lua">
             <img src="assets/img/fabrics/lua.jpg" alt="Lụa" />
-            <span>LỤA</span>
+            <span data-i18n="fabric.silk">LỤA</span>
           </button>
 
           <!-- Tafta -->
           <button type="button" class="fabric-card" data-fabric="tafta">
             <img src="assets/img/fabrics/tafta.jpg" alt="Tafta" />
-            <span>TAFTA</span>
+            <span data-i18n="fabric.tafta">TAFTA</span>
           </button>
 
           <!-- Cotton -->
           <button type="button" class="fabric-card" data-fabric="cotton">
             <img src="assets/img/fabrics/cotton.jpg" alt="Cotton" />
-            <span>COTTON</span>
+            <span data-i18n="fabric.cotton">COTTON</span>
           </button>
 
           <!-- Ren -->
           <button type="button" class="fabric-card" data-fabric="ren">
             <img src="assets/img/fabrics/ren.jpg" alt="Ren" />
-            <span>REN</span>
+            <span data-i18n="fabric.lace">REN</span>
           </button>
         </div>
       </div>
@@ -460,8 +463,8 @@
           <div class="col-lg-3 col-md-6">
             <div class="policy-item">
               <div class="policy-icon">↺</div>
-              <h4>Đổi trả 3 - 5 ngày</h4>
-              <p>
+              <h4 data-i18n="policy.exchangeTitle">Đổi trả 3 - 5 ngày</h4>
+              <p data-i18n="policy.exchangeDesc">
                 Hỗ trợ đổi hàng trong vòng 3 - 5 ngày kể từ khi khách hàng nhận
                 được sản phẩm.
               </p>
@@ -471,8 +474,8 @@
           <div class="col-lg-3 col-md-6">
             <div class="policy-item">
               <div class="policy-icon">✓</div>
-              <h4>Điều kiện đổi trả</h4>
-              <p>
+              <h4 data-i18n="policy.conditionTitle">Điều kiện đổi trả</h4>
+              <p data-i18n="policy.conditionDesc">
                 Sản phẩm phải còn nguyên vẹn, đầy đủ tem tag, chưa qua sử dụng,
                 giặt tẩy hoặc hư hỏng.
               </p>
@@ -482,8 +485,8 @@
           <div class="col-lg-3 col-md-6">
             <div class="policy-item">
               <div class="policy-icon">✉</div>
-              <h4>Liên hệ hỗ trợ</h4>
-              <p>
+              <h4 data-i18n="policy.contactTitle">Liên hệ hỗ trợ</h4>
+              <p data-i18n="policy.contactDesc">
                 Khách hàng vui lòng liên hệ Melanie Mira qua IG hoặc Facebook để
                 được tư vấn đổi hàng.
               </p>
@@ -493,8 +496,8 @@
           <div class="col-lg-3 col-md-6">
             <div class="policy-item">
               <div class="policy-icon">⇆</div>
-              <h4>Kiểm tra và đổi hàng</h4>
-              <p>
+              <h4 data-i18n="policy.checkTitle">Kiểm tra và đổi hàng</h4>
+              <p data-i18n="policy.checkDesc">
                 Shop sẽ kiểm tra sản phẩm sau khi nhận lại. Nếu đúng điều kiện,
                 khách sẽ được hỗ trợ đổi sản phẩm.
               </p>

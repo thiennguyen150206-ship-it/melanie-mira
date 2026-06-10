@@ -35,8 +35,10 @@ function showSearchSuggest() {
 
   let result = products.filter(function (product) {
     return (
-      product.name.toLowerCase().includes(keyword) ||
-      product.category.toLowerCase().includes(keyword)
+      product.nameVi.toLowerCase().includes(keyword) ||
+      product.nameEn.toLowerCase().includes(keyword) ||
+      product.categoryVi.toLowerCase().includes(keyword) ||
+      product.categoryEn.toLowerCase().includes(keyword)
     );
   });
 
@@ -45,17 +47,17 @@ function showSearchSuggest() {
   if (result.length === 0) {
     html = `
       <div class="suggest-empty">
-        Không tìm thấy sản phẩm phù hợp
+        ${t("search.empty")}
       </div>
     `;
   } else {
     for (let i = 0; i < result.length; i++) {
       html += `
         <div class="suggest-item" data-id="${result[i].id}">
-          <img src="${result[i].image}" alt="${result[i].name}" />
+          <img src="${result[i].image}" alt="${getProductName(result[i])}" />
 
           <div class="suggest-info">
-            <h5>${result[i].name}</h5>
+            <h5>${getProductName(result[i])}</h5>
             <p>${formatMoney(result[i].price)}</p>
           </div>
         </div>
@@ -314,16 +316,68 @@ function showFabricPopup(fabricKey) {
     return;
   }
 
+  let title = fabric.title;
+  let desc = fabric.desc;
+  let details = fabric.details;
+
+  if (getCurrentLanguage() === "en") {
+    if (fabricKey === "lua") {
+      title = "Silk";
+      desc =
+        "A soft and slightly glossy fabric, suitable for elegant and premium designs.";
+      details = [
+        "Light and breathable",
+        "Natural drape",
+        "Smooth surface",
+        "Easy to style",
+      ];
+    }
+
+    if (fabricKey === "tafta") {
+      title = "Tafta";
+      desc =
+        "A structured fabric with a slight sheen, often used for elegant dresses.";
+      details = [
+        "Structured shape",
+        "Slightly glossy surface",
+        "Suitable for party dresses",
+        "Elegant and premium look",
+      ];
+    }
+
+    if (fabricKey === "cotton") {
+      title = "Cotton";
+      desc = "A soft, comfortable and easy-to-wear fabric for daily outfits.";
+      details = [
+        "Soft and breathable",
+        "Easy to mix",
+        "Comfortable for daily wear",
+        "Suitable for many body types",
+      ];
+    }
+
+    if (fabricKey === "ren") {
+      title = "Lace";
+      desc = "A feminine fabric that adds softness and charm to the outfit.";
+      details = [
+        "Delicate patterns",
+        "Soft feminine look",
+        "Suitable for elegant designs",
+        "Creates outfit highlights",
+      ];
+    }
+  }
+
   let html = "";
 
-  for (let i = 0; i < fabric.details.length; i++) {
-    html += `<li>${fabric.details[i]}</li>`;
+  for (let i = 0; i < details.length; i++) {
+    html += `<li>${details[i]}</li>`;
   }
 
   $("#fabricPopupImage").attr("src", fabric.image);
-  $("#fabricPopupImage").attr("alt", fabric.title);
-  $("#fabricPopupTitle").text(fabric.title);
-  $("#fabricPopupDesc").text(fabric.desc);
+  $("#fabricPopupImage").attr("alt", title);
+  $("#fabricPopupTitle").text(title);
+  $("#fabricPopupDesc").text(desc);
   $("#fabricPopupList").html(html);
 
   $("#fabricPopup").addClass("active");

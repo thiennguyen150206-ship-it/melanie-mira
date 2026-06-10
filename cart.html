@@ -45,12 +45,12 @@
 
             <ul class="side-menu-list">
               <li>
-                <a href="index.html">Trang chủ</a>
+                <a href="index.html" data-i18n="nav.home">Trang chủ</a>
               </li>
 
               <li class="side-has-dropdown">
                 <div class="side-menu-product-row">
-                  <a href="products.html">Sản phẩm</a>
+                  <a href="products.html" data-i18n="nav.products">Sản phẩm</a>
 
                   <button
                     type="button"
@@ -63,32 +63,48 @@
 
                 <ul class="side-submenu" id="productSubMenu">
                   <li>
-                    <a href="products.html?category=set-quan-ao">Bộ</a>
+                    <a
+                      href="products.html?category=set-quan-ao"
+                      data-i18n="category.set"
+                    >
+                      Bộ
+                    </a>
                   </li>
                   <li>
-                    <a href="products.html?category=vay-ngan">Váy</a>
+                    <a
+                      href="products.html?category=vay-ngan"
+                      data-i18n="category.dress"
+                    >
+                      Váy
+                    </a>
                   </li>
                   <li>
-                    <a href="products.html?category=ao">Áo</a>
+                    <a
+                      href="products.html?category=ao"
+                      data-i18n="category.top"
+                    >
+                      Áo
+                    </a>
                   </li>
                 </ul>
               </li>
 
               <li>
-                <a href="about.html">Giới thiệu</a>
+                <a href="about.html" data-i18n="nav.about">Giới thiệu</a>
               </li>
 
               <li>
-                <a href="contact.html">Liên hệ</a>
+                <a
+                  href="#footer-contact"
+                  class="menu-contact-link"
+                  data-i18n="nav.contact"
+                >
+                  Liên hệ
+                </a>
               </li>
             </ul>
           </div>
         </div>
-
-        <!-- Logo -->
-        <a href="index.html" class="brand">
-          <img src="assets/img/logo/Logo.jpg" alt="Melanie Mira" />
-        </a>
 
         <!-- Header icons -->
         <div class="header-actions">
@@ -108,30 +124,29 @@
                   type="text"
                   id="searchInput"
                   placeholder="Tìm kiếm sản phẩm..."
+                  data-i18n-placeholder="search.placeholder"
                 />
                 <div id="searchSuggest" class="search-suggest"></div>
               </div>
 
-              <button type="button" id="btnSearch">Tìm</button>
+              <button type="button" id="btnSearch" data-i18n="search.button">
+                Tìm
+              </button>
             </form>
           </div>
 
           <!-- Account icon -->
-          <div class="account-menu">
-            <a class="header-icon-btn account-toggle" title="Tài khoản">
-              <svg viewBox="0 0 24 24">
-                <path
-                  d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4m0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5z"
-                />
-              </svg>
-            </a>
-
-            <div class="account-dropdown">
-              <a href="login.html">Đăng nhập</a>
-              <a href="register.html">Đăng ký</a>
-            </div>
-          </div>
-
+          <a
+            href="login.html"
+            class="header-icon-btn account-toggle"
+            title="Tài khoản"
+          >
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4m0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5z"
+              />
+            </svg>
+          </a>
           <!-- Cart icon -->
           <a
             href="cart.html"
@@ -145,6 +160,26 @@
             </svg>
             <span id="cartCount">0</span>
           </a>
+
+          <!-- Language selector -->
+          <div class="language-box">
+            <button type="button" class="language-current" id="btnLanguage">
+              <span class="language-badge" id="currentLanguageBadge">VI</span>
+              <span class="language-arrow">⌄</span>
+            </button>
+
+            <div class="language-dropdown" id="languageDropdown">
+              <button type="button" class="language-option" data-lang="vi">
+                <span class="language-badge">VI</span>
+                <span>Tiếng Việt</span>
+              </button>
+
+              <button type="button" class="language-option" data-lang="en">
+                <span class="language-badge">EN</span>
+                <span>English</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </header>
@@ -152,33 +187,43 @@
     <main class="cart-section">
       <div class="container">
         <div class="cart-box">
-          <h2>Giỏ hàng của bạn</h2>
-          <p>Kiểm tra sản phẩm trước khi tiến hành thanh toán.</p>
+          <h2 data-i18n="cart.pageTitle">Giỏ hàng của bạn</h2>
+          <p data-i18n="cart.pageDesc">
+            Kiểm tra sản phẩm trước khi tiến hành thanh toán.
+          </p>
 
           <div id="cartContent"></div>
 
           <div
             class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-3"
           >
-            <a href="products.html" class="btn-outline-main"
-              >Tiếp tục mua hàng</a
+            <a
+              href="products.html"
+              class="btn-outline-main"
+              data-i18n="cart.continueShopping"
             >
+              Tiếp tục mua hàng
+            </a>
 
             <div>
-              <span class="me-2">Tổng tiền:</span>
+              <span class="me-2" data-i18n="cart.total">Tổng tiền:</span>
               <span class="cart-total" id="cartTotal">0đ</span>
             </div>
 
-            <a href="checkout.html" class="btn-main">Thanh toán</a>
+            <a href="checkout.html" class="btn-main" data-i18n="cart.checkout">
+              Thanh toán
+            </a>
           </div>
         </div>
       </div>
     </main>
 
-    <footer class="main-footer">
+    <footer class="main-footer" id="footer-contact">
       <div class="container">
         <div class="footer-bottom">
-          <p>© 2026 Melanie Mira. All rights reserved.</p>
+          <p data-i18n="footer.copyright">
+            © 2026 Melanie Mira. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
@@ -186,7 +231,7 @@
     <script src="assets/js/jquery-4.0.0.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
     <script src="assets/js/data/products-data.js"></script>
-    <script src="assets/js/pages/cart.js"></script>
     <script src="assets/js/core/header.js"></script>
+    <script src="assets/js/pages/cart.js"></script>
   </body>
 </html>

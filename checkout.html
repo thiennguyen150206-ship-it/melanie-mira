@@ -12,90 +12,208 @@
     <link rel="stylesheet" href="assets/css/responsive.css" />
   </head>
   <body>
-    <div class="top-bar">
-      <div class="container">
+    <!-- Top bar -->
+    <div class="top-bar top-bar-marquee">
+      <div class="top-bar-track">
         <span>Design your own vibes</span>
+        <span>Melanie Mira Studio</span>
+        <span>New item available now</span>
+        <span>Feminine • Elegant • Confident</span>
       </div>
     </div>
 
+    <!-- Header -->
     <header class="main-header">
       <div class="container header-inner">
-        <a href="index.html" class="brand">
-          <img src="assets/img/logo/logo.jpg" alt="Melanie Mira" />
-          <span>Melanie Mira</span>
-        </a>
+        <!-- Menu icon -->
+        <div class="mobile-menu">
+          <button type="button" class="menu-icon-btn" id="btnOpenMenu">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z" />
+            </svg>
+          </button>
 
-        <form class="search-box" autocomplete="off">
-          <input type="text" placeholder="Tìm váy, áo, phụ kiện..." />
-          <button type="button">Tìm kiếm</button>
-        </form>
-
-        <div class="header-actions">
-          <div class="account-menu">
-            <a class="account-toggle">Tài khoản</a>
-            <div class="account-dropdown">
-              <a href="login.html">Đăng nhập</a>
-              <a href="register.html">Đăng ký</a>
+          <div class="side-menu" id="sideMenu">
+            <div class="side-menu-header">
+              <h4>Menu</h4>
+              <button type="button" id="btnCloseMenu">&times;</button>
             </div>
+
+            <ul class="side-menu-list">
+              <li>
+                <a href="index.html" data-i18n="nav.home">Trang chủ</a>
+              </li>
+
+              <li class="side-has-dropdown">
+                <div class="side-menu-product-row">
+                  <a href="products.html" data-i18n="nav.products">Sản phẩm</a>
+
+                  <button
+                    type="button"
+                    id="btnProductMenu"
+                    class="side-submenu-toggle"
+                  >
+                    ▾
+                  </button>
+                </div>
+
+                <ul class="side-submenu" id="productSubMenu">
+                  <li>
+                    <a
+                      href="products.html?category=set-quan-ao"
+                      data-i18n="category.set"
+                    >
+                      Bộ
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="products.html?category=vay-ngan"
+                      data-i18n="category.dress"
+                    >
+                      Váy
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="products.html?category=ao"
+                      data-i18n="category.top"
+                    >
+                      Áo
+                    </a>
+                  </li>
+                </ul>
+              </li>
+
+              <li>
+                <a href="about.html" data-i18n="nav.about">Giới thiệu</a>
+              </li>
+
+              <li>
+                <a
+                  href="#footer-contact"
+                  class="menu-contact-link"
+                  data-i18n="nav.contact"
+                >
+                  Liên hệ
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Header icons -->
+        <div class="header-actions">
+          <!-- Search icon -->
+          <div class="header-search">
+            <button type="button" class="header-icon-btn" id="btnOpenSearch">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M10.5 4a6.5 6.5 0 0 1 5.16 10.45l4.45 4.44-1.42 1.42-4.44-4.45A6.5 6.5 0 1 1 10.5 4m0 2a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9z"
+                />
+              </svg>
+            </button>
+
+            <form class="search-box search-box-dropdown" autocomplete="off">
+              <div class="search-wrapper">
+                <input
+                  type="text"
+                  id="searchInput"
+                  placeholder="Tìm kiếm sản phẩm..."
+                  data-i18n-placeholder="search.placeholder"
+                />
+                <div id="searchSuggest" class="search-suggest"></div>
+              </div>
+
+              <button type="button" id="btnSearch" data-i18n="search.button">
+                Tìm
+              </button>
+            </form>
           </div>
 
-          <a href="cart.html" class="cart-link">
-            Giỏ hàng
+          <!-- Account icon -->
+          <a
+            href="login.html"
+            class="header-icon-btn account-toggle"
+            title="Tài khoản"
+          >
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4m0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5z"
+              />
+            </svg>
+          </a>
+
+          <!-- Cart icon -->
+          <a
+            href="cart.html"
+            class="header-icon-btn cart-link"
+            title="Giỏ hàng"
+          >
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4m10 0a2 2 0 1 0 .01 0H17M6.2 6l.9 2h9.9l-1.3 5H8.3L5.2 3H2v2h1.8l3.2 10h10.2l2.1-9H6.2z"
+              />
+            </svg>
             <span id="cartCount">0</span>
           </a>
+
+          <!-- Language selector -->
+          <div class="language-box">
+            <button type="button" class="language-current" id="btnLanguage">
+              <span class="language-badge" id="currentLanguageBadge">VI</span>
+              <span class="language-arrow">⌄</span>
+            </button>
+
+            <div class="language-dropdown" id="languageDropdown">
+              <button type="button" class="language-option" data-lang="vi">
+                <span class="language-badge">VI</span>
+                <span>Tiếng Việt</span>
+              </button>
+
+              <button type="button" class="language-option" data-lang="en">
+                <span class="language-badge">EN</span>
+                <span>English</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </header>
-
-    <nav class="main-nav">
-      <div class="container">
-        <ul class="nav-list">
-          <li><a href="index.html">Trang chủ</a></li>
-          <li><a href="products.html">Sản phẩm</a></li>
-          <li><a href="collections.html">Bộ sưu tập</a></li>
-          <li><a href="about.html">Giới thiệu</a></li>
-          <li><a href="contact.html">Liên hệ</a></li>
-        </ul>
-      </div>
-    </nav>
-
     <!-- Checkout page -->
     <main class="checkout-page">
       <div class="container">
         <div class="checkout-layout">
           <!-- Left: shipping information -->
           <section class="checkout-left">
-            <div class="checkout-title-row">
-              <h2>SHIPPING ADDRESS</h2>
-              <p>Already have an account? <a href="login.html">Log in</a></p>
-            </div>
-
             <form id="checkoutForm">
+              <div class="checkout-title-row">
+                <h2 data-i18n="checkout.shippingAddress">
+                  Thông tin nhận hàng
+                </h2>
+
+                <p>
+                  <span data-i18n="checkout.hasAccount">Đã có tài khoản?</span>
+                  <a href="login.html" data-i18n="account.login">Đăng nhập</a>
+                </p>
+              </div>
+
               <div class="checkout-field">
                 <input
                   type="text"
-                  id="customerEmail"
-                  placeholder="Email Address"
+                  id="customerFirstName"
+                  placeholder="Tên"
+                  data-i18n-placeholder="checkout.name"
                 />
-                <span class="form-error" id="errCustomerEmail"></span>
-              </div>
-
-              <label class="checkout-checkbox">
-                <input type="checkbox" checked />
-                <span>Email me with news & offers</span>
-              </label>
-
-              <div class="checkout-field">
-                <select id="customerCountry">
-                  <option value="Vietnam">Vietnam</option>
-                </select>
+                <span class="form-error" id="errCustomerName"></span>
               </div>
 
               <div class="checkout-field">
                 <input
                   type="text"
                   id="customerAddress"
-                  placeholder="Street Address*"
+                  placeholder="Địa chỉ"
+                  data-i18n-placeholder="checkout.address"
                 />
                 <span class="form-error" id="errCustomerAddress"></span>
               </div>
@@ -103,93 +221,90 @@
               <div class="checkout-field">
                 <input
                   type="text"
-                  id="customerAddressMore"
-                  placeholder="Apartment, suite, unit, building, floor, etc.*"
+                  id="customerPhone"
+                  placeholder="Số điện thoại"
+                  data-i18n-placeholder="checkout.phone"
                 />
+                <span class="form-error" id="errCustomerPhone"></span>
               </div>
 
-              <div class="checkout-two-cols">
-                <div class="checkout-field">
-                  <input
-                    type="text"
-                    id="customerFirstName"
-                    placeholder="First Name*"
-                  />
-                  <span class="form-error" id="errCustomerName"></span>
-                </div>
+              <div class="checkout-shipping-method">
+                <h2 data-i18n="checkout.shippingMethod">
+                  Phương thức vận chuyển
+                </h2>
 
-                <div class="checkout-field">
-                  <input
-                    type="text"
-                    id="customerLastName"
-                    placeholder="Last Name*"
-                  />
-                </div>
-              </div>
+                <div class="shipping-method-box">
+                  <div>
+                    <h4 data-i18n="checkout.standardShipping">
+                      Giao hàng tiêu chuẩn (3 đến 7 ngày)
+                    </h4>
 
-              <div class="checkout-two-cols">
-                <div class="checkout-field">
-                  <input
-                    type="text"
-                    id="customerWard"
-                    placeholder="Ward/Commune*"
-                  />
-                </div>
+                    <p data-i18n="checkout.shippingNote">
+                      Nhập địa chỉ cụ thể để giao hàng
+                    </p>
+                  </div>
 
-                <div class="checkout-field">
-                  <input
-                    type="text"
-                    id="customerPostal"
-                    placeholder="Postal Code"
-                  />
+                  <strong data-i18n="checkout.freeShipping">MIỄN PHÍ</strong>
                 </div>
               </div>
 
-              <div class="checkout-two-cols">
-                <div class="checkout-field">
-                  <select id="customerProvince">
-                    <option value="">Please select State/Province.</option>
-                    <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
-                    <option value="Hà Nội">Hà Nội</option>
-                    <option value="Đà Nẵng">Đà Nẵng</option>
-                    <option value="Khác">Khác</option>
-                  </select>
+              <div class="checkout-payment-method">
+                <h2 data-i18n="checkout.paymentTitle">Thanh toán</h2>
+
+                <p data-i18n="checkout.paymentDesc">
+                  Toàn bộ các giao dịch được bảo mật và mã hóa.
+                </p>
+
+                <input type="hidden" id="paymentMethod" value="cod" />
+
+                <div class="payment-option" data-payment="zalopay">
+                  <div class="payment-option-top">
+                    <div class="payment-left">
+                      <span class="payment-radio"></span>
+
+                      <strong>
+                        Thanh toán online qua cổng thanh toán ZaloPay
+                      </strong>
+                    </div>
+
+                    <div class="payment-icons">
+                      <span>💳</span>
+                      <span>JCB</span>
+                      <span>VISA</span>
+                      <span>+2</span>
+                    </div>
+                  </div>
+
+                  <div class="payment-option-desc">
+                    Bạn sẽ được chuyển hướng đến Thanh toán online qua cổng
+                    thanh toán ZaloPay để hoàn tất quá trình mua hàng.
+                  </div>
                 </div>
 
-                <div class="checkout-field">
-                  <input
-                    type="text"
-                    id="customerPhone"
-                    placeholder="Phone Number*"
-                  />
-                  <span class="form-error" id="errCustomerPhone"></span>
+                <div class="payment-option active" data-payment="cod">
+                  <div class="payment-option-top">
+                    <div class="payment-left">
+                      <span class="payment-radio"></span>
+
+                      <strong> Thanh toán khi nhận hàng (COD) </strong>
+                    </div>
+                  </div>
+
+                  <div class="payment-option-desc">
+                    - Thanh toán bằng tiền mặt khi nhận hàng.<br />
+                    - Thời gian giao hàng từ 3-5 ngày.
+                  </div>
                 </div>
-              </div>
 
-              <div class="checkout-field">
-                <textarea id="orderNote" rows="3" placeholder="Note"></textarea>
-              </div>
-
-              <label class="checkout-checkbox">
-                <input type="checkbox" checked />
-                <span>My billing and shipping address are the same</span>
-              </label>
-
-              <div class="checkout-field">
-                <select id="paymentMethod">
-                  <option value="">Payment method</option>
-                  <option value="Thanh toán khi nhận hàng">
-                    Thanh toán khi nhận hàng
-                  </option>
-                  <option value="Chuyển khoản ngân hàng">
-                    Chuyển khoản ngân hàng
-                  </option>
-                </select>
                 <span class="form-error" id="errPaymentMethod"></span>
               </div>
 
-              <button type="submit" class="checkout-submit-btn">
-                PLACE ORDER
+              <button
+                type="submit"
+                class="checkout-submit-btn"
+                data-i18n="checkout.placeOrder"
+              >
+                Đặt hàng
               </button>
             </form>
           </section>
@@ -199,7 +314,7 @@
             <div class="checkout-summary" id="checkoutSummary"></div>
 
             <div class="checkout-discount">
-              <h3>DISCOUNT</h3>
+              <h3 data-i18n="checkout.discount">Mã giảm giá</h3>
 
               <div class="checkout-discount-row">
                 <input
@@ -207,25 +322,29 @@
                   id="discountCode"
                   placeholder="Discount code"
                 />
-                <button type="button" id="btnApplyDiscount">
-                  Apply Discount
+                <button
+                  type="button"
+                  id="btnApplyDiscount"
+                  data-i18n="checkout.applyDiscount"
+                >
+                  Áp dụng
                 </button>
               </div>
             </div>
 
             <div class="checkout-money">
               <div class="checkout-money-row">
-                <span>Subtotal</span>
+                <span data-i18n="checkout.subtotal">Tạm tính</span>
                 <strong id="checkoutSubtotal">0đ</strong>
               </div>
 
               <div class="checkout-money-row">
-                <span>Shipping & Handling</span>
+                <span data-i18n="checkout.shipping">Phí vận chuyển</span>
                 <strong id="checkoutShipping">0đ</strong>
               </div>
 
               <div class="checkout-money-row checkout-total-row">
-                <span>Order Total</span>
+                <span data-i18n="checkout.orderTotal">Tổng đơn hàng</span>
                 <strong id="checkoutTotal">0đ</strong>
               </div>
             </div>
@@ -244,6 +363,7 @@
 
     <script src="assets/js/jquery-4.0.0.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/data/products-data.js"></script>
     <script src="assets/js/core/header.js"></script>
     <script src="assets/js/pages/checkout.js"></script>
   </body>

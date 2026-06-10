@@ -62,10 +62,6 @@
     font-size: 48px;
   }
 
-  .best-seller-banner {
-    height: 520px;
-  }
-
   .best-seller-content {
     left: 45px;
     max-width: 430px;
@@ -86,32 +82,7 @@
     overflow-x: hidden;
   }
 
-  .section {
-    padding: 42px 0;
-  }
-
-  .section-heading {
-    margin-bottom: 28px;
-    padding: 0 14px;
-  }
-
-  .section-heading span {
-    font-size: 13px;
-  }
-
-  .section-heading h2 {
-    font-size: 26px;
-    line-height: 1.25;
-  }
-
-  .section-heading p {
-    font-size: 15px;
-  }
-
   /* Top bar */
-  .top-bar-marquee {
-    padding: 7px 0;
-  }
 
   .top-bar-marquee {
     padding: 4px 0;
@@ -320,70 +291,6 @@
     font-size: 14px;
   }
 
-  /* Brand story */
-  .brand-story {
-    padding: 48px 0;
-  }
-
-  .brand-story-inner {
-    padding: 0 16px;
-  }
-
-  .brand-story-inner h2 {
-    font-size: 28px;
-    line-height: 1.3;
-  }
-
-  .brand-story-inner p {
-    font-size: 15px;
-    text-align: left;
-  }
-
-  /* Product cards */
-  .product-card {
-    border-radius: 12px;
-  }
-
-  .product-image img {
-    height: 260px;
-  }
-
-  .product-info {
-    padding: 14px;
-  }
-
-  .product-name {
-    font-size: 14px;
-    line-height: 1.4;
-    min-height: 58px;
-  }
-
-  .product-category {
-    font-size: 12px;
-  }
-
-  .current-price {
-    font-size: 16px;
-  }
-
-  .old-price {
-    font-size: 13px;
-  }
-
-  .product-actions {
-    opacity: 1;
-    transform: translateY(0);
-    left: 8px;
-    right: 8px;
-    bottom: 8px;
-  }
-
-  .product-actions a,
-  .product-actions button {
-    padding: 9px 6px;
-    font-size: 12px;
-  }
-
   /* Policy */
   .policy-section {
     padding: 42px 0;
@@ -468,10 +375,6 @@
     font-size: 36px;
   }
 
-  .best-seller-banner {
-    height: 430px;
-  }
-
   .best-seller-content h3 {
     font-size: 38px;
   }
@@ -517,48 +420,6 @@
   .best-seller-section,
   .featured-banner-section {
     padding-top: 34px;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .category-banner-item {
-    height: 440px;
-  }
-
-  .category-banner-item + .category-banner-item {
-    margin-top: 8px;
-  }
-
-  .category-banner-item img {
-    object-fit: cover;
-    object-position: center top;
-  }
-
-  .category-banner-content {
-    left: 24px;
-    right: 24px;
-    max-width: none;
-  }
-
-  .category-banner-content span {
-    font-size: 17px;
-    letter-spacing: 2px;
-  }
-
-  .category-banner-content h3 {
-    font-size: 44px;
-    letter-spacing: 3px;
-  }
-
-  .category-banner-content p {
-    font-size: 16px;
-    line-height: 1.5;
-    margin-bottom: 22px;
-  }
-
-  .category-banner-content button {
-    padding: 11px 24px;
-    font-size: 14px;
   }
 }
 
@@ -727,6 +588,9 @@
   }
 
   .product-detail-sticky {
+    position: static;
+    top: auto;
+    min-height: auto;
     height: auto;
     padding: 36px 22px 50px;
     overflow: visible;
@@ -1391,11 +1255,112 @@
     height: 52px;
   }
 
-  .language-select {
-    font-size: 12px;
-  }
-
   .home-header-overlay .search-box-dropdown {
     top: 76px;
+  }
+  .language-current {
+    height: 32px;
+    gap: 4px;
+    padding: 0 2px;
+  }
+
+  .language-badge {
+    min-width: 24px;
+    height: 24px;
+    font-size: 11px;
+  }
+
+  .language-arrow {
+    font-size: 14px;
+  }
+}
+@media screen and (max-width: 768px) {
+  .shop-product-item:active .shop-product-img-main {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+
+  .shop-product-item:active .shop-product-img-hover {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+@media screen and (max-width: 768px) {
+  .shipping-method-box {
+    padding: 16px;
+  }
+
+  .shipping-method-box h4 {
+    font-size: 15px;
+  }
+
+  .shipping-method-box p {
+    font-size: 14px;
+  }
+
+  .payment-option-top {
+    align-items: flex-start;
+  }
+
+  .payment-icons {
+    gap: 5px;
+  }
+
+  .payment-icons span {
+    min-width: 32px;
+    height: 26px;
+    font-size: 11px;
+  }
+
+  .payment-left strong {
+    font-size: 14px;
+  }
+
+  .payment-option-desc {
+    font-size: 14px;
+    padding: 14px 18px;
+  }
+}
+@media screen and (max-width: 768px) {
+  .auth-simple-page {
+    padding: 28px 18px 60px;
+  }
+
+  .auth-simple-logo {
+    margin-bottom: 100px;
+  }
+
+  .auth-simple-logo img {
+    width: 145px;
+  }
+
+  .auth-simple-box {
+    max-width: 100%;
+  }
+
+  .auth-simple-box h1 {
+    font-size: 26px;
+  }
+
+  .auth-social-btn {
+    height: 50px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .auth-simple-logo {
+    margin-bottom: 80px;
+  }
+
+  .auth-simple-box h1 {
+    font-size: 24px;
+  }
+
+  .auth-check-row {
+    font-size: 14px;
+  }
+
+  .auth-privacy {
+    bottom: 18px;
   }
 }

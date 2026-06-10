@@ -14,6 +14,18 @@ function saveCart(cart) {
   localStorage.setItem("cart", JSON.stringify(cart));
 }
 
+function getCheckoutProductName(item) {
+  let product = products.find(function (p) {
+    return p.id === item.id;
+  });
+
+  if (product) {
+    return getProductName(product);
+  }
+
+  return item.name || "Product";
+}
+
 function renderCheckoutSummary() {
   let cart = getCart();
   let html = "";
@@ -23,9 +35,9 @@ function renderCheckoutSummary() {
   if (cart.length === 0) {
     $("#checkoutSummary").html(`
       <div class="checkout-empty">
-        Giỏ hàng đang trống.
+        ${t("checkout.empty")}
         <br />
-        <a href="products.html">Mua sắm ngay</a>
+        <a href="products.html">${t("checkout.shopNow")}</a>
       </div>
     `);
 
@@ -36,23 +48,24 @@ function renderCheckoutSummary() {
   }
 
   for (let i = 0; i < cart.length; i++) {
+    let productName = getCheckoutProductName(cart[i]);
     let itemTotal = cart[i].price * cart[i].quantity;
     subtotal += itemTotal;
 
     html += `
       <div class="checkout-summary-item">
         <div class="checkout-summary-img">
-          <img src="${cart[i].image}" alt="${cart[i].name}" />
+          <img src="${cart[i].image}" alt="${productName}" />
         </div>
 
         <div class="checkout-summary-info">
           <div class="checkout-summary-top">
-            <h4>${cart[i].name}</h4>
+            <h4>${productName}</h4>
             <strong>${formatMoney(itemTotal)}</strong>
           </div>
 
-          <p>Size: ${cart[i].size}</p>
-          <p>Qty: ${cart[i].quantity}</p>
+          <p>${t("checkout.size")}: ${cart[i].size}</p>
+          <p>${t("checkout.qty")}: ${cart[i].quantity}</p>
         </div>
       </div>
     `;
@@ -67,53 +80,43 @@ function renderCheckoutSummary() {
 function validateCheckoutForm() {
   let isValid = true;
 
-  let firstName = $("#customerFirstName").val().trim();
+  let name = $("#customerFirstName").val().trim();
   let phone = $("#customerPhone").val().trim();
-  let email = $("#customerEmail").val().trim();
   let address = $("#customerAddress").val().trim();
   let payment = $("#paymentMethod").val();
 
   $(".form-error").text("");
 
-  if (firstName === "") {
-    $("#errCustomerName").text("Vui lòng nhập tên.");
-    isValid = false;
-  }
-
-  if (phone === "") {
-    $("#errCustomerPhone").text("Vui lòng nhập số điện thoại.");
-    isValid = false;
-  } else if (!/^0\d{9}$/.test(phone)) {
-    $("#errCustomerPhone").text("Số điện thoại gồm 10 số và bắt đầu bằng 0.");
-    isValid = false;
-  }
-
-  if (email === "") {
-    $("#errCustomerEmail").text("Vui lòng nhập email.");
-    isValid = false;
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    $("#errCustomerEmail").text("Email không hợp lệ.");
+  if (name === "") {
+    $("#errCustomerName").text(t("form.nameRequired"));
     isValid = false;
   }
 
   if (address === "") {
-    $("#errCustomerAddress").text("Vui lòng nhập địa chỉ nhận hàng.");
+    $("#errCustomerAddress").text(t("form.addressRequired"));
+    isValid = false;
+  }
+
+  if (phone === "") {
+    $("#errCustomerPhone").text(t("form.phoneRequired"));
+    isValid = false;
+  } else if (!/^0\d{9}$/.test(phone)) {
+    $("#errCustomerPhone").text(t("form.phoneInvalid"));
     isValid = false;
   }
 
   if (payment === "") {
-    $("#errPaymentMethod").text("Vui lòng chọn phương thức thanh toán.");
+    $("#errPaymentMethod").text(t("form.paymentRequired"));
     isValid = false;
   }
 
   return isValid;
 }
-
 function submitOrder() {
   let cart = getCart();
 
   if (cart.length === 0) {
-    alert("Giỏ hàng đang trống, không thể đặt hàng.");
+    alert(t("alert.cartEmpty"));
     return;
   }
 
@@ -121,7 +124,7 @@ function submitOrder() {
     return;
   }
 
-  alert("Đặt hàng thành công! Cảm ơn bạn đã mua hàng tại Melanie Mira.");
+  alert(t("alert.orderSuccess"));
 
   saveCart([]);
 
@@ -135,12 +138,20 @@ function submitOrder() {
 $(document).ready(function () {
   renderCheckoutSummary();
 
+  $(".payment-option").click(function () {
+    $(".payment-option").removeClass("active");
+    $(this).addClass("active");
+
+    let payment = $(this).data("payment");
+    $("#paymentMethod").val(payment);
+  });
+
   $("#checkoutForm").submit(function (e) {
     e.preventDefault();
     submitOrder();
   });
 
   $("#btnApplyDiscount").click(function () {
-    alert("Mã giảm giá hiện chưa được áp dụng trong bản demo.");
+    alert(t("alert.discountDemo"));
   });
 });

@@ -9,6 +9,7 @@ const products = [
     price: 488500,
     oldPrice: 520000,
     image: "assets/img/products/ARUL/arul.jpg",
+    hoverImage: "assets/img/products/ARUL/arul2.jpg",
     images: [
       "assets/img/products/ARUL/arul1.jpg",
       "assets/img/products/ARUL/arul2.jpg",
@@ -33,6 +34,7 @@ const products = [
     price: 471500,
     oldPrice: 650000,
     image: "assets/img/products/LUNA/luna.jpg",
+    hoverImage: "assets/img/products/LUNA/luna2.jpg",
     images: [
       "assets/img/products/LUNA/luna1.jpg",
       "assets/img/products/LUNA/luna2.jpg",
@@ -57,6 +59,7 @@ const products = [
     price: 489562,
     oldPrice: 520000,
     image: "assets/img/products/CAMI/cami.jpg",
+    hoverImage: "assets/img/products/CAMI/cami2.jpg",
     images: [
       "assets/img/products/CAMI/cami1.jpg",
       "assets/img/products/CAMI/cami2.jpg",
@@ -81,6 +84,7 @@ const products = [
     price: 478895,
     oldPrice: 560000,
     image: "assets/img/products/DONNA/donna.jpg",
+    hoverImage: "assets/img/products/DONNA/donna2.jpg",
     images: [
       "assets/img/products/DONNA/donna1.jpg",
       "assets/img/products/DONNA/donna2.jpg",
@@ -105,6 +109,7 @@ const products = [
     price: 335187,
     oldPrice: 390000,
     image: "assets/img/products/IVY/ivy.jpg",
+    hoverImage: "assets/img/products/IVY/ivy2.jpg",
     images: [
       "assets/img/products/IVY/ivy1.jpg",
       "assets/img/products/IVY/ivy2.jpg",
@@ -129,6 +134,7 @@ const products = [
     price: 297687,
     oldPrice: 330000,
     image: "assets/img/products/LIA/lia.jpg",
+    hoverImage: "assets/img/products/LIA/lia2.jpg",
     images: [
       "assets/img/products/LIA/lia1.jpg",
       "assets/img/products/LIA/lia2.jpg",
@@ -153,6 +159,7 @@ const products = [
     price: 145250,
     oldPrice: 215000,
     image: "assets/img/products/CHARVI SET/charvi.jpg",
+    hoverImage: "assets/img/products/CHARVI SET/charvi2.jpg",
     images: [
       "assets/img/products/CHARVI SET/charvi1.jpg",
       "assets/img/products/CHARVI SET/charvi2.jpg",
@@ -178,6 +185,7 @@ const products = [
     price: 389000,
     oldPrice: 450000,
     image: "assets/img/products/CROPTOP/croptop.jpg",
+    hoverImage: "assets/img/products/CROPTOP/croptop2.jpg",
     images: [
       "assets/img/products/CROPTOP/croptop1.jpg",
       "assets/img/products/CROPTOP/croptop2.jpg",

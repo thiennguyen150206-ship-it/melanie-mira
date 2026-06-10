@@ -10,37 +10,61 @@ function getUrlParam(name) {
 function getCategoryTitle(categorySlug) {
   if (categorySlug === "set-quan-ao") {
     return {
-      title: "Bộ",
-      desc: "Các set đồ thanh lịch, dễ phối và phù hợp nhiều dịp khác nhau.",
+      title: t("category.set"),
+      desc:
+        getCurrentLanguage() === "en"
+          ? "Elegant sets that are easy to style for different occasions."
+          : "Các set đồ thanh lịch, dễ phối và phù hợp nhiều dịp khác nhau.",
     };
   }
 
   if (categorySlug === "vay-ngan") {
     return {
-      title: "Váy",
-      desc: "Những mẫu váy nữ tính, nổi bật và dễ ứng dụng trong nhiều hoàn cảnh.",
+      title: t("category.dress"),
+      desc:
+        getCurrentLanguage() === "en"
+          ? "Feminine dresses for outings, parties and daily styling."
+          : "Những mẫu váy nữ tính, nổi bật và dễ ứng dụng trong nhiều hoàn cảnh.",
     };
   }
 
   if (categorySlug === "ao") {
     return {
-      title: "Áo",
-      desc: "Áo kiểu, áo ren và áo thun dễ mặc, dễ phối với nhiều phong cách.",
+      title: t("category.top"),
+      desc:
+        getCurrentLanguage() === "en"
+          ? "Tops, lace blouses and everyday pieces that are easy to mix."
+          : "Áo kiểu, áo ren và áo thun dễ mặc, dễ phối với nhiều phong cách.",
     };
   }
 
   return {
-    title: "Tất cả sản phẩm",
-    desc: "Khám phá các thiết kế thời trang nữ thanh lịch, nữ tính và dễ ứng dụng.",
+    title: t("footer.products"),
+    desc:
+      getCurrentLanguage() === "en"
+        ? "Explore elegant and feminine fashion designs from Melanie Mira."
+        : "Khám phá các thiết kế thời trang nữ thanh lịch, nữ tính và dễ ứng dụng.",
   };
 }
 
 function createProductItem(product) {
+  let hoverImage = product.hoverImage || product.images?.[1] || product.image;
+
   return `
     <div class="col-lg-3 col-md-4 col-6">
       <a href="product-detail.html?id=${product.id}" class="shop-product-item">
         <div class="shop-product-image">
-          <img src="${product.image}" alt="${getProductName(product)}" />
+          <img
+            class="shop-product-img-main"
+            src="${product.image}"
+            alt="${getProductName(product)}"
+          />
+
+          <img
+            class="shop-product-img-hover"
+            src="${hoverImage}"
+            alt="${getProductName(product)}"
+          />
         </div>
 
         <div class="shop-product-info">
@@ -50,6 +74,15 @@ function createProductItem(product) {
       </a>
     </div>
   `;
+}
+
+function productMatchesSearch(product, keyword) {
+  return (
+    product.nameVi.toLowerCase().includes(keyword) ||
+    product.nameEn.toLowerCase().includes(keyword) ||
+    product.categoryVi.toLowerCase().includes(keyword) ||
+    product.categoryEn.toLowerCase().includes(keyword)
+  );
 }
 
 function renderProducts() {
@@ -68,10 +101,7 @@ function renderProducts() {
     let keyword = searchKeyword.trim().toLowerCase();
 
     result = result.filter(function (product) {
-      return (
-        product.name.toLowerCase().includes(keyword) ||
-        product.category.toLowerCase().includes(keyword)
-      );
+      return productMatchesSearch(product, keyword);
     });
   }
 
@@ -79,8 +109,12 @@ function renderProducts() {
 
   if (searchKeyword) {
     pageInfo = {
-      title: "Kết quả tìm kiếm",
-      desc: 'Sản phẩm phù hợp với từ khóa "' + searchKeyword + '".',
+      title:
+        getCurrentLanguage() === "en" ? "Search results" : "Kết quả tìm kiếm",
+      desc:
+        getCurrentLanguage() === "en"
+          ? 'Products matching "' + searchKeyword + '".'
+          : 'Sản phẩm phù hợp với từ khóa "' + searchKeyword + '".',
     };
   }
 

@@ -143,20 +143,17 @@
           </div>
 
           <!-- Account icon -->
-          <div class="account-menu">
-            <a class="header-icon-btn account-toggle" title="Tài khoản">
-              <svg viewBox="0 0 24 24">
-                <path
-                  d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4m0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5z"
-                />
-              </svg>
-            </a>
-
-            <div class="account-dropdown">
-              <a href="login.html" data-i18n="account.login">Đăng nhập</a>
-              <a href="register.html" data-i18n="account.register">Đăng ký</a>
-            </div>
-          </div>
+          <a
+            href="login.html"
+            class="header-icon-btn account-toggle"
+            title="Tài khoản"
+          >
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4m0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5z"
+              />
+            </svg>
+          </a>
 
           <!-- Cart icon -->
           <a
@@ -171,7 +168,7 @@
             </svg>
             <span id="cartCount">0</span>
           </a>
-          <!-- Language selector -->
+
           <!-- Language selector -->
           <div class="language-box">
             <button type="button" class="language-current" id="btnLanguage">
@@ -209,7 +206,7 @@
             >
               <div class="category-icon-circle">
                 <img src="assets/img/icons/tatca.svg" alt="Tất cả" />
-                <span>TẤT CẢ</span>
+                <span data-i18n="category.all">TẤT CẢ</span>
               </div>
             </a>
 
@@ -221,7 +218,7 @@
             >
               <div class="category-icon-circle">
                 <img src="assets/img/icons/bo.svg" alt="Bộ" />
-                <span>BỘ</span>
+                <span data-i18n="category.set">BỘ</span>
               </div>
             </a>
 
@@ -233,7 +230,7 @@
             >
               <div class="category-icon-circle">
                 <img src="assets/img/icons/vay.svg" alt="Váy" />
-                <span>VÁY</span>
+                <span data-i18n="category.dress">VÁY</span>
               </div>
             </a>
 
@@ -245,7 +242,7 @@
             >
               <div class="category-icon-circle">
                 <img src="assets/img/icons/ao.svg" alt="Áo" />
-                <span>ÁO</span>
+                <span data-i18n="category.top">ÁO</span>
               </div>
             </a>
           </div>
@@ -257,7 +254,11 @@
         <div class="container-fluid px-lg-5">
           <div class="row g-4" id="productsList"></div>
 
-          <div class="products-empty" id="productsEmpty">
+          <div
+            class="products-empty"
+            id="productsEmpty"
+            data-i18n="product.notFound"
+          >
             Không tìm thấy sản phẩm phù hợp.
           </div>
         </div>

@@ -1,4 +1,3 @@
-
 let currentProduct = null;
 let selectedSize = "";
 
@@ -34,7 +33,7 @@ function renderProductImages(product) {
   for (let i = 0; i < images.length; i++) {
     html += `
       <div class="product-detail-image-item">
-        <img src="${images[i]}" alt="${product.name}" />
+        <img src="${images[i]}" alt="${getProductName(product)}" />
       </div>
     `;
   }
@@ -136,11 +135,7 @@ function addProductToCart(showModal) {
   }
 
   if (selectedSize === "") {
-    if (getCurrentLanguage() === "en") {
-      $("#sizeMessage").text("Please select a size before adding to cart.");
-    } else {
-      $("#sizeMessage").text("Bạn cần chọn size trước khi thêm vào giỏ.");
-    }
+    $("#sizeMessage").text(t("product.sizeNeed"));
     return;
   }
 
@@ -155,7 +150,6 @@ function addProductToCart(showModal) {
   } else {
     cart.push({
       id: currentProduct.id,
-      name: getProductName(currentProduct),
       price: currentProduct.price,
       image: currentProduct.image,
       size: selectedSize,
@@ -169,11 +163,13 @@ function addProductToCart(showModal) {
     updateCartCount();
   }
 
-  if (getCurrentLanguage() === "en") {
-    $("#sizeMessage").text("Size " + selectedSize + " has been added to cart.");
-  } else {
-    $("#sizeMessage").text("Đã thêm size " + selectedSize + " vào giỏ hàng.");
-  }
+  $("#sizeMessage").text(
+    t("product.addedSize") +
+      " " +
+      selectedSize +
+      " " +
+      t("product.addedToCart"),
+  );
 
   if (showModal) {
     openCartModal();
@@ -187,7 +183,7 @@ function renderCartModal() {
   if (cart.length === 0) {
     $("#cartModalList").html(`
       <div class="cart-modal-empty">
-        Giỏ hàng đang trống.
+        ${t("cart.empty")}
       </div>
     `);
 
@@ -196,27 +192,37 @@ function renderCartModal() {
   }
 
   for (let i = 0; i < cart.length; i++) {
+    let product = products.find(function (p) {
+      return p.id === cart[i].id;
+    });
+
+    let productName = product ? getProductName(product) : "Product";
+
     let itemTotal = cart[i].price * cart[i].quantity;
     total += itemTotal;
 
     html += `
       <div class="cart-modal-item">
         <div class="cart-modal-img">
-          <img src="${cart[i].image}" alt="${cart[i].name}" />
+          <img src="${cart[i].image}" alt="${productName}" />
         </div>
 
         <div class="cart-modal-info">
-          <div class="cart-modal-name-price">
-            <h4>${cart[i].name}</h4>
-            <span>${formatMoney(cart[i].price)}</span>
-          </div>
+         <div class="cart-modal-name-price">
+  <div class="cart-modal-product-text">
+    <h4>${productName}</h4>
+    <p>Size: ${cart[i].size}</p>
+  </div>
+
+  <span>${formatMoney(cart[i].price)}</span>
+</div>
 
           <button
             type="button"
             class="cart-modal-remove"
             data-index="${i}"
           >
-            Remove
+            ${t("cart.remove")}
           </button>
 
           <div class="cart-modal-quantity">
@@ -341,11 +347,9 @@ $(document).ready(function () {
     $(this).addClass("active");
 
     selectedSize = $(this).data("size");
-    if (getCurrentLanguage() === "en") {
-      $("#sizeMessage").text("You selected size " + selectedSize + ".");
-    } else {
-      $("#sizeMessage").text("Bạn đã chọn size " + selectedSize + ".");
-    }
+    $("#sizeMessage").text(
+      t("product.sizeSelected") + " " + selectedSize + ".",
+    );
   });
 
   $("#btnAddToCartDetail").click(function () {
