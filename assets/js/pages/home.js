@@ -68,7 +68,44 @@ function showSearchSuggest() {
   $("#searchSuggest").html(html);
   $("#searchSuggest").show();
 }
+/* =========================
+   Slider controls
+   Tạo nút trái/phải + 3 dots cho Hero và Best Seller
+   ========================= */
 
+function getHomeSliderControlHtml(type) {
+  return `
+    <div class="slider-control ${type}-slider-control">
+      <button type="button" class="slider-arrow ${type}-prev" aria-label="Banner trước">
+        ‹
+      </button>
+
+      <div class="slider-dots">
+        <button type="button" class="slider-dot ${type}-dot active" data-index="0"></button>
+        <button type="button" class="slider-dot ${type}-dot" data-index="1"></button>
+        <button type="button" class="slider-dot ${type}-dot" data-index="2"></button>
+      </div>
+
+      <button type="button" class="slider-arrow ${type}-next" aria-label="Banner sau">
+        ›
+      </button>
+    </div>
+  `;
+}
+
+function addHeroControls() {
+  if ($(".hero-content .hero-slider-control").length === 0) {
+    $(".hero-content").append(getHomeSliderControlHtml("hero"));
+  }
+}
+
+function addBestSellerControls() {
+  $(".best-seller-content").each(function () {
+    if ($(this).find(".best-seller-slider-control").length === 0) {
+      $(this).append(getHomeSliderControlHtml("best-seller"));
+    }
+  });
+}
 /* =========================
    Best seller slider
    ========================= */
@@ -76,26 +113,42 @@ function showSearchSuggest() {
 let currentBestSellerIndex = 0;
 let bestSellerRealTotal = 0;
 let bestSellerTimer = null;
+let bestSellerIsResetting = false;
 
 function prepareBestSellerSlider() {
   let track = $(".best-seller-track");
-  let slides = $(".best-seller-slide");
+  let slides = $(".best-seller-slide").not(".is-clone");
 
   if (track.length === 0 || slides.length === 0) {
     return;
   }
 
+  bestSellerRealTotal = slides.length;
+
+  /* 
+    Clone slide đầu để khi auto chạy tới cuối,
+    slider nhảy về đầu nhìn mượt hơn.
+  */
   if (track.attr("data-cloned") === "true") {
     return;
   }
-
-  bestSellerRealTotal = slides.length;
 
   let firstSlide = slides.eq(0).clone();
   firstSlide.addClass("is-clone");
 
   track.append(firstSlide);
   track.attr("data-cloned", "true");
+}
+
+function updateBestSellerDots() {
+  if (bestSellerRealTotal === 0) {
+    return;
+  }
+
+  let activeIndex = currentBestSellerIndex % bestSellerRealTotal;
+
+  $(".best-seller-dot").removeClass("active");
+  $('.best-seller-dot[data-index="' + activeIndex + '"]').addClass("active");
 }
 
 function updateBestSellerSlider(useTransition) {
@@ -112,26 +165,58 @@ function updateBestSellerSlider(useTransition) {
   }
 
   track.css("transform", "translateX(-" + currentBestSellerIndex * 100 + "%)");
+
+  updateBestSellerDots();
 }
 
 function goToNextBestSeller() {
-  if (bestSellerRealTotal === 0) {
+  if (bestSellerRealTotal === 0 || bestSellerIsResetting) {
     return;
   }
 
   currentBestSellerIndex++;
   updateBestSellerSlider(true);
 
+  /*
+    Khi chạy tới slide clone,
+    reset âm thầm về slide thật đầu tiên.
+  */
   if (currentBestSellerIndex === bestSellerRealTotal) {
+    bestSellerIsResetting = true;
+
     setTimeout(function () {
       currentBestSellerIndex = 0;
       updateBestSellerSlider(false);
 
       setTimeout(function () {
         $(".best-seller-track").css("transition", "transform 0.75s ease");
-      }, 30);
+        bestSellerIsResetting = false;
+      }, 40);
     }, 760);
   }
+}
+
+function goToPrevBestSeller() {
+  if (bestSellerRealTotal === 0 || bestSellerIsResetting) {
+    return;
+  }
+
+  currentBestSellerIndex--;
+
+  if (currentBestSellerIndex < 0) {
+    currentBestSellerIndex = bestSellerRealTotal - 1;
+  }
+
+  updateBestSellerSlider(true);
+}
+
+function goToBestSellerSlide(index) {
+  if (bestSellerRealTotal === 0 || bestSellerIsResetting) {
+    return;
+  }
+
+  currentBestSellerIndex = index;
+  updateBestSellerSlider(true);
 }
 
 function startBestSellerAutoSlide() {
@@ -142,10 +227,88 @@ function startBestSellerAutoSlide() {
   }, 3500);
 }
 
+function initBestSellerSwipe() {
+  let startX = 0;
+  let endX = 0;
+
+  $(".best-seller-slider").off("touchstart.bestSellerSwipe");
+  $(".best-seller-slider").off("touchmove.bestSellerSwipe");
+  $(".best-seller-slider").off("touchend.bestSellerSwipe");
+
+  $(".best-seller-slider").on("touchstart.bestSellerSwipe", function (e) {
+    startX = e.originalEvent.touches[0].clientX;
+    endX = startX;
+  });
+
+  $(".best-seller-slider").on("touchmove.bestSellerSwipe", function (e) {
+    endX = e.originalEvent.touches[0].clientX;
+  });
+
+  $(".best-seller-slider").on("touchend.bestSellerSwipe", function () {
+    let distance = endX - startX;
+
+    if (Math.abs(distance) < 50) {
+      return;
+    }
+
+    if (distance < 0) {
+      goToNextBestSeller();
+    } else {
+      goToPrevBestSeller();
+    }
+
+    startBestSellerAutoSlide();
+
+    startX = 0;
+    endX = 0;
+  });
+}
+
+function bindBestSellerControls() {
+  $(document).off("click", ".best-seller-next");
+  $(document).off("click", ".best-seller-prev");
+  $(document).off("click", ".best-seller-dot");
+
+  $(document).on("click", ".best-seller-next", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    goToNextBestSeller();
+    startBestSellerAutoSlide();
+  });
+
+  $(document).on("click", ".best-seller-prev", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    goToPrevBestSeller();
+    startBestSellerAutoSlide();
+  });
+
+  $(document).on("click", ".best-seller-dot", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    let index = Number($(this).data("index"));
+
+    goToBestSellerSlide(index);
+    startBestSellerAutoSlide();
+  });
+}
+
 function initBestSellerSlider() {
   prepareBestSellerSlider();
+
+  /*
+    Sau khi clone xong mới thêm control,
+    để slide clone cũng có nút và dots.
+  */
+  addBestSellerControls();
+
   updateBestSellerSlider(false);
   startBestSellerAutoSlide();
+  bindBestSellerControls();
+  initBestSellerSwipe();
 }
 
 /* =========================
@@ -393,6 +556,18 @@ function closeFabricPopup() {
 let currentHeroIndex = 0;
 let heroTimer = null;
 let heroIsResetting = false;
+let heroRealTotal = 0;
+
+function updateHeroDots() {
+  if (heroRealTotal === 0) {
+    return;
+  }
+
+  let activeIndex = currentHeroIndex % heroRealTotal;
+
+  $(".hero-dot").removeClass("active");
+  $('.hero-dot[data-index="' + activeIndex + '"]').addClass("active");
+}
 
 function updateHeroSlider(useTransition) {
   if (useTransition) {
@@ -405,17 +580,12 @@ function updateHeroSlider(useTransition) {
     "transform",
     "translateX(-" + currentHeroIndex * 100 + "%)",
   );
+
+  updateHeroDots();
 }
 
 function goToNextHeroSlide() {
-  if (heroIsResetting) {
-    return;
-  }
-
-  let slides = $(".hero-slide");
-  let total = slides.length;
-
-  if (total === 0) {
+  if (heroRealTotal === 0 || heroIsResetting) {
     return;
   }
 
@@ -423,13 +593,11 @@ function goToNextHeroSlide() {
   updateHeroSlider(true);
 
   /*
-    total gồm:
-    Banner 1, Banner 2, Banner 3, Banner 1 clone
-
-    Khi chạy tới Banner 1 clone,
-    JS sẽ nhảy âm thầm về Banner 1 thật.
+    index 0,1,2 là 3 banner thật.
+    index 3 là banner clone.
+    Khi tới clone thì reset về banner 0.
   */
-  if (currentHeroIndex === total - 1) {
+  if (currentHeroIndex === heroRealTotal) {
     heroIsResetting = true;
 
     setTimeout(function () {
@@ -439,9 +607,32 @@ function goToNextHeroSlide() {
       setTimeout(function () {
         $("#heroTrack").css("transition", "transform 0.75s ease");
         heroIsResetting = false;
-      }, 50);
+      }, 40);
     }, 760);
   }
+}
+
+function goToPrevHeroSlide() {
+  if (heroRealTotal === 0 || heroIsResetting) {
+    return;
+  }
+
+  currentHeroIndex--;
+
+  if (currentHeroIndex < 0) {
+    currentHeroIndex = heroRealTotal - 1;
+  }
+
+  updateHeroSlider(true);
+}
+
+function goToHeroSlide(index) {
+  if (heroRealTotal === 0 || heroIsResetting) {
+    return;
+  }
+
+  currentHeroIndex = index;
+  updateHeroSlider(true);
 }
 
 function startHeroSlider() {
@@ -456,10 +647,89 @@ function stopHeroSlider() {
   clearInterval(heroTimer);
 }
 
+function initHeroSwipe() {
+  let startX = 0;
+  let endX = 0;
+
+  $(".hero-slider").off("touchstart.heroSwipe");
+  $(".hero-slider").off("touchmove.heroSwipe");
+  $(".hero-slider").off("touchend.heroSwipe");
+
+  $(".hero-slider").on("touchstart.heroSwipe", function (e) {
+    startX = e.originalEvent.touches[0].clientX;
+    endX = startX;
+  });
+
+  $(".hero-slider").on("touchmove.heroSwipe", function (e) {
+    endX = e.originalEvent.touches[0].clientX;
+  });
+
+  $(".hero-slider").on("touchend.heroSwipe", function () {
+    let distance = endX - startX;
+
+    if (Math.abs(distance) < 50) {
+      return;
+    }
+
+    if (distance < 0) {
+      goToNextHeroSlide();
+    } else {
+      goToPrevHeroSlide();
+    }
+
+    startHeroSlider();
+
+    startX = 0;
+    endX = 0;
+  });
+}
+
+function bindHeroControls() {
+  $(document).off("click", ".hero-next");
+  $(document).off("click", ".hero-prev");
+  $(document).off("click", ".hero-dot");
+
+  $(document).on("click", ".hero-next", function (e) {
+    e.preventDefault();
+
+    goToNextHeroSlide();
+    startHeroSlider();
+  });
+
+  $(document).on("click", ".hero-prev", function (e) {
+    e.preventDefault();
+
+    goToPrevHeroSlide();
+    startHeroSlider();
+  });
+
+  $(document).on("click", ".hero-dot", function (e) {
+    e.preventDefault();
+
+    let index = Number($(this).data("index"));
+
+    goToHeroSlide(index);
+    startHeroSlider();
+  });
+}
+
 function initHeroSlider() {
+  addHeroControls();
+
+  /*
+    Chỉ đếm banner thật, không đếm banner clone.
+  */
+  heroRealTotal = $(".hero-slide").not(".hero-slide-clone").length;
+
   updateHeroSlider(false);
   startHeroSlider();
+  bindHeroControls();
+  initHeroSwipe();
 
+  /*
+    Desktop: rê chuột vào thì tạm dừng,
+    rời chuột thì chạy tiếp.
+  */
   $(".hero-slider").mouseenter(function () {
     stopHeroSlider();
   });

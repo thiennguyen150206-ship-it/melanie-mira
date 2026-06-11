@@ -1,5 +1,6 @@
 let currentProduct = null;
 let selectedSize = "";
+let buyNowItem = null;
 
 function formatMoney(price) {
   return price.toLocaleString("vi-VN") + "đ";
@@ -17,13 +18,92 @@ function getCart() {
 function saveCart(cart) {
   localStorage.setItem("cart", JSON.stringify(cart));
 }
+/* =========================
+   Product detail language class
+   Dùng để đổi font theo VI / EN
+   ========================= */
 
+function applyProductDetailLanguageClass() {
+  let language = localStorage.getItem("language") || "vi";
+
+  $("body").removeClass("lang-vi lang-en");
+
+  if (language === "en") {
+    $("body").addClass("lang-en");
+  } else {
+    $("body").addClass("lang-vi");
+  }
+}
 function createProductImages(product) {
   if (product.images && product.images.length > 0) {
     return product.images;
   }
 
   return [product.image];
+}
+/* =========================
+   Product cart helpers
+   ========================= */
+
+function createCurrentCartItem() {
+  return {
+    id: currentProduct.id,
+    price: currentProduct.price,
+    image: currentProduct.image,
+    size: selectedSize,
+    quantity: 1,
+  };
+}
+
+/*
+  Hiệu ứng quăng ảnh sản phẩm vào icon giỏ hàng.
+  Dùng cho nút "Thêm vào giỏ".
+*/
+function animateProductToCart() {
+  let productImage = $("#productDetailGallery img").first();
+  let cartIcon = $(".cart-link").first();
+
+  if (productImage.length === 0 || cartIcon.length === 0) {
+    return;
+  }
+
+  let imageRect = productImage[0].getBoundingClientRect();
+  let cartRect = cartIcon[0].getBoundingClientRect();
+
+  let flyingImage = $("<img />");
+
+  flyingImage.attr("src", productImage.attr("src"));
+  flyingImage.addClass("fly-cart-img");
+
+  flyingImage.css({
+    left: imageRect.left + imageRect.width / 2 - 40 + "px",
+    top: imageRect.top + imageRect.height / 2 - 50 + "px",
+  });
+
+  $("body").append(flyingImage);
+
+  let moveX =
+    cartRect.left + cartRect.width / 2 - (imageRect.left + imageRect.width / 2);
+
+  let moveY =
+    cartRect.top + cartRect.height / 2 - (imageRect.top + imageRect.height / 2);
+
+  setTimeout(function () {
+    flyingImage.css({
+      transform: "translate(" + moveX + "px, " + moveY + "px) scale(0.15)",
+      opacity: "0.15",
+    });
+  }, 20);
+
+  setTimeout(function () {
+    flyingImage.remove();
+
+    cartIcon.addClass("cart-bump");
+
+    setTimeout(function () {
+      cartIcon.removeClass("cart-bump");
+    }, 350);
+  }, 760);
 }
 
 function renderProductImages(product) {
@@ -129,7 +209,7 @@ function renderProductDetail() {
   renderRecommendProducts(currentProduct);
 }
 
-function addProductToCart(showModal) {
+function addProductToCart() {
   if (!currentProduct) {
     return;
   }
@@ -148,13 +228,7 @@ function addProductToCart(showModal) {
   if (index !== -1) {
     cart[index].quantity += 1;
   } else {
-    cart.push({
-      id: currentProduct.id,
-      price: currentProduct.price,
-      image: currentProduct.image,
-      size: selectedSize,
-      quantity: 1,
-    });
+    cart.push(createCurrentCartItem());
   }
 
   saveCart(cart);
@@ -171,197 +245,67 @@ function addProductToCart(showModal) {
       t("product.addedToCart"),
   );
 
-  if (showModal) {
-    openCartModal();
-  }
+  /*
+    Không mở modal nữa.
+    Chỉ chạy hiệu ứng bay vào icon giỏ hàng.
+  */
+  animateProductToCart();
 }
-function renderCartModal() {
-  let cart = getCart();
-  let html = "";
-  let total = 0;
 
-  if (cart.length === 0) {
-    $("#cartModalList").html(`
-      <div class="cart-modal-empty">
-        ${t("cart.empty")}
-      </div>
-    `);
+/* =========================
+   Buy now checkout modal
+   Mua ngay chỉ thanh toán sản phẩm hiện tại,
+   không thêm vào giỏ hàng chính
+   ========================= */
 
-    $("#cartModalTotal").text(formatMoney(0));
+function openBuyNowCheckoutModal() {
+  if (!currentProduct) {
     return;
   }
 
-  for (let i = 0; i < cart.length; i++) {
-    let product = products.find(function (p) {
-      return p.id === cart[i].id;
-    });
-
-    let productName = product ? getProductName(product) : "Product";
-
-    let itemTotal = cart[i].price * cart[i].quantity;
-    total += itemTotal;
-
-    html += `
-      <div class="cart-modal-item">
-        <div class="cart-modal-img">
-          <img src="${cart[i].image}" alt="${productName}" />
-        </div>
-
-        <div class="cart-modal-info">
-         <div class="cart-modal-name-price">
-  <div class="cart-modal-product-text">
-    <h4>${productName}</h4>
-    <p>Size: ${cart[i].size}</p>
-  </div>
-
-  <span>${formatMoney(cart[i].price)}</span>
-</div>
-
-          <button
-            type="button"
-            class="cart-modal-remove"
-            data-index="${i}"
-          >
-            ${t("cart.remove")}
-          </button>
-
-          <div class="cart-modal-quantity">
-            <button type="button" class="cart-qty-minus" data-index="${i}">
-              −
-            </button>
-
-            <span>${cart[i].quantity}</span>
-
-            <button type="button" class="cart-qty-plus" data-index="${i}">
-              +
-            </button>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  $("#cartModalList").html(html);
-  $("#cartModalTotal").text(formatMoney(total));
-}
-
-function openCartModal() {
-  renderCartModal();
-
-  $("#cartModalOverlay").addClass("active");
-  $("#cartSideModal").addClass("active");
-}
-
-function closeCartModal() {
-  $("#cartModalOverlay").removeClass("active");
-  $("#cartSideModal").removeClass("active");
-}
-
-function changeCartQuantity(index, type) {
-  let cart = getCart();
-
-  if (!cart[index]) {
+  if (selectedSize === "") {
+    $("#sizeMessage").text(t("product.sizeNeed"));
     return;
   }
 
-  if (type === "plus") {
-    cart[index].quantity += 1;
-  }
+  /*
+    Tạo sản phẩm mua ngay.
+    Không lưu vào cart, nên không ảnh hưởng giỏ hàng cũ.
+  */
+  buyNowItem = createCurrentCartItem();
 
-  if (type === "minus") {
-    cart[index].quantity -= 1;
-
-    if (cart[index].quantity <= 0) {
-      cart.splice(index, 1);
-    }
-  }
-
-  saveCart(cart);
-  renderCartModal();
-
-  if (typeof updateCartCount === "function") {
-    updateCartCount();
+  /*
+    openCheckoutModal() nằm trong header.js.
+    product-detail.html đã load header.js trước product-detail.js nên gọi được.
+  */
+  if (typeof openCheckoutModal === "function") {
+    openCheckoutModal("buy-now", [buyNowItem]);
+  } else {
+    console.log("Chưa tìm thấy openCheckoutModal(). Kiểm tra lại header.js.");
   }
 }
 
-function removeCartItem(index) {
-  let cart = getCart();
-
-  cart.splice(index, 1);
-
-  saveCart(cart);
-  renderCartModal();
-
-  if (typeof updateCartCount === "function") {
-    updateCartCount();
-  }
-}
-
-function clearCartModal() {
-  saveCart([]);
-  renderCartModal();
-
-  if (typeof updateCartCount === "function") {
-    updateCartCount();
-  }
-}
-
-function initCartModalEvents() {
-  $("#btnCloseCartModal").click(function () {
-    closeCartModal();
-  });
-
-  $("#cartModalOverlay").click(function () {
-    closeCartModal();
-  });
-
-  $("#btnClearCartModal").click(function () {
-    clearCartModal();
-  });
-
-  $("#btnCartCheckout").click(function () {
-    window.location.href = "checkout.html";
-  });
-
-  $(document).on("click", ".cart-qty-plus", function () {
-    let index = Number($(this).data("index"));
-    changeCartQuantity(index, "plus");
-  });
-
-  $(document).on("click", ".cart-qty-minus", function () {
-    let index = Number($(this).data("index"));
-    changeCartQuantity(index, "minus");
-  });
-
-  $(document).on("click", ".cart-modal-remove", function () {
-    let index = Number($(this).data("index"));
-    removeCartItem(index);
-  });
-}
 $(document).ready(function () {
+  applyProductDetailLanguageClass();
   renderProductDetail();
-  initCartModalEvents();
 
   $(".size-option").click(function () {
     $(".size-option").removeClass("active");
     $(this).addClass("active");
 
     selectedSize = $(this).data("size");
+
     $("#sizeMessage").text(
       t("product.sizeSelected") + " " + selectedSize + ".",
     );
   });
 
   $("#btnAddToCartDetail").click(function () {
-    addProductToCart(true);
+    addProductToCart();
   });
 
   $("#btnBuyNow").click(function () {
-    addProductToCart(false);
-
-    if (selectedSize !== "") {
-      window.location.href = "checkout.html";
-    }
+    openBuyNowCheckoutModal();
   });
 
   $("#btnToggleDetail").click(function () {

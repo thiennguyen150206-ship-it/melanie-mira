@@ -216,81 +216,6 @@
     font-size: 13px;
   }
 
-  /* Hero */
-  .hero-section {
-    height: 470px;
-  }
-
-  .hero-section img {
-    object-fit: cover;
-    object-position: center center;
-  }
-
-  .hero-section::after {
-    background: linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0.64),
-      rgba(0, 0, 0, 0.25)
-    );
-  }
-
-  .hero-content {
-    left: 22px;
-    right: 22px;
-    max-width: none;
-  }
-
-  .hero-font-cormorant .hero-subtitle {
-    font-size: 18px;
-  }
-
-  .hero-content h1,
-  .hero-font-cormorant h1 {
-    font-size: 42px;
-    line-height: 1.08;
-    letter-spacing: 3px;
-  }
-
-  .hero-desc {
-    font-size: 15px;
-    line-height: 1.6;
-    margin-bottom: 22px;
-  }
-
-  .btn-main {
-    padding: 11px 24px;
-    font-size: 14px;
-  }
-
-  /* Best seller full banners */
-
-  .best-seller-content {
-    left: 24px;
-    right: 24px;
-    max-width: none;
-  }
-
-  .best-seller-content span {
-    font-size: 17px;
-    letter-spacing: 2px;
-  }
-
-  .best-seller-content h3 {
-    font-size: 44px;
-    letter-spacing: 4px;
-  }
-
-  .best-seller-content p {
-    font-size: 16px;
-    line-height: 1.5;
-    margin-bottom: 22px;
-  }
-
-  .best-seller-content button {
-    padding: 11px 24px;
-    font-size: 14px;
-  }
-
   /* Policy */
   .policy-section {
     padding: 42px 0;
@@ -417,7 +342,6 @@
     line-height: 1.5;
   }
 
-  .best-seller-section,
   .featured-banner-section {
     padding-top: 34px;
   }
@@ -426,7 +350,19 @@
 /* Product category carousel mobile */
 @media screen and (max-width: 768px) {
   .category-carousel-section {
+    padding-top: 20px !important;
     padding-bottom: 44px;
+  }
+
+  .category-carousel-section .section-heading {
+    margin-bottom: 10px;
+    padding: 0 18px;
+  }
+
+  .category-carousel-section .section-heading h2 {
+    margin-bottom: 0;
+    font-size: 34px;
+    line-height: 1.1;
   }
 
   .category-carousel {
@@ -524,6 +460,17 @@
 
   .category-carousel-content h3 {
     font-size: 36px;
+  }
+  .category-carousel-section {
+    padding-top: 18px !important;
+  }
+
+  .category-carousel-section .section-heading {
+    margin-bottom: 8px;
+  }
+
+  .category-carousel-section .section-heading h2 {
+    font-size: 32px;
   }
 }
 
@@ -690,17 +637,27 @@
   }
 
   .product-detail-top {
-    flex-direction: column;
-    gap: 8px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
   }
 
   .product-detail-top h1 {
+    max-width: 72%;
+    margin-bottom: 0;
     font-size: 20px;
-    line-height: 1.4;
+    line-height: 1.35;
   }
 
   .product-detail-top span {
+    flex: 0 0 auto;
     font-size: 18px;
+    font-weight: 800;
+    white-space: nowrap;
+    text-align: right;
+    padding-top: 2px;
   }
 
   .product-detail-line {
@@ -747,6 +704,14 @@
   @media screen and (max-width: 480px) {
     .product-detail-image-item {
       height: 540px;
+    }
+    .product-detail-top h1 {
+      max-width: 68%;
+      font-size: 19px;
+    }
+
+    .product-detail-top span {
+      font-size: 17px;
     }
   }
 
@@ -892,7 +857,7 @@
       margin-bottom: 16px;
     }
 
-    .best-seller-content button {
+    .best-seller-content > button {
       padding: 8px 22px;
       font-size: 13px;
       border-radius: 4px;
@@ -1362,5 +1327,183 @@
 
   .auth-privacy {
     bottom: 18px;
+  }
+}
+/* =========================
+   Fix home mobile height
+   Hero + Best Seller dài hơn trên mobile
+   ========================= */
+
+@media screen and (max-width: 768px) {
+  /* Hero mobile: chiếm gần trọn phần màn hình bên dưới top bar */
+  .hero-banner-responsive {
+    height: auto;
+    min-height: auto;
+    padding: 14px;
+    background-color: var(--color-white);
+  }
+
+  .hero-track {
+    height: calc(100vh - 48px);
+    min-height: 680px;
+  }
+
+  .hero-slide picture {
+    height: 100%;
+  }
+
+  .hero-banner-responsive .hero-content {
+    left: 50%;
+    bottom: 42px;
+    transform: translateX(-50%);
+    text-align: center;
+  }
+
+  /* Giảm khoảng cách trên dưới chữ Best Seller */
+  .best-seller-section {
+    padding-top: 20px !important;
+    padding-bottom: 24px !important;
+  }
+
+  .best-seller-section .section-heading {
+    margin-bottom: 10px;
+    padding: 0 18px;
+  }
+
+  .best-seller-section .section-heading h2 {
+    margin-bottom: 0;
+    font-size: 34px;
+    line-height: 1.1;
+  }
+
+  /* Best seller mobile cao bằng Hero */
+  .best-seller-slider {
+    height: calc(100vh - 48px);
+    min-height: 680px;
+    margin: 0 14px;
+  }
+
+  .best-seller-track {
+    height: 100%;
+  }
+
+  .best-seller-slide {
+    height: 100%;
+  }
+
+  .best-seller-slide picture {
+    height: 100%;
+  }
+
+  .best-seller-slide picture img {
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  .best-seller-content {
+    bottom: 34px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .hero-banner-responsive {
+    padding: 12px;
+  }
+
+  .hero-track,
+  .best-seller-slider {
+    height: calc(100vh - 44px);
+    min-height: 640px;
+  }
+
+  .best-seller-slider {
+    margin: 0 12px;
+  }
+
+  .best-seller-section {
+    padding-top: 18px !important;
+  }
+
+  .best-seller-section .section-heading {
+    margin-bottom: 8px;
+  }
+
+  .best-seller-section .section-heading h2 {
+    font-size: 32px;
+  }
+
+  .hero-banner-responsive .hero-content {
+    bottom: 36px;
+  }
+
+  .best-seller-content {
+    bottom: 28px;
+  }
+}
+/* =========================
+   Checkout drawer responsive
+   ========================= */
+
+@media screen and (max-width: 768px) {
+  .checkout-modal-panel {
+    width: 92%;
+  }
+
+  .checkout-modal-header {
+    padding: 14px 16px;
+  }
+
+  .checkout-modal-header h3 {
+    font-size: 18px;
+  }
+
+  .checkout-modal-header p {
+    font-size: 12px;
+  }
+
+  .checkout-modal-body {
+    padding: 16px;
+  }
+
+  .checkout-qr-box {
+    align-items: flex-start;
+  }
+
+  .checkout-qr-fake {
+    width: 108px;
+    height: 108px;
+    min-width: 108px;
+  }
+
+  .checkout-modal .checkout-summary-item {
+    grid-template-columns: 54px 1fr;
+  }
+
+  .checkout-modal .checkout-summary-img img {
+    width: 50px;
+    height: 70px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .checkout-modal-panel {
+    width: 100%;
+  }
+
+  .checkout-modal-header p {
+    display: none;
+  }
+
+  .checkout-qr-box {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .checkout-qr-fake {
+    width: 130px;
+    height: 130px;
+    min-width: 130px;
   }
 }

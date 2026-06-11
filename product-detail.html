@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="assets/css/responsive.css" />
 
     <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Cormorant+Garamond:wght@600;700&family=Marcellus&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Noto+Sans:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@500;600;700&family=Marcellus&display=swap"
       rel="stylesheet"
     />
 
@@ -23,7 +23,7 @@
     <script src="assets/js/pages/product-detail.js"></script>
   </head>
 
-  <body>
+  <body class="font-pair-1">
     <!-- Top bar -->
     <div class="top-bar top-bar-marquee">
       <div class="top-bar-track">
@@ -155,9 +155,10 @@
 
           <!-- Cart icon -->
           <a
-            href="cart.html"
+            href="#"
             class="header-icon-btn cart-link"
             title="Giỏ hàng"
+            aria-label="Giỏ hàng"
           >
             <svg viewBox="0 0 24 24">
               <path
@@ -305,44 +306,7 @@
         </aside>
       </section>
     </main>
-    <!-- Cart side modal -->
-    <div class="cart-modal-overlay" id="cartModalOverlay"></div>
 
-    <div class="cart-side-modal" id="cartSideModal">
-      <div class="cart-modal-header">
-        <h3 data-i18n="cart.shoppingCart">GIỎ HÀNG</h3>
-        <button type="button" id="btnCloseCartModal" data-i18n="cart.close">
-          Đóng ×
-        </button>
-      </div>
-
-      <button
-        type="button"
-        class="cart-clear-btn"
-        id="btnClearCartModal"
-        data-i18n="cart.clearAll"
-      >
-        Xóa tất cả
-      </button>
-
-      <div class="cart-modal-list" id="cartModalList"></div>
-
-      <div class="cart-modal-bottom">
-        <div class="cart-modal-total">
-          <span data-i18n="cart.subtotal">Tạm tính</span>
-          <strong id="cartModalTotal">0đ</strong>
-        </div>
-
-        <button
-          type="button"
-          class="cart-modal-checkout"
-          id="btnCartCheckout"
-          data-i18n="cart.checkout"
-        >
-          Thanh toán
-        </button>
-      </div>
-    </div>
     <!-- Footer / Contact -->
     <footer class="main-footer" id="footer-contact">
       <div class="container">

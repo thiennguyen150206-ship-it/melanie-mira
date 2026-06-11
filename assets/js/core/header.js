@@ -16,7 +16,760 @@ function updateCartCount() {
 
   $("#cartCount").text(total);
 }
+function saveCart(cart) {
+  localStorage.setItem("cart", JSON.stringify(cart));
+}
 
+function formatCartMoney(price) {
+  return price.toLocaleString("vi-VN") + "đ";
+}
+/* =========================
+   Checkout modal
+   Thanh toán ngay trên modal, không chuyển trang checkout.html
+   ========================= */
+
+let checkoutModalItems = [];
+let checkoutModalMode = "cart";
+
+function createCheckoutModal() {
+  if ($("#checkoutModalOverlay").length === 0) {
+    $("body").append(`
+      <div class="checkout-modal-overlay" id="checkoutModalOverlay"></div>
+    `);
+  }
+
+  if ($("#checkoutModal").length === 0) {
+    $("body").append(`
+      <div class="checkout-modal" id="checkoutModal">
+        <div class="checkout-modal-panel">
+          <!-- Header modal -->
+          <div class="checkout-modal-header">
+            <div>
+              <h3>${t("checkout.modalTitle")}</h3>
+              <p>${t("checkout.modalDesc")}</p>
+            </div>
+
+            <button type="button" id="btnCloseCheckoutModal">
+              ${t("cart.close")}
+            </button>
+          </div>
+
+          <div class="checkout-modal-body">
+            <form id="checkoutModalForm">
+              <div class="checkout-layout checkout-modal-layout">
+
+                <!-- 1. Tóm tắt sản phẩm: đưa lên trên thông tin nhận hàng -->
+                <aside class="checkout-right">
+                  <div class="checkout-summary" id="checkoutModalSummary"></div>
+
+                  <div class="checkout-money">
+                    <div class="checkout-money-row">
+                      <span>${t("checkout.subtotal")}</span>
+                      <strong id="checkoutModalSubtotal">0đ</strong>
+                    </div>
+
+                    <div class="checkout-money-row">
+                      <span>${t("checkout.shipping")}</span>
+                      <strong id="checkoutModalShipping">0đ</strong>
+                    </div>
+
+                    <div class="checkout-money-row checkout-total-row">
+                      <span>${t("checkout.orderTotal")}</span>
+                      <strong id="checkoutModalTotal">0đ</strong>
+                    </div>
+                  </div>
+                </aside>
+
+                <!-- 2. Thông tin nhận hàng -->
+                <section class="checkout-left">
+                  <div class="checkout-title-row">
+                    <h2>${t("checkout.shippingAddress")}</h2>
+
+                    <p>
+                      <span>${t("checkout.hasAccount")}</span>
+                      <a href="login.html">${t("account.login")}</a>
+                    </p>
+                  </div>
+
+                  <div class="checkout-field">
+                    <input
+                      type="text"
+                      id="modalCustomerName"
+                      placeholder="${t("checkout.name")}"
+                    />
+                    <span class="form-error" id="errModalCustomerName"></span>
+                  </div>
+
+                  <div class="checkout-field">
+                    <input
+                      type="text"
+                      id="modalCustomerAddress"
+                      placeholder="${t("checkout.address")}"
+                    />
+                    <span class="form-error" id="errModalCustomerAddress"></span>
+                  </div>
+
+                  <div class="checkout-field">
+                    <input
+                      type="text"
+                      id="modalCustomerPhone"
+                      placeholder="${t("checkout.phone")}"
+                    />
+                    <span class="form-error" id="errModalCustomerPhone"></span>
+                  </div>
+
+                  <!-- 3. Phương thức vận chuyển -->
+                  <div class="checkout-shipping-method">
+                    <h2>${t("checkout.shippingMethod")}</h2>
+
+                    <div class="shipping-method-box">
+                      <div>
+                        <h4>${t("checkout.standardShipping")}</h4>
+                        <p>${t("checkout.shippingNote")}</p>
+                      </div>
+
+                      <strong>${t("checkout.freeShipping")}</strong>
+                    </div>
+                  </div>
+
+                  <!-- 4. Thanh toán QR -->
+                  <div class="checkout-payment-method">
+                    <h2>${t("checkout.paymentTitle")}</h2>
+
+                    <p>${t("checkout.paymentDesc")}</p>
+
+                    <!-- Không dùng COD, chỉ dùng thanh toán QR -->
+                    <input type="hidden" id="modalPaymentMethod" value="qr" />
+
+                    <div class="payment-option active">
+                      <div class="payment-option-top">
+                        <div class="payment-left">
+                          <span class="payment-radio"></span>
+
+                          <strong>${t("checkout.qrPaymentTitle")}</strong>
+                        </div>
+
+                        <div class="payment-icons">
+                          <span>QR</span>
+                          <span>Bank</span>
+                        </div>
+                      </div>
+
+                      <div class="payment-option-desc">
+                        ${t("checkout.qrPaymentDesc")}
+                      </div>
+                    </div>
+
+                    <div class="checkout-qr-box">
+                      <div class="checkout-qr-fake">
+                        <span class="qr-corner qr-top-left"></span>
+                        <span class="qr-corner qr-top-right"></span>
+                        <span class="qr-corner qr-bottom-left"></span>
+                        <strong>QR</strong>
+                      </div>
+
+                      <div class="checkout-qr-info">
+                        <h4>${t("checkout.qrScanTitle")}</h4>
+                        <p>${t("checkout.qrScanNote")}</p>
+
+                        <p class="checkout-qr-amount">
+                          ${t("checkout.orderTotal")}:
+                          <strong id="checkoutQrAmount">0đ</strong>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 5. Nút đặt hàng -->
+                  <button
+                    type="submit"
+                    class="checkout-submit-btn"
+                  >
+                    ${t("checkout.placeOrder")}
+                  </button>
+                </section>
+              </div>
+            </form>
+
+            <!-- Thông báo đặt hàng thành công -->
+            <div class="checkout-success-box" id="checkoutSuccessBox">
+              <div class="checkout-success-icon">✓</div>
+
+              <h3>${t("checkout.successTitle")}</h3>
+
+              <p>${t("checkout.successDesc")}</p>
+
+              <p class="checkout-success-total">
+                ${t("checkout.orderTotal")}:
+                <strong id="checkoutSuccessTotal">0đ</strong>
+              </p>
+
+              <button type="button" id="btnCheckoutSuccessClose">
+                ${t("checkout.continueShopping")}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `);
+  }
+}
+
+function getCheckoutItemProduct(item) {
+  if (typeof products === "undefined") {
+    return null;
+  }
+
+  return products.find(function (product) {
+    return product.id === item.id;
+  });
+}
+
+function getCheckoutItemName(item) {
+  let product = getCheckoutItemProduct(item);
+
+  if (product) {
+    return getProductName(product);
+  }
+
+  return item.name || "Product";
+}
+
+function getCheckoutItemImage(item) {
+  let product = getCheckoutItemProduct(item);
+
+  if (item.image) {
+    return item.image;
+  }
+
+  if (product) {
+    return product.image;
+  }
+
+  return "";
+}
+
+function cloneCheckoutItems(items) {
+  let result = [];
+
+  for (let i = 0; i < items.length; i++) {
+    result.push({
+      id: items[i].id,
+      price: items[i].price,
+      image: items[i].image,
+      size: items[i].size,
+      quantity: items[i].quantity,
+    });
+  }
+
+  return result;
+}
+
+function renderCheckoutModalSummary() {
+  let html = "";
+  let subtotal = 0;
+  let shipping = 0;
+
+  if (checkoutModalItems.length === 0) {
+    $("#checkoutModalSummary").html(`
+      <div class="checkout-empty">
+        ${t("checkout.empty")}
+      </div>
+    `);
+
+    $("#checkoutModalSubtotal").text(formatCartMoney(0));
+    $("#checkoutModalShipping").text(formatCartMoney(0));
+    $("#checkoutModalTotal").text(formatCartMoney(0));
+    $("#checkoutQrAmount").text(formatCartMoney(0));
+    return;
+  }
+
+  for (let i = 0; i < checkoutModalItems.length; i++) {
+    let item = checkoutModalItems[i];
+    let productName = getCheckoutItemName(item);
+    let productImage = getCheckoutItemImage(item);
+    let itemTotal = item.price * item.quantity;
+
+    subtotal += itemTotal;
+
+    html += `
+      <div class="checkout-summary-item">
+        <div class="checkout-summary-img">
+          <img src="${productImage}" alt="${productName}" />
+        </div>
+
+        <div class="checkout-summary-info">
+          <div class="checkout-summary-top">
+            <h4>${productName}</h4>
+            <strong>${formatCartMoney(itemTotal)}</strong>
+          </div>
+
+          <p>${t("checkout.size")}: ${item.size}</p>
+          <p>${t("checkout.qty")}: ${item.quantity}</p>
+        </div>
+      </div>
+    `;
+  }
+
+  $("#checkoutModalSummary").html(html);
+  $("#checkoutModalSubtotal").text(formatCartMoney(subtotal));
+  $("#checkoutModalShipping").text(formatCartMoney(shipping));
+  $("#checkoutModalTotal").text(formatCartMoney(subtotal + shipping));
+  $("#checkoutQrAmount").text(formatCartMoney(subtotal + shipping));
+}
+
+function resetCheckoutModalForm() {
+  $("#checkoutModalForm").show();
+  $("#checkoutSuccessBox").hide();
+
+  $("#modalCustomerName").val("");
+  $("#modalCustomerAddress").val("");
+  $("#modalCustomerPhone").val("");
+  $("#modalDiscountCode").val("");
+
+  $("#checkoutModal .form-error").text("");
+}
+
+function openCheckoutModal(mode, items) {
+  checkoutModalMode = mode || "cart";
+
+  if (Array.isArray(items)) {
+    checkoutModalItems = cloneCheckoutItems(items);
+  } else {
+    checkoutModalItems = cloneCheckoutItems(getCart());
+  }
+
+  if (checkoutModalItems.length === 0) {
+    alert(t("alert.cartEmpty"));
+    return;
+  }
+
+  createCheckoutModal();
+  resetCheckoutModalForm();
+  renderCheckoutModalSummary();
+
+  /*
+    Nếu đang mở cart modal thì đóng lại trước,
+    tránh 2 modal đè lên nhau.
+  */
+  if (typeof closeHeaderCartModal === "function") {
+    closeHeaderCartModal();
+  }
+
+  $("#checkoutModalOverlay").addClass("active");
+  $("#checkoutModal").addClass("active");
+}
+
+function closeCheckoutModal() {
+  $("#checkoutModalOverlay").removeClass("active");
+  $("#checkoutModal").removeClass("active");
+}
+
+function validateCheckoutModalForm() {
+  let isValid = true;
+
+  let name = $("#modalCustomerName").val().trim();
+  let address = $("#modalCustomerAddress").val().trim();
+  let phone = $("#modalCustomerPhone").val().trim();
+
+  $("#checkoutModal .form-error").text("");
+
+  if (name === "") {
+    $("#errModalCustomerName").text(t("form.nameRequired"));
+    isValid = false;
+  }
+
+  if (address === "") {
+    $("#errModalCustomerAddress").text(t("form.addressRequired"));
+    isValid = false;
+  }
+
+  if (phone === "") {
+    $("#errModalCustomerPhone").text(t("form.phoneRequired"));
+    isValid = false;
+  } else if (!/^0\\d{9}$/.test(phone)) {
+    $("#errModalCustomerPhone").text(t("form.phoneInvalid"));
+    isValid = false;
+  }
+
+  return isValid;
+}
+
+function saveOrderDemo() {
+  let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+  let subtotal = 0;
+
+  for (let i = 0; i < checkoutModalItems.length; i++) {
+    subtotal += checkoutModalItems[i].price * checkoutModalItems[i].quantity;
+  }
+
+  orders.push({
+    customerName: $("#modalCustomerName").val().trim(),
+    customerAddress: $("#modalCustomerAddress").val().trim(),
+    customerPhone: $("#modalCustomerPhone").val().trim(),
+    paymentMethod: "qr",
+    items: checkoutModalItems,
+    total: subtotal,
+    createdAt: new Date().toISOString(),
+  });
+
+  localStorage.setItem("orders", JSON.stringify(orders));
+
+  return subtotal;
+}
+
+function submitCheckoutModal() {
+  if (checkoutModalItems.length === 0) {
+    alert(t("alert.cartEmpty"));
+    return;
+  }
+
+  if (!validateCheckoutModalForm()) {
+    return;
+  }
+
+  let total = saveOrderDemo();
+
+  /*
+    Nếu thanh toán từ giỏ hàng thì xóa giỏ.
+    Nếu mua ngay thì không đụng vào giỏ hàng cũ.
+  */
+  if (checkoutModalMode === "cart") {
+    saveCart([]);
+
+    if (typeof updateCartCount === "function") {
+      updateCartCount();
+    }
+  }
+
+  $("#checkoutSuccessTotal").text(formatCartMoney(total));
+
+  $("#checkoutModalForm").hide();
+  $("#checkoutSuccessBox").show();
+}
+
+function initCheckoutModalEvents() {
+  $(document).on("click", "#btnCloseCheckoutModal", function () {
+    closeCheckoutModal();
+  });
+
+  $(document).on("click", "#checkoutModalOverlay", function () {
+    closeCheckoutModal();
+  });
+
+  $(document).on("submit", "#checkoutModalForm", function (e) {
+    e.preventDefault();
+    submitCheckoutModal();
+  });
+
+  $(document).on("click", "#btnModalApplyDiscount", function () {
+    alert(t("alert.discountDemo"));
+  });
+
+  $(document).on("click", "#btnCheckoutSuccessClose", function () {
+    closeCheckoutModal();
+
+    window.location.href = "products.html";
+  });
+
+  /*
+    Chặn các link cũ trỏ tới checkout.html.
+    Từ giờ nếu bấm link checkout.html thì mở modal thay vì chuyển trang.
+  */
+  $(document).on(
+    "click",
+    'a[href="checkout.html"], .js-open-checkout-modal',
+    function (e) {
+      e.preventDefault();
+
+      openCheckoutModal("cart", getCart());
+    },
+  );
+}
+/* =========================
+   Shared cart modal
+   Dùng chung cho toàn bộ website
+   ========================= */
+
+function createSharedCartModal() {
+  if ($("#cartModalOverlay").length === 0) {
+    $("body").append(
+      `<div class="cart-modal-overlay" id="cartModalOverlay"></div>`,
+    );
+  }
+
+  if ($("#cartSideModal").length === 0) {
+    $("body").append(`
+      <div class="cart-side-modal" id="cartSideModal">
+        <div class="cart-modal-header">
+          <h3 data-i18n="cart.shoppingCart">GIỎ HÀNG</h3>
+
+          <button type="button" id="btnCloseCartModal" data-i18n="cart.close">
+            Đóng ×
+          </button>
+        </div>
+
+        <button
+          type="button"
+          class="cart-clear-btn"
+          id="btnClearCartModal"
+          data-i18n="cart.clearAll"
+        >
+          Xóa tất cả
+        </button>
+
+        <div class="cart-modal-summary-line">
+          <span data-i18n="cart.totalItems">Tổng sản phẩm</span>
+          <strong id="cartModalCountText">0 sản phẩm</strong>
+        </div>
+
+        <div class="cart-modal-list" id="cartModalList"></div>
+
+        <div class="cart-modal-bottom">
+          <div class="cart-modal-total">
+            <span data-i18n="cart.subtotal">Tạm tính</span>
+            <strong id="cartModalTotal">0đ</strong>
+          </div>
+
+          <button
+            type="button"
+            class="cart-modal-checkout"
+            id="btnCartCheckout"
+            data-i18n="cart.checkout"
+          >
+            Thanh toán
+          </button>
+        </div>
+      </div>
+    `);
+  }
+
+  /* Nếu trang cũ còn modal nhưng thiếu dòng tổng sản phẩm thì tự thêm */
+  if ($("#cartModalCountText").length === 0) {
+    $("#btnClearCartModal").after(`
+      <div class="cart-modal-summary-line">
+        <span data-i18n="cart.totalItems">Tổng sản phẩm</span>
+        <strong id="cartModalCountText">0 sản phẩm</strong>
+      </div>
+    `);
+  }
+}
+
+function getCartProduct(cartItem) {
+  if (typeof products === "undefined") {
+    return null;
+  }
+
+  return products.find(function (product) {
+    return product.id === cartItem.id;
+  });
+}
+
+function resetCartModalToNormal() {
+  $("#cartSideModal").removeClass("buy-now-modal");
+  $("#cartSideModal").removeData("buyNowItem");
+
+  $(".cart-modal-header h3").text(t("cart.shoppingCart"));
+  $("#btnClearCartModal").show();
+  $("#btnClearCartModal").text(t("cart.clearAll"));
+  $(".cart-modal-total span").text(t("cart.subtotal"));
+  $("#btnCartCheckout").text(t("cart.checkout"));
+}
+
+function renderHeaderCartModal() {
+  let cart = getCart();
+  let html = "";
+  let totalMoney = 0;
+  let totalQuantity = 0;
+
+  resetCartModalToNormal();
+
+  if (cart.length === 0) {
+    $("#cartModalList").html(`
+      <div class="cart-modal-empty">
+        ${t("cart.empty")}
+      </div>
+    `);
+
+    $("#cartModalTotal").text(formatCartMoney(0));
+    $("#cartModalCountText").text("0 " + t("cart.itemUnit"));
+    return;
+  }
+
+  for (let i = 0; i < cart.length; i++) {
+    let product = getCartProduct(cart[i]);
+
+    let productName = product ? getProductName(product) : "Product";
+    let productImage = cart[i].image || (product ? product.image : "");
+    let itemTotal = cart[i].price * cart[i].quantity;
+
+    totalMoney += itemTotal;
+    totalQuantity += cart[i].quantity;
+
+    html += `
+      <div class="cart-modal-item">
+        <div class="cart-modal-img">
+          <img src="${productImage}" alt="${productName}" />
+        </div>
+
+        <div class="cart-modal-info">
+          <div class="cart-modal-name-price">
+            <div class="cart-modal-product-text">
+              <h4>${productName}</h4>
+              <p>Size: ${cart[i].size}</p>
+            </div>
+
+            <span>${formatCartMoney(cart[i].price)}</span>
+          </div>
+
+          <button
+            type="button"
+            class="cart-modal-remove"
+            data-index="${i}"
+          >
+            ${t("cart.remove")}
+          </button>
+
+          <div class="cart-modal-quantity">
+            <button type="button" class="cart-qty-minus" data-index="${i}">
+              −
+            </button>
+
+            <span>${cart[i].quantity}</span>
+
+            <button type="button" class="cart-qty-plus" data-index="${i}">
+              +
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  $("#cartModalList").html(html);
+  $("#cartModalTotal").text(formatCartMoney(totalMoney));
+  $("#cartModalCountText").text(totalQuantity + " " + t("cart.itemUnit"));
+}
+
+function openHeaderCartModal() {
+  createSharedCartModal();
+  renderHeaderCartModal();
+
+  $("#cartModalOverlay").addClass("active");
+  $("#cartSideModal").addClass("active");
+}
+
+function closeHeaderCartModal() {
+  $("#cartModalOverlay").removeClass("active");
+  $("#cartSideModal").removeClass("active");
+
+  $("#cartSideModal").removeClass("buy-now-modal");
+  $("#cartSideModal").removeData("buyNowItem");
+  $("#btnClearCartModal").show();
+}
+
+function changeHeaderCartQuantity(index, type) {
+  let cart = getCart();
+
+  if (!cart[index]) {
+    return;
+  }
+
+  if (type === "plus") {
+    cart[index].quantity += 1;
+  }
+
+  if (type === "minus") {
+    cart[index].quantity -= 1;
+
+    if (cart[index].quantity <= 0) {
+      cart.splice(index, 1);
+    }
+  }
+
+  saveCart(cart);
+  updateCartCount();
+  renderHeaderCartModal();
+}
+
+function removeHeaderCartItem(index) {
+  let cart = getCart();
+
+  cart.splice(index, 1);
+
+  saveCart(cart);
+  updateCartCount();
+  renderHeaderCartModal();
+}
+
+function clearHeaderCartModal() {
+  saveCart([]);
+  updateCartCount();
+  renderHeaderCartModal();
+}
+
+function initSharedCartModalEvents() {
+  $(document).on("click", ".cart-link", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    openHeaderCartModal();
+  });
+
+  $(document).on("click", "#btnCloseCartModal", function () {
+    closeHeaderCartModal();
+  });
+
+  $(document).on("click", "#cartModalOverlay", function () {
+    closeHeaderCartModal();
+  });
+
+  $(document).on("click", "#btnClearCartModal", function () {
+    clearHeaderCartModal();
+  });
+
+  $(document).on("click", ".cart-qty-plus", function () {
+    let index = Number($(this).data("index"));
+    changeHeaderCartQuantity(index, "plus");
+  });
+
+  $(document).on("click", ".cart-qty-minus", function () {
+    let index = Number($(this).data("index"));
+    changeHeaderCartQuantity(index, "minus");
+  });
+
+  $(document).on("click", ".cart-modal-remove", function () {
+    let index = Number($(this).data("index"));
+    removeHeaderCartItem(index);
+  });
+
+  $(document).on("click", "#btnCartCheckout", function () {
+    /*
+    Trường hợp cũ: modal mua ngay đang dùng cartSideModal.
+    Nếu còn class buy-now-modal thì lấy đúng 1 sản phẩm hiện tại.
+  */
+    if ($("#cartSideModal").hasClass("buy-now-modal")) {
+      let buyNowItem = $("#cartSideModal").data("buyNowItem");
+
+      if (buyNowItem) {
+        openCheckoutModal("buy-now", [buyNowItem]);
+      }
+
+      return;
+    }
+
+    /*
+    Trường hợp bình thường: thanh toán toàn bộ giỏ hàng.
+  */
+    if (getCart().length === 0) {
+      alert(t("alert.cartEmpty"));
+      return;
+    }
+
+    openCheckoutModal("cart", getCart());
+  });
+}
 /* =========================
    Language
    ========================= */
@@ -151,6 +904,8 @@ const translations = {
     "cart.clearAll": "Xóa tất cả",
     "cart.remove": "Xóa",
     "cart.subtotal": "Tạm tính",
+    "cart.totalItems": "Tổng sản phẩm",
+    "cart.itemUnit": "sản phẩm",
     "cart.empty": "Giỏ hàng đang trống.",
     "cart.checkout": "Thanh toán",
 
@@ -209,6 +964,19 @@ const translations = {
     "checkout.freeShipping": "MIỄN PHÍ",
     "checkout.paymentTitle": "Thanh toán",
     "checkout.paymentDesc": "Toàn bộ các giao dịch được bảo mật và mã hóa.",
+    "checkout.modalTitle": "Thanh toán",
+    "checkout.modalDesc":
+      "Vui lòng kiểm tra đơn hàng và quét mã QR để thanh toán.",
+    "checkout.qrPaymentTitle": "Thanh toán online bằng mã QR",
+    "checkout.qrPaymentDesc":
+      "Quét mã QR bằng ứng dụng ngân hàng hoặc ví điện tử để thanh toán đơn hàng.",
+    "checkout.qrScanTitle": "Quét mã QR để thanh toán",
+    "checkout.qrScanNote":
+      "Đây là mã QR demo để kiểm tra giao diện. Sau này có thể thay bằng ảnh QR thật.",
+    "checkout.successTitle": "Đặt hàng thành công!",
+    "checkout.successDesc":
+      "Cảm ơn bạn đã mua hàng tại Melanie Mira. Shop sẽ liên hệ xác nhận đơn hàng trong thời gian sớm nhất.",
+    "checkout.continueShopping": "Tiếp tục mua sắm",
   },
 
   en: {
@@ -272,12 +1040,13 @@ const translations = {
     "product.notFoundDesc":
       "This product may have been removed or has not been updated.",
     "product.backToProducts": "Back to products",
-
     "cart.shoppingCart": "SHOPPING CART",
     "cart.close": "Close ×",
     "cart.clearAll": "Clear all",
     "cart.remove": "Remove",
     "cart.subtotal": "SUBTOTAL",
+    "cart.totalItems": "Total items",
+    "cart.itemUnit": "items",
     "cart.empty": "Your cart is empty.",
     "cart.checkout": "Checkout",
 
@@ -336,6 +1105,19 @@ const translations = {
     "checkout.freeShipping": "FREE",
     "checkout.paymentTitle": "Payment",
     "checkout.paymentDesc": "All transactions are secure and encrypted.",
+    "checkout.modalTitle": "Checkout",
+    "checkout.modalDesc":
+      "Please review your order and scan the QR code to pay.",
+    "checkout.qrPaymentTitle": "Online payment by QR code",
+    "checkout.qrPaymentDesc":
+      "Scan the QR code using your banking app or e-wallet to complete the payment.",
+    "checkout.qrScanTitle": "Scan QR code to pay",
+    "checkout.qrScanNote":
+      "This is a demo QR code for testing. You can replace it with a real QR image later.",
+    "checkout.successTitle": "Order placed successfully!",
+    "checkout.successDesc":
+      "Thank you for shopping at Melanie Mira. We will contact you to confirm your order soon.",
+    "checkout.continueShopping": "Continue shopping",
   },
 };
 
@@ -377,8 +1159,11 @@ function applyStaticLanguage() {
 applyProductLanguageData();
 
 $(document).ready(function () {
+  createSharedCartModal();
   updateCartCount();
   applyStaticLanguage();
+  initSharedCartModalEvents();
+  initCheckoutModalEvents();
 
   function updateLanguageButton() {
     let language = getCurrentLanguage();
