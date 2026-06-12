@@ -284,10 +284,96 @@ function openBuyNowCheckoutModal() {
     console.log("Chưa tìm thấy openCheckoutModal(). Kiểm tra lại header.js.");
   }
 }
+/* =========================
+   Product detail image zoom
+   Chỉ dùng cho desktop
+   ========================= */
 
+function isDesktopImageZoom() {
+  return window.innerWidth > 992;
+}
+
+function updateProductImageZoomPosition(e, imageItem) {
+  let itemOffset = imageItem.offset();
+  let itemWidth = imageItem.outerWidth();
+  let itemHeight = imageItem.outerHeight();
+
+  let x = ((e.pageX - itemOffset.left) / itemWidth) * 100;
+  let y = ((e.pageY - itemOffset.top) / itemHeight) * 100;
+
+  if (x < 0) {
+    x = 0;
+  }
+
+  if (x > 100) {
+    x = 100;
+  }
+
+  if (y < 0) {
+    y = 0;
+  }
+
+  if (y > 100) {
+    y = 100;
+  }
+
+  imageItem.find("img").css("transform-origin", x + "% " + y + "%");
+}
+
+function initProductImageZoom() {
+  /*
+    Click vào từng ảnh bên trái để bật / tắt zoom.
+    Mỗi ảnh tự xử lý riêng, không ảnh hưởng ảnh khác.
+  */
+  $(document).on("click", ".product-detail-image-item", function (e) {
+    if (!isDesktopImageZoom()) {
+      return;
+    }
+
+    let imageItem = $(this);
+
+    imageItem.toggleClass("is-zoomed");
+
+    if (imageItem.hasClass("is-zoomed")) {
+      updateProductImageZoomPosition(e, imageItem);
+    } else {
+      imageItem.find("img").css("transform-origin", "center center");
+    }
+  });
+
+  /*
+    Khi ảnh đang zoom, rê chuột tới đâu thì vùng đó được phóng to.
+  */
+  $(document).on(
+    "mousemove",
+    ".product-detail-image-item.is-zoomed",
+    function (e) {
+      if (!isDesktopImageZoom()) {
+        return;
+      }
+
+      updateProductImageZoomPosition(e, $(this));
+    },
+  );
+
+  /*
+    Nếu đang zoom mà thu nhỏ xuống mobile/tablet thì tắt zoom,
+    tránh ảnh bị scale khi người dùng vuốt trên mobile.
+  */
+  $(window).on("resize", function () {
+    if (!isDesktopImageZoom()) {
+      $(".product-detail-image-item").removeClass("is-zoomed");
+      $(".product-detail-image-item img").css(
+        "transform-origin",
+        "center center",
+      );
+    }
+  });
+}
 $(document).ready(function () {
   applyProductDetailLanguageClass();
   renderProductDetail();
+  initProductImageZoom();
 
   $(".size-option").click(function () {
     $(".size-option").removeClass("active");

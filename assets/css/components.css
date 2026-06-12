@@ -3388,3 +3388,90 @@ body.lang-en .product-detail-page .recommend-item h4 {
 #btnCheckoutSuccessClose:hover {
   background-color: var(--color-secondary);
 }
+/* =========================
+   Products category icon - medium small
+   Nhỏ hơn ban đầu khoảng 1/3
+   ========================= */
+
+.products-filter-section {
+  padding: 22px 0 20px;
+}
+
+.category-icon-filter {
+  gap: 24px;
+}
+
+.category-icon-link {
+  min-width: auto;
+}
+
+.category-icon-circle {
+  width: 72px;
+  height: 72px;
+  gap: 5px;
+  border-radius: 50%;
+}
+
+.category-icon-circle img {
+  width: 28px;
+  height: 28px;
+}
+
+.category-icon-circle span {
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 800;
+}
+
+.category-icon-link:hover .category-icon-circle,
+.category-icon-link.active .category-icon-circle {
+  transform: translateY(-3px);
+}
+/* =========================
+   Products category spacing fix
+   Giảm khoảng cách trên dưới dãy hình tròn
+   ========================= */
+
+.products-filter-section {
+  padding: 10px 0 8px !important;
+}
+
+.category-icon-filter {
+  gap: 24px;
+}
+
+.category-icon-circle {
+  width: 72px;
+  height: 72px;
+}
+
+/* Giảm khoảng cách từ dãy icon xuống danh sách sản phẩm */
+.products-list-section {
+  padding: 22px 0 70px !important;
+}
+/* =========================
+   Product detail image zoom desktop
+   Click ảnh để zoom, rê chuột để xem chi tiết
+   ========================= */
+
+@media screen and (min-width: 993px) {
+  .product-detail-image-item {
+    position: relative;
+    overflow: hidden;
+    cursor: zoom-in;
+  }
+
+  .product-detail-image-item img {
+    transition: transform 0.18s ease;
+    transform-origin: center center;
+    will-change: transform;
+  }
+
+  .product-detail-image-item.is-zoomed {
+    cursor: zoom-out;
+  }
+
+  .product-detail-image-item.is-zoomed img {
+    transform: scale(2.2);
+  }
+}

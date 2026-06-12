@@ -1507,3 +1507,64 @@
     min-width: 130px;
   }
 }
+/* =========================
+   Products category icon mobile - medium small
+   ========================= */
+
+@media screen and (max-width: 768px) {
+  .products-filter-section {
+    padding: 16px 0 15px;
+  }
+
+  .category-icon-filter {
+    gap: 14px;
+    padding: 0 14px 6px;
+  }
+
+  .category-icon-link {
+    min-width: 54px;
+  }
+
+  .category-icon-circle {
+    width: 52px;
+    height: 52px;
+    gap: 3px;
+  }
+
+  .category-icon-circle img {
+    width: 21px;
+    height: 21px;
+  }
+
+  .category-icon-link span {
+    font-size: 8.5px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .products-filter-section {
+    padding: 14px 0 12px;
+  }
+
+  .category-icon-filter {
+    gap: 12px;
+  }
+
+  .category-icon-link {
+    min-width: 52px;
+  }
+
+  .category-icon-circle {
+    width: 50px;
+    height: 50px;
+  }
+
+  .category-icon-circle img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .category-icon-link span {
+    font-size: 8px;
+  }
+}
