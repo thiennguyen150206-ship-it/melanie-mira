@@ -1568,3 +1568,68 @@
     font-size: 8px;
   }
 }
+/* =========================
+   Products category icons mobile center
+   Căn giữa 4 hình tròn trên mobile
+   ========================= */
+
+@media screen and (max-width: 768px) {
+  .products-filter-section {
+    padding: 10px 0 8px !important;
+  }
+
+  .products-filter-section .container {
+    max-width: 100%;
+  }
+
+  .category-icon-filter {
+    justify-content: center !important;
+    flex-wrap: nowrap !important;
+    overflow-x: visible !important;
+    gap: 14px !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+  }
+
+  .category-icon-link {
+    min-width: 52px !important;
+  }
+
+  .category-icon-circle {
+    width: 52px !important;
+    height: 52px !important;
+  }
+
+  .category-icon-circle img {
+    width: 21px !important;
+    height: 21px !important;
+  }
+
+  .category-icon-circle span {
+    font-size: 8.5px !important;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .category-icon-filter {
+    gap: 12px !important;
+  }
+
+  .category-icon-link {
+    min-width: 50px !important;
+  }
+
+  .category-icon-circle {
+    width: 50px !important;
+    height: 50px !important;
+  }
+
+  .category-icon-circle img {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  .category-icon-circle span {
+    font-size: 8px !important;
+  }
+}
