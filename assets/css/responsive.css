@@ -715,56 +715,6 @@
     }
   }
 
-  /* Hero banner mobile */
-  @media screen and (max-width: 768px) {
-    .hero-banner-responsive {
-      height: auto;
-      min-height: auto;
-      padding: 14px;
-      background-color: var(--color-white);
-    }
-
-    .hero-track {
-      height: 560px;
-    }
-
-    .hero-slide picture {
-      display: block;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      border: 2px solid var(--color-white);
-      border-radius: 14px;
-      box-shadow: var(--shadow-soft);
-    }
-
-    .hero-slide picture img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center top;
-    }
-
-    .hero-banner-responsive::after {
-      display: none;
-    }
-
-    .hero-banner-responsive .hero-content {
-      left: 50%;
-      bottom: 42px;
-      transform: translateX(-50%);
-      text-align: center;
-    }
-
-    .hero-banner-responsive .hero-btn {
-      padding: 8px 22px;
-      font-size: 13px;
-      border-radius: 4px;
-      background-color: var(--color-white);
-      color: var(--color-primary);
-      border-color: var(--color-white);
-    }
-  }
   @media screen and (max-width: 480px) {
     .hero-banner-responsive {
       padding: 12px;
@@ -793,9 +743,11 @@
     }
 
     .best-seller-slider {
+      width: 100%;
+      max-width: 100%;
       height: 560px;
       overflow: hidden;
-      margin: 0 14px;
+      margin: 0;
     }
 
     .best-seller-track {
@@ -803,11 +755,15 @@
     }
 
     .best-seller-slide {
+      width: 100%;
+      min-width: 100%;
+      max-width: 100%;
+      flex: 0 0 100%;
       height: 100%;
-      border: 2px solid var(--color-white);
-      border-radius: 14px;
+      border: none;
+      border-radius: 0;
       overflow: hidden;
-      box-shadow: var(--shadow-soft);
+      box-shadow: none;
     }
 
     .best-seller-slide picture {
@@ -867,7 +823,7 @@
   @media screen and (max-width: 480px) {
     .best-seller-slider {
       height: 520px;
-      margin: 0 12px;
+      margin: 0;
     }
 
     .best-seller-slide {
@@ -1339,7 +1295,7 @@
   .hero-banner-responsive {
     height: auto;
     min-height: auto;
-    padding: 14px;
+    padding: 14px 0 0;
     background-color: var(--color-white);
   }
 
@@ -1378,9 +1334,12 @@
 
   /* Best seller mobile cao bằng Hero */
   .best-seller-slider {
+    width: 100%;
+    max-width: 100%;
     height: calc(100vh - 48px);
     min-height: 680px;
-    margin: 0 14px;
+    margin: 0;
+    overflow: hidden;
   }
 
   .best-seller-track {
@@ -1408,7 +1367,7 @@
 
 @media screen and (max-width: 480px) {
   .hero-banner-responsive {
-    padding: 12px;
+    padding: 12px 0 0;
   }
 
   .hero-track,
@@ -1418,7 +1377,7 @@
   }
 
   .best-seller-slider {
-    margin: 0 12px;
+    margin: 0;
   }
 
   .best-seller-section {
@@ -1631,5 +1590,419 @@
 
   .category-icon-circle span {
     font-size: 8px !important;
+  }
+}
+/* =========================
+   Home hero mobile fix
+   Banner full ngang, không bo góc, không kéo ngang trang
+   ========================= */
+
+@media screen and (max-width: 768px) {
+  /* Chống lỗi trang bị kéo ngang / cảm giác bị phóng to */
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    position: relative;
+  }
+
+  /* Giữ khoảng trắng phía trên so với topbar/header,
+     nhưng bỏ khoảng trắng trái phải */
+  .hero-banner-responsive {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    min-height: auto;
+
+    padding-top: 14px;
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+
+    margin: 0;
+    overflow: hidden;
+    background-color: var(--color-white);
+  }
+
+  /* Track full ngang, mỗi slide đúng 100% */
+  .hero-track {
+    width: 100%;
+    max-width: 100%;
+    height: calc(100vh - 48px);
+    min-height: 680px;
+    overflow: visible;
+  }
+
+  .hero-slide {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    flex: 0 0 100%;
+  }
+
+  .hero-slide picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .hero-slide picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  /* Không phủ lớp đen trên mobile */
+  .hero-banner-responsive::after {
+    display: none;
+  }
+
+  /* Dời dots xuống sát cạnh dưới banner */
+  .hero-banner-responsive .hero-content {
+    left: 0;
+    right: 0;
+    bottom: 12px;
+    top: auto;
+
+    width: 100%;
+    max-width: none;
+    transform: none;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    pointer-events: none;
+  }
+
+  .hero-slider-control {
+    margin-top: 0;
+    gap: 0;
+    pointer-events: auto;
+  }
+
+  /* Mobile chỉ giữ 3 dots, ẩn mũi tên cho gọn */
+  .hero-slider-control .slider-arrow {
+    display: none;
+  }
+
+  .hero-slider-control .slider-dots {
+    gap: 8px;
+  }
+
+  .hero-slider-control .slider-dot {
+    width: 7px;
+    height: 7px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .hero-banner-responsive {
+    padding-top: 12px;
+  }
+
+  .hero-track {
+    height: calc(100vh - 44px);
+    min-height: 640px;
+  }
+
+  .hero-banner-responsive .hero-content {
+    bottom: 10px;
+  }
+}
+/* =========================
+   Best seller controls mobile
+   Mobile chỉ hiện dots, nằm sát cạnh dưới banner
+   ========================= */
+
+@media screen and (max-width: 768px) {
+  .best-seller-slider > .best-seller-slider-control {
+    left: 0;
+    right: 0;
+    bottom: 12px;
+
+    margin-top: 0;
+    justify-content: center;
+    gap: 0;
+  }
+
+  /* Mobile ẩn mũi tên, chỉ giữ dots + vuốt */
+  .best-seller-slider > .best-seller-slider-control .slider-arrow {
+    display: none;
+  }
+
+  .best-seller-slider > .best-seller-slider-control .slider-dots {
+    gap: 8px;
+  }
+
+  .best-seller-slider > .best-seller-slider-control .slider-dot {
+    width: 7px;
+    height: 7px;
+  }
+
+  /* Nút Xem chi tiết nhỏ gọn hơn trên mobile */
+  .best-seller-content > button {
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    line-height: 1.2;
+  }
+
+  /* Nút Xem thêm trong Product Category nhỏ gọn hơn trên mobile */
+  .category-carousel-link {
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    line-height: 1.2;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .best-seller-slider > .best-seller-slider-control {
+    bottom: 10px;
+  }
+
+  .best-seller-content > button,
+  .category-carousel-link {
+    padding: 6px 13px;
+    font-size: 12px;
+  }
+}
+
+/* =========================
+   Best seller mobile full width fix
+   Banner Best Seller full ngang giống Hero
+   ========================= */
+
+@media screen and (max-width: 768px) {
+  /* Không cho section Best Seller tạo kéo ngang */
+  .best-seller-section {
+    overflow: hidden;
+  }
+
+  /* Bỏ khoảng trắng trái/phải của banner Best Seller */
+  .best-seller-slider {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Track không được rộng quá màn hình */
+  .best-seller-track {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Mỗi slide chiếm đúng 100% chiều ngang */
+  .best-seller-slide {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+  }
+
+  /* Bỏ bo góc, viền, shadow của ảnh */
+  .best-seller-slide picture {
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+  }
+
+  .best-seller-slide picture img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    object-position: center top;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .best-seller-slider {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+/* =========================
+   Best seller mobile full width fix
+   Banner Best Seller full ngang giống Hero
+   ========================= */
+
+@media screen and (max-width: 768px) {
+  /* Không cho section Best Seller tạo kéo ngang */
+  .best-seller-section {
+    overflow: hidden;
+  }
+
+  /* Banner Best Seller full ngang, không chừa trắng 2 bên */
+  .best-seller-slider {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Track giữ đúng kích thước slider */
+  .best-seller-track {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* Mỗi slide chiếm đúng 100% màn hình */
+  .best-seller-slide {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+  }
+
+  /* Ảnh không bo góc, không viền trắng */
+  .best-seller-slide picture {
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+  }
+
+  .best-seller-slide picture img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    object-position: center top;
+  }
+}
+/* =========================
+   Footer category/contact icon spacing mobile
+   Đồng bộ khoảng cách chữ Sản phẩm / Liên hệ với icons bên dưới
+   ========================= */
+
+@media screen and (max-width: 768px) {
+  /* Nhóm icon Bộ / Váy / Áo */
+  .footer-category-svg-links {
+    justify-content: flex-start;
+    gap: 16px;
+
+    /* Khoảng cách từ chữ Sản phẩm xuống icon */
+    margin-top: 14px;
+    margin-bottom: 34px;
+  }
+
+  .footer-category-svg-link {
+    width: 50px;
+    height: 50px;
+  }
+
+  .footer-category-svg-link img {
+    width: 26px;
+    height: 26px;
+  }
+
+  /* Chữ Liên hệ */
+  .footer-contact-title {
+    margin-bottom: 14px;
+  }
+
+  /* Nhóm icon Facebook / TikTok / Instagram */
+  .footer-socials {
+    margin-top: 0;
+    margin-bottom: 24px;
+  }
+}
+/* =========================
+   Home extra banners mobile
+   ========================= */
+
+@media screen and (max-width: 768px) {
+  .home-extra-banner {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  /* Banner ngang trên mobile vẫn full ngang, không chừa trắng 2 bên */
+  .home-horizontal-banner {
+    aspect-ratio: 2 / 1;
+  }
+
+  .home-horizontal-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+  }
+
+  /* Banner dọc trên mobile */
+  .home-vertical-banner {
+    padding: 0;
+    margin: 0;
+    line-height: 0;
+  }
+
+  .home-vertical-banner img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+}
+/* =========================
+   Mobile: banner dọc sát Best Seller
+   ========================= */
+
+@media screen and (max-width: 768px) {
+  /* Bỏ khoảng hở dưới phần Best Seller */
+  .best-seller-section {
+    padding-bottom: 0 !important;
+  }
+
+  .best-seller-slider {
+    margin-bottom: 0 !important;
+  }
+
+  /* Banner dọc nằm sát ngay sau Best Seller */
+  .best-seller-section + .home-vertical-banner {
+    margin-top: 0 !important;
+  }
+
+  .home-vertical-banner {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-top: 0 !important;
+    line-height: 0;
+  }
+
+  .home-vertical-banner img {
+    display: block;
+    width: 100%;
+    height: auto;
   }
 }

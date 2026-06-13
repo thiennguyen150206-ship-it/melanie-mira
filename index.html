@@ -252,14 +252,15 @@
       </div>
 
       <div class="hero-content">
-        <a
-          href="products.html"
-          class="btn-main hero-btn"
-          data-i18n="button.viewMore"
-        >
-          Xem thêm
-        </a>
+        <!-- home.js sẽ tự thêm nút chuyển banner và dấu chấm vào đây -->
       </div>
+    </section>
+    <!-- Extra horizontal banner -->
+    <section class="home-extra-banner home-horizontal-banner">
+      <img
+        src="assets/img/banners/banner-ngang.jpg"
+        alt="Melanie Mira Banner"
+      />
     </section>
     <!-- Best seller products -->
     <section class="section best-seller-section">
@@ -339,7 +340,13 @@
         </div>
       </div>
     </section>
-
+    <!-- Extra vertical banner -->
+    <section class="home-extra-banner home-vertical-banner">
+      <img
+        src="assets/img/banners/banner-doc.jpg"
+        alt="Melanie Mira Vertical Banner"
+      />
+    </section>
     <!-- Product category carousel -->
     <section class="section category-carousel-section">
       <div class="container">
@@ -550,23 +557,35 @@
                 Sản phẩm
               </a>
 
-              <div class="footer-product-links">
-                <a href="products.html?category=ao" data-i18n="category.top">
-                  Áo
-                </a>
-
-                <a
-                  href="products.html?category=vay-ngan"
-                  data-i18n="category.dress"
-                >
-                  Váy
-                </a>
-
+              <div class="footer-product-links footer-category-svg-links">
+                <!-- Bộ -->
                 <a
                   href="products.html?category=set-quan-ao"
-                  data-i18n="category.set"
+                  class="footer-category-svg-link"
+                  title="Bộ"
+                  aria-label="Bộ"
                 >
-                  Bộ
+                  <img src="assets/img/icons/bo.svg" alt="Bộ" />
+                </a>
+
+                <!-- Váy -->
+                <a
+                  href="products.html?category=vay-ngan"
+                  class="footer-category-svg-link"
+                  title="Váy"
+                  aria-label="Váy"
+                >
+                  <img src="assets/img/icons/vay.svg" alt="Váy" />
+                </a>
+
+                <!-- Áo -->
+                <a
+                  href="products.html?category=ao"
+                  class="footer-category-svg-link"
+                  title="Áo"
+                  aria-label="Áo"
+                >
+                  <img src="assets/img/icons/ao.svg" alt="Áo" />
                 </a>
               </div>
             </div>

@@ -100,11 +100,13 @@ function addHeroControls() {
 }
 
 function addBestSellerControls() {
-  $(".best-seller-content").each(function () {
-    if ($(this).find(".best-seller-slider-control").length === 0) {
-      $(this).append(getHomeSliderControlHtml("best-seller"));
-    }
-  });
+  /*
+    Đưa controls ra ngoài phần chữ Best Seller.
+    Nhờ vậy dots và mũi tên có thể nằm sát cạnh dưới banner giống Hero.
+  */
+  if ($(".best-seller-slider .best-seller-slider-control").length === 0) {
+    $(".best-seller-slider").append(getHomeSliderControlHtml("best-seller"));
+  }
 }
 /* =========================
    Best seller slider
