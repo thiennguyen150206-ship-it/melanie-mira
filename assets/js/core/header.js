@@ -43,16 +43,12 @@ function createCheckoutModal() {
       <div class="checkout-modal" id="checkoutModal">
         <div class="checkout-modal-panel">
           <!-- Header modal -->
-          <div class="checkout-modal-header">
-            <div>
-              <h3>${t("checkout.modalTitle")}</h3>
-              <p>${t("checkout.modalDesc")}</p>
-            </div>
-
-            <button type="button" id="btnCloseCheckoutModal">
-              ${t("cart.close")}
-            </button>
-          </div>
+         <div class="checkout-modal-header">
+  <div>
+    <h3>${t("checkout.modalTitle")}</h3>
+    <p>${t("checkout.modalDesc")}</p>
+  </div>
+</div>
 
           <div class="checkout-modal-body">
             <form id="checkoutModalForm">
@@ -60,25 +56,41 @@ function createCheckoutModal() {
 
                 <!-- 1. Tóm tắt sản phẩm: đưa lên trên thông tin nhận hàng -->
                 <aside class="checkout-right">
-                  <div class="checkout-summary" id="checkoutModalSummary"></div>
+  <div class="checkout-summary" id="checkoutModalSummary"></div>
 
-                  <div class="checkout-money">
-                    <div class="checkout-money-row">
-                      <span>${t("checkout.subtotal")}</span>
-                      <strong id="checkoutModalSubtotal">0đ</strong>
-                    </div>
+  <div class="checkout-discount checkout-modal-discount">
+    <h3>${t("checkout.discount")}</h3>
 
-                    <div class="checkout-money-row">
-                      <span>${t("checkout.shipping")}</span>
-                      <strong id="checkoutModalShipping">0đ</strong>
-                    </div>
+    <div class="checkout-discount-row">
+      <input
+        type="text"
+        id="modalDiscountCode"
+        placeholder="${t("checkout.discountCode")}"
+      />
 
-                    <div class="checkout-money-row checkout-total-row">
-                      <span>${t("checkout.orderTotal")}</span>
-                      <strong id="checkoutModalTotal">0đ</strong>
-                    </div>
-                  </div>
-                </aside>
+      <button type="button" id="btnModalApplyDiscount">
+        ${t("checkout.applyDiscount")}
+      </button>
+    </div>
+  </div>
+
+  <div class="checkout-money">
+    <div class="checkout-money-row">
+      <span>${t("checkout.subtotal")}</span>
+      <strong id="checkoutModalSubtotal">0đ</strong>
+    </div>
+
+    <div class="checkout-money-row">
+      <span>${t("checkout.shipping")}</span>
+      <strong id="checkoutModalShipping">0đ</strong>
+    </div>
+
+    <div class="checkout-money-row checkout-total-row">
+      <span>${t("checkout.orderTotal")}</span>
+      <strong id="checkoutModalTotal">0đ</strong>
+    </div>
+  </div>
+</aside>
 
                 <!-- 2. Thông tin nhận hàng -->
                 <section class="checkout-left">
@@ -387,7 +399,7 @@ function validateCheckoutModalForm() {
   if (phone === "") {
     $("#errModalCustomerPhone").text(t("form.phoneRequired"));
     isValid = false;
-  } else if (!/^0\\d{9}$/.test(phone)) {
+  } else if (!/^0\d{9}$/.test(phone)) {
     $("#errModalCustomerPhone").text(t("form.phoneInvalid"));
     isValid = false;
   }
@@ -503,12 +515,8 @@ function createSharedCartModal() {
     $("body").append(`
       <div class="cart-side-modal" id="cartSideModal">
         <div class="cart-modal-header">
-          <h3 data-i18n="cart.shoppingCart">GIỎ HÀNG</h3>
-
-          <button type="button" id="btnCloseCartModal" data-i18n="cart.close">
-            Đóng ×
-          </button>
-        </div>
+  <h3 data-i18n="cart.shoppingCart">GIỎ HÀNG</h3>
+</div>
 
         <button
           type="button"
@@ -717,10 +725,6 @@ function initSharedCartModalEvents() {
     openHeaderCartModal();
   });
 
-  $(document).on("click", "#btnCloseCartModal", function () {
-    closeHeaderCartModal();
-  });
-
   $(document).on("click", "#cartModalOverlay", function () {
     closeHeaderCartModal();
   });
@@ -781,7 +785,21 @@ function getCurrentLanguage() {
 function setCurrentLanguage(language) {
   localStorage.setItem("language", language);
 }
+function applyLanguageFont() {
+  let language = getCurrentLanguage();
 
+  /*
+    Xóa class font test cũ và class ngôn ngữ cũ.
+    Sau đó thêm lại class đúng theo ngôn ngữ hiện tại.
+  */
+  $("body").removeClass("lang-vi lang-en font-pair-1 font-pair-2 font-pair-3");
+
+  if (language === "en") {
+    $("body").addClass("lang-en");
+  } else {
+    $("body").addClass("lang-vi");
+  }
+}
 function t(key) {
   let language = getCurrentLanguage();
   let dictionary = translations[language];
@@ -1122,6 +1140,8 @@ const translations = {
 };
 
 function applyStaticLanguage() {
+  applyLanguageFont();
+
   let language = getCurrentLanguage();
   let dictionary = translations[language];
 
@@ -1159,6 +1179,7 @@ function applyStaticLanguage() {
 applyProductLanguageData();
 
 $(document).ready(function () {
+  applyLanguageFont();
   createSharedCartModal();
   updateCartCount();
   applyStaticLanguage();

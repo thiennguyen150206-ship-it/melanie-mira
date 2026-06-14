@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&family=Marcellus&display=swap");
 :root {
   --color-primary: #111111;
   --color-secondary: #c08b75;
@@ -18,6 +19,8 @@
 
   --shadow-soft: 0 8px 25px rgba(0, 0, 0, 0.08);
   --transition-fast: 0.25s ease;
+  --font-vi: "Be Vietnam Pro", sans-serif;
+  --font-en: "Marcellus", serif;
 }
 
 * {
@@ -158,4 +161,41 @@ html {
 
 #footer-contact {
   scroll-margin-top: 90px;
+}
+/* =========================
+   Global language fonts
+   VI: Be Vietnam Pro
+   EN: Marcellus
+   ========================= */
+
+/* Mặc định dùng tiếng Việt */
+body {
+  font-family: var(--font-vi);
+}
+
+/* Tiếng Việt */
+body.lang-vi,
+body.lang-vi *:not(svg):not(path) {
+  font-family: var(--font-vi) !important;
+}
+
+/* Tiếng Anh */
+body.lang-en,
+body.lang-en *:not(svg):not(path) {
+  font-family: var(--font-en) !important;
+}
+
+/* Form cũng phải đổi font theo ngôn ngữ */
+body.lang-vi input,
+body.lang-vi button,
+body.lang-vi textarea,
+body.lang-vi select {
+  font-family: var(--font-vi) !important;
+}
+
+body.lang-en input,
+body.lang-en button,
+body.lang-en textarea,
+body.lang-en select {
+  font-family: var(--font-en) !important;
 }

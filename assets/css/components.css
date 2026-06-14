@@ -1251,9 +1251,13 @@
   margin-bottom: 0;
 }
 
-/* Products category icon filter */
+/* =========================
+   Products category icon filter
+   Style nhẹ, sang, hợp shop thời trang
+   ========================= */
+
 .products-filter-section {
-  padding: 34px 0 30px;
+  padding: 18px 0 16px;
   background-color: var(--color-white);
   border-bottom: 1px solid var(--color-border);
 }
@@ -1262,11 +1266,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 34px;
+  gap: 26px;
   flex-wrap: wrap;
 }
 
 .category-icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   text-decoration: none;
   background-color: transparent;
   border: none;
@@ -1274,45 +1281,56 @@
 }
 
 .category-icon-circle {
-  width: 108px;
-  height: 108px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
-  border: 1px dashed #bdb6ae;
-  background-color: #f1efec;
-  color: var(--color-primary);
+  border: 1px solid #cfc7bf;
+  background-color: #ffffff;
 
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
 
-  transition: var(--transition-fast);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
+  transition: 0.25s ease;
 }
 
 .category-icon-circle img {
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
   object-fit: contain;
+  display: block;
+
+  /* icon đen rõ hơn */
+  filter: brightness(0);
+  opacity: 1;
+  transition: 0.25s ease;
 }
 
-.category-icon-circle span {
-  font-size: 13px;
-  font-weight: 800;
-  text-transform: uppercase;
-  color: var(--color-primary);
+/* Hover: nhẹ, không đen nguyên cục */
+.category-icon-link:hover .category-icon-circle {
+  background-color: #f4f4f2;
+  border-color: #9a948d;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.07);
 }
 
-.category-icon-link:hover .category-icon-circle,
+.category-icon-link:hover .category-icon-circle img {
+  opacity: 1;
+}
+
+/* Active: danh mục đang chọn */
 .category-icon-link.active .category-icon-circle {
-  background-color: #e7ded6;
-  border-color: var(--color-secondary);
-  transform: translateY(-4px);
+  background-color: #eeeeeb;
+  border: 1.5px solid #8f8982;
+  box-shadow:
+    0 10px 26px rgba(0, 0, 0, 0.08),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.75);
 }
 
-.category-icon-link:hover span,
-.category-icon-link.active span {
-  color: var(--color-secondary);
+.category-icon-link.active .category-icon-circle img {
+  opacity: 0.95;
+  filter: brightness(0);
 }
 
 .products-list-section {
@@ -1827,7 +1845,7 @@
   border-bottom: 1px solid var(--color-border);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 
 .cart-modal-header h3 {
@@ -1835,14 +1853,6 @@
   font-weight: 500;
   color: var(--color-primary);
   margin-bottom: 0;
-}
-
-.cart-modal-header button {
-  border: none;
-  background-color: transparent;
-  color: var(--color-muted);
-  font-size: 14px;
-  cursor: pointer;
 }
 
 /* Clear button */
@@ -2724,158 +2734,7 @@
     justify-content: flex-start;
   }
 }
-/* =========================
-   Product detail font test
-   Chỉ áp dụng cho trang chi tiết sản phẩm
-   Đổi font-pair-1 / font-pair-2 / font-pair-3 ở thẻ body để thử
-   ========================= */
 
-/* ---------- CẶP 1 ----------
-   VI: Be Vietnam Pro
-   EN: Cormorant Garamond
-*/
-
-body.font-pair-1.lang-vi .product-detail-page,
-body.font-pair-1.lang-vi .product-detail-page button,
-body.font-pair-1.lang-vi .product-detail-page input,
-body.font-pair-1.lang-vi .product-detail-page select,
-body.font-pair-1.lang-vi .product-detail-page textarea {
-  font-family: "Be Vietnam Pro", sans-serif;
-}
-
-body.font-pair-1.lang-en .product-detail-page,
-body.font-pair-1.lang-en .product-detail-page button,
-body.font-pair-1.lang-en .product-detail-page input,
-body.font-pair-1.lang-en .product-detail-page select,
-body.font-pair-1.lang-en .product-detail-page textarea {
-  font-family: "Cormorant Garamond", serif;
-}
-
-/* Cormorant hơi kiểu thời trang, tăng nhẹ độ rõ chữ */
-body.font-pair-1.lang-en .product-detail-page {
-  letter-spacing: 0.2px;
-}
-
-/* ---------- CẶP 2 ----------
-   VI: Inter
-   EN: Playfair Display
-*/
-
-body.font-pair-2.lang-vi .product-detail-page,
-body.font-pair-2.lang-vi .product-detail-page button,
-body.font-pair-2.lang-vi .product-detail-page input,
-body.font-pair-2.lang-vi .product-detail-page select,
-body.font-pair-2.lang-vi .product-detail-page textarea {
-  font-family: "Inter", sans-serif;
-}
-
-body.font-pair-2.lang-en .product-detail-page,
-body.font-pair-2.lang-en .product-detail-page button,
-body.font-pair-2.lang-en .product-detail-page input,
-body.font-pair-2.lang-en .product-detail-page select,
-body.font-pair-2.lang-en .product-detail-page textarea {
-  font-family: "Playfair Display", serif;
-}
-
-body.font-pair-2.lang-en .product-detail-page {
-  letter-spacing: 0.15px;
-}
-
-/* ---------- CẶP 3 ----------
-   VI: Noto Sans
-   EN: Marcellus
-*/
-
-body.font-pair-3.lang-vi .product-detail-page,
-body.font-pair-3.lang-vi .product-detail-page button,
-body.font-pair-3.lang-vi .product-detail-page input,
-body.font-pair-3.lang-vi .product-detail-page select,
-body.font-pair-3.lang-vi .product-detail-page textarea {
-  font-family: "Noto Sans", sans-serif;
-}
-
-body.font-pair-3.lang-en .product-detail-page,
-body.font-pair-3.lang-en .product-detail-page button,
-body.font-pair-3.lang-en .product-detail-page input,
-body.font-pair-3.lang-en .product-detail-page select,
-body.font-pair-3.lang-en .product-detail-page textarea {
-  font-family: "Marcellus", serif;
-}
-
-body.font-pair-3.lang-en .product-detail-page {
-  letter-spacing: 0.15px;
-}
-
-/* =========================
-   Tinh chỉnh nhẹ cho product detail khi đổi font
-   ========================= */
-
-/* Tên sản phẩm */
-.product-detail-page .product-detail-top h1 {
-  font-weight: 600;
-}
-
-/* Giá tiền */
-.product-detail-page .product-detail-top span {
-  font-weight: 700;
-}
-
-/* Tiêu đề accordion: Chi tiết sản phẩm */
-.product-detail-page .detail-toggle {
-  font-weight: 700;
-}
-
-/* Nút mua / thêm giỏ */
-.product-detail-page .product-buy-btn,
-.product-detail-page .product-action-icon {
-  font-weight: 700;
-}
-
-/* Tên sản phẩm gợi ý */
-.product-detail-page .recommend-item h4 {
-  font-weight: 500;
-}
-/* =========================
-   Fix number font for English product detail
-   Số tiền, size, nút dùng font dễ đọc hơn
-   ========================= */
-
-/* Giá sản phẩm chính */
-body.lang-en .product-detail-page .product-detail-top span {
-  font-family: "Inter", sans-serif !important;
-  font-variant-numeric: lining-nums tabular-nums;
-  letter-spacing: 0;
-  font-weight: 700;
-}
-
-/* Size, thông báo chọn size */
-body.lang-en .product-detail-page .product-size-label,
-body.lang-en .product-detail-page .size-option,
-body.lang-en .product-detail-page .size-message {
-  font-family: "Inter", sans-serif !important;
-  letter-spacing: 0;
-}
-
-/* Nút mua, nút thêm giỏ, icon */
-body.lang-en .product-detail-page .product-buy-btn,
-body.lang-en .product-detail-page .product-action-icon {
-  font-family: "Inter", sans-serif !important;
-  letter-spacing: 0;
-}
-
-/* Giá sản phẩm gợi ý bên dưới */
-body.lang-en .product-detail-page .recommend-item p {
-  font-family: "Inter", sans-serif !important;
-  font-variant-numeric: lining-nums tabular-nums;
-  letter-spacing: 0;
-  font-weight: 700;
-}
-
-/* Tên sản phẩm gợi ý: nếu thấy serif khó đọc thì cho về Inter */
-body.lang-en .product-detail-page .recommend-item h4 {
-  font-family: "Inter", sans-serif !important;
-  letter-spacing: 0;
-}
 /* =========================
    Product detail add cart animation
    Hiệu ứng quăng sản phẩm vào icon giỏ hàng
@@ -2919,16 +2778,6 @@ body.lang-en .product-detail-page .recommend-item h4 {
   display: none;
 }
 
-.buy-now-quantity-text {
-  margin-top: auto;
-  height: 36px;
-  border-top: 1px solid var(--color-border);
-  padding: 0 10px;
-  display: flex;
-  align-items: center;
-  color: var(--color-muted);
-  font-size: 14px;
-}
 /* =========================
    Cart modal summary
    ========================= */
@@ -3049,24 +2898,28 @@ body.lang-en .product-detail-page .recommend-item h4 {
   padding: 18px;
 }
 
-/* Bỏ layout 2 cột, chuyển thành 1 cột gọn */
 .checkout-modal-layout {
   display: flex;
   flex-direction: column;
   gap: 22px;
+  width: 100%;
 }
 
 /* Cho tóm tắt đơn hàng lên trước */
 .checkout-modal .checkout-right {
   order: 1;
   position: static;
-  padding: 14px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 18px;
   border: 1px solid var(--color-border);
   background-color: #fafafa;
 }
 
 .checkout-modal .checkout-left {
   order: 2;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Trong drawer không cần dòng đăng nhập */
@@ -3126,9 +2979,47 @@ body.lang-en .product-detail-page .recommend-item h4 {
   font-size: 12px;
 }
 
-/* Ẩn mã giảm giá cho gọn, vì hiện chỉ demo alert */
+/* Mã giảm giá trong checkout modal */
 .checkout-modal .checkout-discount {
-  display: none;
+  display: block;
+  margin-top: 18px;
+  margin-bottom: 18px;
+}
+
+.checkout-modal .checkout-discount h3 {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: 12px;
+}
+
+.checkout-modal .checkout-discount-row {
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  gap: 8px;
+}
+
+.checkout-modal .checkout-discount-row input {
+  width: 100%;
+  border: none;
+  background-color: #f7f7f7;
+  color: var(--color-primary);
+  padding: 14px 15px;
+  font-size: 14px;
+  outline: none;
+}
+
+.checkout-modal .checkout-discount-row button {
+  border: none;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.checkout-modal .checkout-discount-row button:hover {
+  background-color: var(--color-secondary);
 }
 
 .checkout-modal .checkout-money {
@@ -3372,12 +3263,12 @@ body.lang-en .product-detail-page .recommend-item h4 {
   background-color: var(--color-secondary);
 }
 /* =========================
-   Products category icon - medium small
-   Nhỏ hơn ban đầu khoảng 1/3
+   Products category icon
+   Icon danh mục sản phẩm gọn hơn
    ========================= */
 
 .products-filter-section {
-  padding: 22px 0 20px;
+  padding: 10px 0 8px;
 }
 
 .category-icon-filter {
@@ -3396,8 +3287,8 @@ body.lang-en .product-detail-page .recommend-item h4 {
 }
 
 .category-icon-circle img {
-  width: 28px;
-  height: 28px;
+  width: 34px;
+  height: 34px;
 }
 
 .category-icon-circle span {
@@ -3410,27 +3301,9 @@ body.lang-en .product-detail-page .recommend-item h4 {
 .category-icon-link.active .category-icon-circle {
   transform: translateY(-3px);
 }
-/* =========================
-   Products category spacing fix
-   Giảm khoảng cách trên dưới dãy hình tròn
-   ========================= */
 
-.products-filter-section {
-  padding: 10px 0 8px !important;
-}
-
-.category-icon-filter {
-  gap: 24px;
-}
-
-.category-icon-circle {
-  width: 72px;
-  height: 72px;
-}
-
-/* Giảm khoảng cách từ dãy icon xuống danh sách sản phẩm */
 .products-list-section {
-  padding: 22px 0 70px !important;
+  padding: 22px 0 70px;
 }
 /* =========================
    Product detail image zoom desktop

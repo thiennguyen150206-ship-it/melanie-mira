@@ -207,7 +207,6 @@
             >
               <div class="category-icon-circle">
                 <img src="assets/img/icons/tatca.svg" alt="Tất cả" />
-                <span data-i18n="category.all">TẤT CẢ</span>
               </div>
             </a>
 
@@ -219,7 +218,6 @@
             >
               <div class="category-icon-circle">
                 <img src="assets/img/icons/bo.svg" alt="Bộ" />
-                <span data-i18n="category.set">BỘ</span>
               </div>
             </a>
 
@@ -231,7 +229,6 @@
             >
               <div class="category-icon-circle">
                 <img src="assets/img/icons/vay.svg" alt="Váy" />
-                <span data-i18n="category.dress">VÁY</span>
               </div>
             </a>
 
@@ -243,7 +240,6 @@
             >
               <div class="category-icon-circle">
                 <img src="assets/img/icons/ao.svg" alt="Áo" />
-                <span data-i18n="category.top">ÁO</span>
               </div>
             </a>
           </div>
@@ -265,7 +261,6 @@
         </div>
       </section>
     </main>
-
     <!-- Footer / Contact -->
     <footer class="main-footer" id="footer-contact">
       <div class="container">
@@ -308,23 +303,35 @@
                 Sản phẩm
               </a>
 
-              <div class="footer-product-links">
-                <a href="products.html?category=ao" data-i18n="category.top">
-                  Áo
-                </a>
-
-                <a
-                  href="products.html?category=vay-ngan"
-                  data-i18n="category.dress"
-                >
-                  Váy
-                </a>
-
+              <div class="footer-product-links footer-category-svg-links">
+                <!-- Bộ -->
                 <a
                   href="products.html?category=set-quan-ao"
-                  data-i18n="category.set"
+                  class="footer-category-svg-link"
+                  title="Bộ"
+                  aria-label="Bộ"
                 >
-                  Bộ
+                  <img src="assets/img/icons/bo.svg" alt="Bộ" />
+                </a>
+
+                <!-- Váy -->
+                <a
+                  href="products.html?category=vay-ngan"
+                  class="footer-category-svg-link"
+                  title="Váy"
+                  aria-label="Váy"
+                >
+                  <img src="assets/img/icons/vay.svg" alt="Váy" />
+                </a>
+
+                <!-- Áo -->
+                <a
+                  href="products.html?category=ao"
+                  class="footer-category-svg-link"
+                  title="Áo"
+                  aria-label="Áo"
+                >
+                  <img src="assets/img/icons/ao.svg" alt="Áo" />
                 </a>
               </div>
             </div>
