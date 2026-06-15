@@ -10,7 +10,7 @@
   --color-muted: #777777;
   --color-white: #ffffff;
 
-  --font-main: Arial, sans-serif;
+  --font-main: var(--font-vi);
 
   --section-space: 70px;
   --radius-sm: 8px;
@@ -167,11 +167,6 @@ html {
    VI: Be Vietnam Pro
    EN: Marcellus
    ========================= */
-
-/* Mặc định dùng tiếng Việt */
-body {
-  font-family: var(--font-vi);
-}
 
 /* Tiếng Việt */
 body.lang-vi,
