@@ -3597,3 +3597,25 @@
   object-fit: contain;
   object-position: center top;
 }
+/* =========================
+   Home video banner
+   Video ngang nằm giữa Hero và banner ngang
+   ========================= */
+
+.home-video-banner {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  background-color: var(--color-primary);
+  line-height: 0;
+}
+
+.home-video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center center;
+}
