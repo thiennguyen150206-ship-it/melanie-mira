@@ -134,6 +134,7 @@
 
 .fabric-section {
   background-color: #fffaf0;
+  padding: 70px 0 78px;
 }
 
 .fabric-heading {
@@ -3599,7 +3600,6 @@
 }
 /* =========================
    Home video banner
-   Video ngang nằm giữa Hero và banner ngang
    ========================= */
 
 .home-video-banner {
@@ -3608,7 +3608,7 @@
   padding: 0;
   margin: 0;
   overflow: hidden;
-  background-color: var(--color-primary);
+  background-color: var(--color-white);
   line-height: 0;
 }
 
@@ -3618,4 +3618,5 @@
   display: block;
   object-fit: cover;
   object-position: center center;
+  background-color: var(--color-white);
 }

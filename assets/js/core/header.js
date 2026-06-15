@@ -872,10 +872,9 @@ const translations = {
     "button.buy": "Mua",
     "button.checkout": "Thanh toán",
 
-    "home.bestSeller": "Best Seller",
-    "home.categoryTitle": "Danh mục sản phẩm",
-    "home.fabricTitle": "Đa dạng chất liệu & mẫu mã",
-    "home.policyTitle": "Chính sách đổi trả sản phẩm",
+    "home.bestSeller": "BEST SELLER",
+    "home.categoryTitle": "DANH MỤC SẢN PHẨM",
+    "home.fabricTitle": "ĐA DẠNG CHẤT LIỆU",
 
     "category.all": "Tất cả",
     "category.top": "Áo",
@@ -1014,10 +1013,9 @@ const translations = {
     "button.buy": "Buy",
     "button.checkout": "Checkout",
 
-    "home.bestSeller": "Best Seller",
-    "home.categoryTitle": "Product Categories",
-    "home.fabricTitle": "Fabrics & Styles",
-    "home.policyTitle": "Return & Exchange Policy",
+    "home.bestSeller": "BEST SELLER",
+    "home.categoryTitle": "PRODUCT CATEGORIES",
+    "home.fabricTitle": "FABRICS",
 
     "category.all": "All",
     "category.top": "Tops",

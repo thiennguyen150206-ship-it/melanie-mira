@@ -864,7 +864,7 @@
 /* Fabric materials mobile */
 @media screen and (max-width: 768px) {
   .fabric-section {
-    padding: 42px 0;
+    padding: 42px 0 54px;
   }
 
   .fabric-heading h2 {
@@ -922,6 +922,10 @@
 }
 
 @media screen and (max-width: 480px) {
+  .fabric-section {
+    padding-bottom: 48px;
+  }
+
   .fabric-card {
     height: 170px;
   }
