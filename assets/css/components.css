@@ -142,13 +142,13 @@
 }
 
 .fabric-heading h2 {
-  font-family: "Cormorant Garamond", serif;
-  font-size: 42px;
-  font-weight: 700;
-  letter-spacing: 1px;
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
   color: #4a2c2a;
   margin-bottom: 14px;
+  white-space: nowrap;
 }
 
 .fabric-heading-line {
@@ -903,10 +903,9 @@
 }
 
 .best-seller-content h3 {
-  font-family: "Cormorant Garamond", serif;
   font-size: 72px;
-  font-weight: 700;
-  letter-spacing: 5px;
+  font-weight: 800;
+  letter-spacing: 0;
   margin-bottom: 12px;
   color: var(--color-white);
 }
@@ -1047,10 +1046,9 @@
 }
 
 .category-carousel-content h3 {
-  font-family: "Cormorant Garamond", serif;
   font-size: 58px;
-  font-weight: 700;
-  letter-spacing: 4px;
+  font-weight: 800;
+  letter-spacing: 0;
   color: var(--color-white);
   margin-bottom: 18px;
 }

@@ -83,12 +83,13 @@ textarea {
 }
 
 .section-heading h2 {
-  font-family: "Cormorant Garamond", serif;
-  font-size: 42px;
-  font-weight: 700;
+  font-size: 40px;
+  font-weight: 800;
   color: var(--color-primary);
-  letter-spacing: 1.5px;
+  letter-spacing: 0.5px;
   margin-bottom: 8px;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .section-heading p {

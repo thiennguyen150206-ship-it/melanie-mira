@@ -68,7 +68,8 @@
   }
 
   .best-seller-content h3 {
-    font-size: 56px;
+    font-size: 38px;
+    letter-spacing: 0;
   }
 
   .product-image img {
@@ -333,8 +334,10 @@
   }
 
   .section-heading h2 {
-    font-size: 34px;
+    font-size: 26px;
     line-height: 1.15;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
   }
 
   .section-heading p {
@@ -361,8 +364,10 @@
 
   .category-carousel-section .section-heading h2 {
     margin-bottom: 0;
-    font-size: 34px;
+    font-size: 26px;
     line-height: 1.1;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
   }
 
   .category-carousel {
@@ -429,7 +434,7 @@
 
   .category-carousel-content h3 {
     font-size: 42px;
-    letter-spacing: 3px;
+    letter-spacing: 0;
     margin-bottom: 14px;
   }
 
@@ -871,8 +876,9 @@
   }
 
   .fabric-heading h2 {
-    font-size: 28px;
-    letter-spacing: 1.5px;
+    font-size: 26px;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
   }
 
   .fabric-heading-line {
@@ -1511,8 +1517,10 @@
 
   .best-seller-section .section-heading h2 {
     margin-bottom: 0;
-    font-size: 34px;
+    font-size: 26px;
     line-height: 1.1;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
   }
 }
 
@@ -1638,5 +1646,62 @@
   .home-video-banner + .home-horizontal-banner {
     margin-top: 0 !important;
     padding-top: 0 !important;
+  }
+}
+/* =========================
+   Mobile section title spacing
+   Đồng bộ khoảng cách tiêu đề:
+   BEST SELLER / DANH MỤC SẢN PHẨM / ĐA DẠNG CHẤT LIỆU
+   ========================= */
+
+@media screen and (max-width: 768px) {
+  .best-seller-section,
+  .category-carousel-section,
+  .fabric-section {
+    padding-top: 20px !important;
+  }
+
+  .best-seller-section .section-heading,
+  .category-carousel-section .section-heading,
+  .fabric-section .section-heading,
+  .fabric-heading {
+    margin: 0 auto 10px !important;
+    padding: 0 16px !important;
+  }
+
+  .best-seller-section .section-heading h2,
+  .category-carousel-section .section-heading h2,
+  .fabric-heading h2 {
+    margin: 0 !important;
+    font-size: 26px !important;
+    line-height: 1.15 !important;
+    letter-spacing: 0.3px !important;
+    white-space: nowrap !important;
+  }
+
+  .fabric-grid {
+    margin-top: 0 !important;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .best-seller-section,
+  .category-carousel-section,
+  .fabric-section {
+    padding-top: 18px !important;
+  }
+
+  .best-seller-section .section-heading,
+  .category-carousel-section .section-heading,
+  .fabric-section .section-heading,
+  .fabric-heading {
+    margin-bottom: 8px !important;
+  }
+
+  .best-seller-section .section-heading h2,
+  .category-carousel-section .section-heading h2,
+  .fabric-heading h2 {
+    font-size: 24px !important;
+    letter-spacing: 0.2px !important;
   }
 }
