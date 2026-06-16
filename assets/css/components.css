@@ -847,10 +847,9 @@
 
 .best-seller-content span {
   display: inline-block;
-  font-family: "Cormorant Garamond", serif;
   font-size: 22px;
-  font-weight: 700;
-  letter-spacing: 3px;
+  font-weight: 800;
+  letter-spacing: 0;
   text-transform: uppercase;
   color: #f1d6ca;
   margin-bottom: 12px;
