@@ -1447,15 +1447,17 @@
 }
 
 /* =========================
-   Mobile: Hero chiếm trọn màn hình đầu tiên
-   Ảnh hiện trọn vẹn, không cắt trên dưới / hai bên
+   Mobile hero banner
+   Khung theo đúng tỉ lệ ảnh mobile 9:16
+   Không cắt ảnh, không méo ảnh
    ========================= */
 
 @media screen and (max-width: 768px) {
   .hero-banner-responsive {
     width: 100%;
-    height: calc(100svh - 28px) !important;
-    min-height: calc(100svh - 28px) !important;
+    height: auto !important;
+    min-height: 0 !important;
+    aspect-ratio: 9 / 16;
     margin: 0 !important;
     padding: 0 !important;
     overflow: hidden !important;
@@ -1465,38 +1467,33 @@
   .hero-track {
     width: 100%;
     height: 100% !important;
-    min-height: 100% !important;
+    min-height: 0 !important;
     display: flex;
     margin: 0 !important;
-    overflow: visible !important;
   }
 
   .hero-slide {
     width: 100%;
     min-width: 100%;
     height: 100% !important;
-    min-height: 100% !important;
     flex: 0 0 100%;
   }
 
   .hero-slide picture {
     width: 100%;
     height: 100% !important;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
+    display: block !important;
     margin: 0 !important;
     padding: 0 !important;
     line-height: 0;
-    background-color: transparent !important;
   }
 
   .hero-slide picture img {
     width: 100% !important;
     height: 100% !important;
+    display: block !important;
     object-fit: contain !important;
     object-position: center center !important;
-    display: block !important;
     background-color: transparent !important;
   }
 
@@ -1512,22 +1509,6 @@
 
   .hero-slider-control {
     margin-top: 0 !important;
-  }
-
-  .hero-banner-responsive + .home-extra-banner,
-  .hero-banner-responsive + .home-horizontal-banner {
-    margin-top: 0 !important;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .hero-banner-responsive {
-    height: calc(100svh - 26px) !important;
-    min-height: calc(100svh - 26px) !important;
-  }
-
-  .hero-banner-responsive .hero-content {
-    bottom: 10px !important;
   }
 }
 /* =========================
