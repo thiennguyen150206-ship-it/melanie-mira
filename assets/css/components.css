@@ -1888,20 +1888,6 @@
   white-space: nowrap;
 }
 
-.cart-modal-remove {
-  border: none;
-  background-color: transparent;
-  color: var(--color-muted);
-  font-size: 14px;
-  text-align: right;
-  padding: 0 10px 8px;
-  cursor: pointer;
-}
-
-.cart-modal-remove:hover {
-  color: var(--color-accent);
-}
-
 .cart-modal-quantity {
   margin-top: auto;
   height: 36px;

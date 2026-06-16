@@ -1549,68 +1549,47 @@
   }
 }
 /* =========================
-   Index mobile section spacing
-   Đồng bộ khoảng cách tiêu đề:
+   Index mobile section title spacing
+   Mobile: khoảng cách trên tiêu đề = khoảng cách dưới tiêu đề
+   Áp dụng cho:
    BEST SELLER / DANH MỤC SẢN PHẨM / ĐA DẠNG CHẤT LIỆU
-
-   Quy ước mobile:
-   - Khoảng trên tiêu đề: 24px
-   - Khoảng dưới tiêu đề: 48px
-   - Riêng Danh mục sản phẩm:
-     khoảng trên tiêu đề = khoảng dưới ảnh carousel
    ========================= */
 
 @media screen and (max-width: 768px) {
-  /* 1. BEST SELLER */
+  /* BEST SELLER */
   .best-seller-section {
-    padding-top: 24px !important;
+    padding-top: 32px !important;
     padding-bottom: 0 !important;
   }
 
   .best-seller-section .section-heading {
-    margin: 0 auto 48px !important;
+    margin: 0 auto 32px !important;
     padding: 0 16px !important;
   }
 
-  /* 2. DANH MỤC SẢN PHẨM */
+  /* DANH MỤC SẢN PHẨM */
   .category-carousel-section {
-    /*
-      Khoảng trên chữ DANH MỤC SẢN PHẨM.
-      Đồng thời padding-bottom bên dưới cũng là 24px,
-      để khoảng trên chữ = khoảng từ cạnh dưới ảnh đến cạnh dưới section.
-    */
-    padding-top: 24px !important;
-    padding-bottom: 24px !important;
+    padding-top: 32px !important;
+    padding-bottom: 32px !important;
   }
 
   .category-carousel-section .section-heading {
-    /*
-      Khoảng dưới chữ DANH MỤC SẢN PHẨM
-      giống khoảng dưới chữ ĐA DẠNG CHẤT LIỆU.
-    */
-    margin: 0 auto 48px !important;
+    margin: 0 auto 32px !important;
     padding: 0 16px !important;
   }
 
-  /* 3. ĐA DẠNG CHẤT LIỆU */
+  /* ĐA DẠNG CHẤT LIỆU */
   .fabric-section {
-    /*
-      Khoảng trên chữ ĐA DẠNG CHẤT LIỆU = 24px.
-    */
-    padding-top: 24px !important;
+    padding-top: 32px !important;
     padding-bottom: 54px !important;
   }
 
   .fabric-heading {
-    /*
-      Khoảng dưới chữ ĐA DẠNG CHẤT LIỆU = 48px.
-      Tức là gấp đôi khoảng trên 24px.
-    */
-    margin: 0 auto 48px !important;
+    margin: 0 auto 32px !important;
     padding: 0 16px !important;
   }
 
-  /* Style chữ tiêu đề */
+  /* Style chung cho 3 tiêu đề */
   .best-seller-section .section-heading h2,
   .category-carousel-section .section-heading h2,
   .fabric-heading h2 {
@@ -1627,31 +1606,30 @@
 }
 
 @media screen and (max-width: 480px) {
-  /* Mobile nhỏ: giảm nhẹ nhưng vẫn giữ tỉ lệ 1 : 2 */
   .best-seller-section {
-    padding-top: 20px !important;
+    padding-top: 28px !important;
   }
 
   .best-seller-section .section-heading {
-    margin-bottom: 40px !important;
+    margin-bottom: 28px !important;
   }
 
   .category-carousel-section {
-    padding-top: 20px !important;
-    padding-bottom: 20px !important;
+    padding-top: 28px !important;
+    padding-bottom: 28px !important;
   }
 
   .category-carousel-section .section-heading {
-    margin-bottom: 40px !important;
+    margin-bottom: 28px !important;
   }
 
   .fabric-section {
-    padding-top: 20px !important;
+    padding-top: 28px !important;
     padding-bottom: 48px !important;
   }
 
   .fabric-heading {
-    margin-bottom: 40px !important;
+    margin-bottom: 28px !important;
   }
 
   .best-seller-section .section-heading h2,

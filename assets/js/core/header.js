@@ -631,13 +631,7 @@ function renderHeaderCartModal() {
             <span>${formatCartMoney(cart[i].price)}</span>
           </div>
 
-          <button
-            type="button"
-            class="cart-modal-remove"
-            data-index="${i}"
-          >
-            ${t("cart.remove")}
-          </button>
+         
 
           <div class="cart-modal-quantity">
             <button type="button" class="cart-qty-minus" data-index="${i}">
@@ -701,16 +695,6 @@ function changeHeaderCartQuantity(index, type) {
   renderHeaderCartModal();
 }
 
-function removeHeaderCartItem(index) {
-  let cart = getCart();
-
-  cart.splice(index, 1);
-
-  saveCart(cart);
-  updateCartCount();
-  renderHeaderCartModal();
-}
-
 function clearHeaderCartModal() {
   saveCart([]);
   updateCartCount();
@@ -741,11 +725,6 @@ function initSharedCartModalEvents() {
   $(document).on("click", ".cart-qty-minus", function () {
     let index = Number($(this).data("index"));
     changeHeaderCartQuantity(index, "minus");
-  });
-
-  $(document).on("click", ".cart-modal-remove", function () {
-    let index = Number($(this).data("index"));
-    removeHeaderCartItem(index);
   });
 
   $(document).on("click", "#btnCartCheckout", function () {
