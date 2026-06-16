@@ -18,22 +18,7 @@ function getCart() {
 function saveCart(cart) {
   localStorage.setItem("cart", JSON.stringify(cart));
 }
-/* =========================
-   Product detail language class
-   Dùng để đổi font theo VI / EN
-   ========================= */
 
-function applyProductDetailLanguageClass() {
-  let language = localStorage.getItem("language") || "vi";
-
-  $("body").removeClass("lang-vi lang-en");
-
-  if (language === "en") {
-    $("body").addClass("lang-en");
-  } else {
-    $("body").addClass("lang-vi");
-  }
-}
 function createProductImages(product) {
   if (product.images && product.images.length > 0) {
     return product.images;
@@ -371,7 +356,6 @@ function initProductImageZoom() {
   });
 }
 $(document).ready(function () {
-  applyProductDetailLanguageClass();
   renderProductDetail();
   initProductImageZoom();
 

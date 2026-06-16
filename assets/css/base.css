@@ -74,11 +74,10 @@ textarea {
 .section-heading span {
   display: inline-block;
   color: var(--color-secondary);
-  font-family: "Cormorant Garamond", serif;
   font-size: 18px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 2.5px;
+  letter-spacing: 1.2px;
   margin-bottom: 6px;
 }
 

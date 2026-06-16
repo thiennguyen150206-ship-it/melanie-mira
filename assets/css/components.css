@@ -305,52 +305,6 @@
   color: #ffffff;
 }
 
-.policy-section {
-  background-color: var(--color-light);
-  padding: 45px 0;
-}
-
-.policy-item {
-  background-color: var(--color-white);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: 25px;
-  text-align: center;
-  height: 100%;
-  transition: var(--transition-fast);
-}
-
-.policy-item:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-soft);
-}
-
-.policy-icon {
-  width: 46px;
-  height: 46px;
-  margin: 0 auto 14px;
-  border-radius: 50%;
-  background-color: var(--color-primary);
-  color: var(--color-white);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  font-weight: 700;
-}
-
-.policy-item h4 {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.policy-item p {
-  color: var(--color-muted);
-  margin-bottom: 0;
-  font-size: 15px;
-}
-
 .lookbook-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -3261,49 +3215,7 @@
 #btnCheckoutSuccessClose:hover {
   background-color: var(--color-secondary);
 }
-/* =========================
-   Products category icon
-   Icon danh mục sản phẩm gọn hơn
-   ========================= */
 
-.products-filter-section {
-  padding: 10px 0 8px;
-}
-
-.category-icon-filter {
-  gap: 24px;
-}
-
-.category-icon-link {
-  min-width: auto;
-}
-
-.category-icon-circle {
-  width: 72px;
-  height: 72px;
-  gap: 5px;
-  border-radius: 50%;
-}
-
-.category-icon-circle img {
-  width: 34px;
-  height: 34px;
-}
-
-.category-icon-circle span {
-  font-size: 10px;
-  line-height: 1;
-  font-weight: 800;
-}
-
-.category-icon-link:hover .category-icon-circle,
-.category-icon-link.active .category-icon-circle {
-  transform: translateY(-3px);
-}
-
-.products-list-section {
-  padding: 22px 0 70px;
-}
 /* =========================
    Product detail image zoom desktop
    Click ảnh để zoom, rê chuột để xem chi tiết

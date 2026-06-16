@@ -305,29 +305,12 @@
   }
 }
 
-.hero-font-cormorant .hero-subtitle {
-  font-family: "Cormorant Garamond", serif;
-  font-size: 22px;
-  letter-spacing: 2px;
-}
-
-.hero-font-cormorant h1 {
-  font-family: "Cormorant Garamond", serif;
-  font-weight: 700;
-  letter-spacing: 4px;
-}
-
-.hero-font-cormorant .hero-desc {
-  font-family: Arial, sans-serif;
-}
-
 .top-bar-marquee {
   background-color: #111111;
   color: #fffaf7;
   overflow: hidden;
   white-space: nowrap;
   padding: 4px 0;
-  font-family: "Cormorant Garamond", serif;
 }
 
 .top-bar-track {

@@ -217,23 +217,6 @@
     font-size: 13px;
   }
 
-  /* Policy */
-  .policy-section {
-    padding: 42px 0;
-  }
-
-  .policy-item {
-    padding: 22px 18px;
-  }
-
-  .policy-item h4 {
-    font-size: 17px;
-  }
-
-  .policy-item p {
-    font-size: 14px;
-  }
-
   /* Cart / auth / checkout */
   .auth-section,
   .cart-section,
@@ -1406,38 +1389,7 @@
     display: block;
   }
 }
-/* =========================
-   Mobile: banner dọc sát Best Seller
-   ========================= */
 
-@media screen and (max-width: 768px) {
-  /* Bỏ khoảng hở dưới phần Best Seller */
-  .best-seller-section {
-    padding-bottom: 0 !important;
-  }
-
-  .best-seller-slider {
-    margin-bottom: 0 !important;
-  }
-
-  /* Banner dọc nằm sát ngay sau Best Seller */
-  .best-seller-section + .home-vertical-banner {
-    margin-top: 0 !important;
-  }
-
-  .home-vertical-banner {
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    margin-top: 0 !important;
-    line-height: 0;
-  }
-
-  .home-vertical-banner img {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-}
 /* =========================
    Best seller mobile full width fix
    Banner Best Seller full ngang giống Hero
@@ -1493,50 +1445,7 @@
     margin-top: 0 !important;
   }
 }
-/* =========================
-   Index mobile spacing fix
-   Best Seller spacing giống Danh mục sản phẩm
-   ========================= */
 
-@media screen and (max-width: 768px) {
-  .best-seller-section {
-    padding-top: 20px !important;
-    padding-bottom: 0 !important;
-  }
-
-  .best-seller-section .section-heading {
-    margin-bottom: 10px !important;
-    padding: 0 18px;
-  }
-
-  .best-seller-section .section-heading span {
-    margin-bottom: 6px;
-    font-size: 15px;
-    letter-spacing: 2px;
-  }
-
-  .best-seller-section .section-heading h2 {
-    margin-bottom: 0;
-    font-size: 26px;
-    line-height: 1.1;
-    letter-spacing: 0.3px;
-    white-space: nowrap;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .best-seller-section {
-    padding-top: 18px !important;
-  }
-
-  .best-seller-section .section-heading {
-    margin-bottom: 8px !important;
-  }
-
-  .best-seller-section .section-heading h2 {
-    font-size: 32px;
-  }
-}
 /* =========================
    Mobile: Hero chiếm trọn màn hình đầu tiên
    Ảnh hiện trọn vẹn, không cắt trên dưới / hai bên
@@ -1650,15 +1559,24 @@
 }
 /* =========================
    Mobile section title spacing
-   Đồng bộ khoảng cách tiêu đề:
+   Đồng bộ tiêu đề:
    BEST SELLER / DANH MỤC SẢN PHẨM / ĐA DẠNG CHẤT LIỆU
    ========================= */
 
 @media screen and (max-width: 768px) {
-  .best-seller-section,
-  .category-carousel-section,
+  .best-seller-section {
+    padding-top: 20px !important;
+    padding-bottom: 0 !important;
+  }
+
+  .category-carousel-section {
+    padding-top: 20px !important;
+    padding-bottom: 44px !important;
+  }
+
   .fabric-section {
     padding-top: 20px !important;
+    padding-bottom: 54px !important;
   }
 
   .best-seller-section .section-heading,
@@ -1685,10 +1603,17 @@
 }
 
 @media screen and (max-width: 480px) {
-  .best-seller-section,
-  .category-carousel-section,
+  .best-seller-section {
+    padding-top: 18px !important;
+  }
+
+  .category-carousel-section {
+    padding-top: 18px !important;
+  }
+
   .fabric-section {
     padding-top: 18px !important;
+    padding-bottom: 48px !important;
   }
 
   .best-seller-section .section-heading,
@@ -1703,5 +1628,6 @@
   .fabric-heading h2 {
     font-size: 24px !important;
     letter-spacing: 0.2px !important;
+    white-space: nowrap !important;
   }
 }

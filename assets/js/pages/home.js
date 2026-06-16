@@ -741,10 +741,40 @@ function initHeroSlider() {
   });
 }
 /* =========================
+   Home video autoplay
+   Hỗ trợ video tự chạy trên mobile
+   ========================= */
+
+function initHomeVideoAutoplay() {
+  let homeVideo = document.querySelector(".home-video");
+
+  if (!homeVideo) {
+    return;
+  }
+
+  homeVideo.muted = true;
+  homeVideo.playsInline = true;
+
+  homeVideo.play().catch(function () {
+    console.log(
+      "Video chưa autoplay được, sẽ chạy sau khi người dùng chạm màn hình.",
+    );
+  });
+
+  document.addEventListener(
+    "touchstart",
+    function () {
+      homeVideo.play().catch(function () {});
+    },
+    { once: true },
+  );
+}
+/* =========================
    Document ready
    ========================= */
 $(document).ready(function () {
   initHeroSlider();
+  initHomeVideoAutoplay();
   /* Search input */
   $("#searchInput").keyup(function (e) {
     showSearchSuggest();
