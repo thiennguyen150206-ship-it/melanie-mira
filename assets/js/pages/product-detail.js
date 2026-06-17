@@ -1,14 +1,108 @@
 let currentProduct = null;
 let selectedSize = "";
 let buyNowItem = null;
+let productSource = [];
 
 function formatMoney(price) {
   return price.toLocaleString("vi-VN") + "đ";
 }
 
+function getProductSlugFromUrl() {
+  let params = new URLSearchParams(window.location.search);
+  return params.get("slug");
+}
+
 function getProductIdFromUrl() {
   let params = new URLSearchParams(window.location.search);
   return Number(params.get("id"));
+}
+
+function convertApiProduct(product) {
+  let images = [];
+
+  if (product.images && product.images.length > 0) {
+    images = product.images.map(function (item) {
+      return item.image_url;
+    });
+  }
+
+  if (images.length === 0) {
+    images = [product.image];
+
+    if (product.hover_image) {
+      images.push(product.hover_image);
+    }
+  }
+
+  return {
+    id: product.id,
+    slug: product.slug,
+    nameVi: product.name_vi,
+    nameEn: product.name_en,
+    categoryVi: product.category_vi,
+    categoryEn: product.category_en,
+    categorySlug: product.category_slug,
+    price: Number(product.price),
+    oldPrice: product.old_price ? Number(product.old_price) : null,
+    image: product.image,
+    hoverImage: product.hover_image,
+    images: images,
+    badge: product.badge,
+    descriptionVi: product.description_vi,
+    descriptionEn: product.description_en,
+    sizes: product.sizes || [],
+  };
+}
+
+async function loadProductDetail() {
+  let slug = getProductSlugFromUrl();
+  let productId = getProductIdFromUrl();
+
+  try {
+    if (slug) {
+      let response = await fetch(API_BASE_URL + "/products/" + slug);
+      let result = await response.json();
+
+      if (result.success) {
+        currentProduct = convertApiProduct(result.data);
+      }
+    }
+
+    /*
+      Nếu chưa có currentProduct thì dùng dữ liệu dự phòng từ products-data.js.
+      Trường hợp này dùng khi:
+      - Backend chưa chạy
+      - API lỗi
+      - Link cũ vẫn còn dạng product-detail.html?id=1
+    */
+    if (!currentProduct) {
+      if (slug) {
+        currentProduct = products.find(function (product) {
+          return product.slug === slug;
+        });
+      } else {
+        currentProduct = products.find(function (product) {
+          return product.id === productId;
+        });
+      }
+    }
+
+    productSource = products;
+  } catch (error) {
+    console.log("Cannot load product detail from API:", error);
+
+    if (slug) {
+      currentProduct = products.find(function (product) {
+        return product.slug === slug;
+      });
+    } else {
+      currentProduct = products.find(function (product) {
+        return product.id === productId;
+      });
+    }
+
+    productSource = products;
+  }
 }
 
 function getCart() {
@@ -125,7 +219,7 @@ function renderRecommendProducts(product) {
   let maxRecommend = 4;
 
   /* Ưu tiên lấy sản phẩm cùng nhóm */
-  let sameCategoryProducts = products.filter(function (item) {
+  let sameCategoryProducts = productSource.filter(function (item) {
     return item.id !== product.id && item.categorySlug === product.categorySlug;
   });
 
@@ -140,7 +234,7 @@ function renderRecommendProducts(product) {
 
   /* Nếu chưa đủ thì lấy thêm sản phẩm nhóm khác */
   if (suggestProducts.length < maxRecommend) {
-    let otherProducts = products.filter(function (item) {
+    let otherProducts = productSource.filter(function (item) {
       return (
         item.id !== product.id && item.categorySlug !== product.categorySlug
       );
@@ -157,7 +251,7 @@ function renderRecommendProducts(product) {
 
   for (let i = 0; i < suggestProducts.length; i++) {
     html += `
-      <a href="product-detail.html?id=${suggestProducts[i].id}" class="recommend-item">
+      <a href="product-detail.html?slug=${suggestProducts[i].slug}" class="recommend-item">
        <img
   src="${suggestProducts[i].image}"
   alt="${getProductName(suggestProducts[i])}"
@@ -172,20 +266,14 @@ function renderRecommendProducts(product) {
 }
 
 function renderProductDetail() {
-  let productId = getProductIdFromUrl();
-
-  currentProduct = products.find(function (product) {
-    return product.id === productId;
-  });
-
   if (!currentProduct) {
     $(".product-detail-page").html(`
-  <div class="container py-5 text-center">
-    <h2>${t("product.notFound")}</h2>
-    <p>${t("product.notFoundDesc")}</p>
-    <a href="products.html" class="btn-main">${t("product.backToProducts")}</a>
-  </div>
-`);
+      <div class="container py-5 text-center">
+        <h2>${t("product.notFound")}</h2>
+        <p>${t("product.notFoundDesc")}</p>
+        <a href="products.html" class="btn-main">${t("product.backToProducts")}</a>
+      </div>
+    `);
     return;
   }
 
@@ -355,7 +443,8 @@ function initProductImageZoom() {
     }
   });
 }
-$(document).ready(function () {
+$(document).ready(async function () {
+  await loadProductDetail();
   renderProductDetail();
   initProductImageZoom();
 

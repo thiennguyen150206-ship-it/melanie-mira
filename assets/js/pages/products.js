@@ -7,6 +7,46 @@ function getUrlParam(name) {
   return params.get(name);
 }
 
+let productSource = [];
+
+function convertApiProduct(product) {
+  return {
+    id: product.id,
+    slug: product.slug,
+    nameVi: product.name_vi,
+    nameEn: product.name_en,
+    categoryVi: product.category_vi,
+    categoryEn: product.category_en,
+    categorySlug: product.category_slug,
+    price: Number(product.price),
+    oldPrice: product.old_price ? Number(product.old_price) : null,
+    image: product.image,
+    hoverImage: product.hover_image,
+    images: product.images || [],
+    badge: product.badge,
+    descriptionVi: product.description_vi,
+    descriptionEn: product.description_en,
+  };
+}
+
+async function loadProducts() {
+  try {
+    let response = await fetch(API_BASE_URL + "/products");
+    let result = await response.json();
+
+    if (result.success) {
+      productSource = result.data.map(function (product) {
+        return convertApiProduct(product);
+      });
+    } else {
+      productSource = products;
+    }
+  } catch (error) {
+    console.log("Cannot load products from API:", error);
+    productSource = products;
+  }
+}
+
 function getCategoryTitle(categorySlug) {
   if (categorySlug === "set-quan-ao") {
     return {
@@ -50,9 +90,13 @@ function getCategoryTitle(categorySlug) {
 function createProductItem(product) {
   let hoverImage = product.hoverImage || product.images?.[1] || product.image;
 
+  let detailUrl = product.slug
+    ? "product-detail.html?slug=" + product.slug
+    : "product-detail.html?id=" + product.id;
+
   return `
     <div class="col-lg-3 col-md-4 col-6">
-      <a href="product-detail.html?id=${product.id}" class="shop-product-item">
+      <a href="${detailUrl}" class="shop-product-item">
         <div class="shop-product-image">
           <img
             class="shop-product-img-main"
@@ -78,10 +122,10 @@ function createProductItem(product) {
 
 function productMatchesSearch(product, keyword) {
   return (
-    product.nameVi.toLowerCase().includes(keyword) ||
-    product.nameEn.toLowerCase().includes(keyword) ||
-    product.categoryVi.toLowerCase().includes(keyword) ||
-    product.categoryEn.toLowerCase().includes(keyword)
+    (product.nameVi || "").toLowerCase().includes(keyword) ||
+    (product.nameEn || "").toLowerCase().includes(keyword) ||
+    (product.categoryVi || "").toLowerCase().includes(keyword) ||
+    (product.categoryEn || "").toLowerCase().includes(keyword)
   );
 }
 
@@ -89,7 +133,7 @@ function renderProducts() {
   let categorySlug = getUrlParam("category");
   let searchKeyword = getUrlParam("search");
 
-  let result = products;
+  let result = productSource;
 
   if (categorySlug) {
     result = result.filter(function (product) {
@@ -144,6 +188,7 @@ function renderProducts() {
   }
 }
 
-$(document).ready(function () {
+$(document).ready(async function () {
+  await loadProducts();
   renderProducts();
 });

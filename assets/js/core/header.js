@@ -431,7 +431,59 @@ function saveOrderDemo() {
   return subtotal;
 }
 
-function submitCheckoutModal() {
+async function submitOrderToApi() {
+  let apiUrl =
+    typeof API_BASE_URL !== "undefined"
+      ? API_BASE_URL
+      : "http://localhost:5000/api";
+
+  let orderItems = [];
+
+  for (let i = 0; i < checkoutModalItems.length; i++) {
+    orderItems.push({
+      product_id: checkoutModalItems[i].id,
+      size: checkoutModalItems[i].size,
+      quantity: checkoutModalItems[i].quantity,
+    });
+  }
+
+  let orderData = {
+    customer_name: $("#modalCustomerName").val().trim(),
+    customer_email: null,
+    customer_phone: $("#modalCustomerPhone").val().trim(),
+    customer_address: $("#modalCustomerAddress").val().trim(),
+    note: $("#modalDiscountCode").val().trim()
+      ? "Mã giảm giá: " + $("#modalDiscountCode").val().trim()
+      : null,
+
+    /*
+      Modal hiện tại của bạn đang dùng QR.
+      Backend đang nhận payment_method là 'cod' hoặc 'bank_transfer'.
+      QR thực chất là chuyển khoản, nên gửi bank_transfer.
+    */
+    payment_method: "bank_transfer",
+
+    items: orderItems,
+  };
+
+  let response = await fetch(apiUrl + "/orders", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(orderData),
+  });
+
+  let result = await response.json();
+
+  if (!response.ok || !result.success) {
+    throw new Error(result.message || "Cannot create order");
+  }
+
+  return result.data;
+}
+
+async function submitCheckoutModal() {
   if (checkoutModalItems.length === 0) {
     alert(t("alert.cartEmpty"));
     return;
@@ -441,24 +493,40 @@ function submitCheckoutModal() {
     return;
   }
 
-  let total = saveOrderDemo();
+  let submitButton = $(".checkout-submit-btn");
+  let oldButtonText = submitButton.text();
 
-  /*
-    Nếu thanh toán từ giỏ hàng thì xóa giỏ.
-    Nếu mua ngay thì không đụng vào giỏ hàng cũ.
-  */
-  if (checkoutModalMode === "cart") {
-    saveCart([]);
+  submitButton.prop("disabled", true);
+  submitButton.text("Đang xử lý...");
 
-    if (typeof updateCartCount === "function") {
-      updateCartCount();
+  try {
+    let orderResult = await submitOrderToApi();
+
+    /*
+      Nếu thanh toán từ giỏ hàng thì xóa giỏ.
+      Nếu mua ngay thì không đụng vào giỏ hàng cũ.
+    */
+    if (checkoutModalMode === "cart") {
+      saveCart([]);
+
+      if (typeof updateCartCount === "function") {
+        updateCartCount();
+      }
     }
+
+    $("#checkoutSuccessTotal").text(
+      formatCartMoney(Number(orderResult.total_amount)),
+    );
+
+    $("#checkoutModalForm").hide();
+    $("#checkoutSuccessBox").show();
+  } catch (error) {
+    console.log("Create order failed:", error);
+    alert(error.message || "Không thể tạo đơn hàng. Vui lòng thử lại.");
+  } finally {
+    submitButton.prop("disabled", false);
+    submitButton.text(oldButtonText);
   }
-
-  $("#checkoutSuccessTotal").text(formatCartMoney(total));
-
-  $("#checkoutModalForm").hide();
-  $("#checkoutSuccessBox").show();
 }
 
 function initCheckoutModalEvents() {
@@ -470,9 +538,9 @@ function initCheckoutModalEvents() {
     closeCheckoutModal();
   });
 
-  $(document).on("submit", "#checkoutModalForm", function (e) {
+  $(document).on("submit", "#checkoutModalForm", async function (e) {
     e.preventDefault();
-    submitCheckoutModal();
+    await submitCheckoutModal();
   });
 
   $(document).on("click", "#btnModalApplyDiscount", function () {
