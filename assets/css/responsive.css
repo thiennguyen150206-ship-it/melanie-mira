@@ -1081,11 +1081,13 @@
 }
 @media screen and (max-width: 768px) {
   .auth-simple-page {
-    padding: 28px 18px 60px;
+    height: 100vh;
+    overflow: hidden;
+    padding: 28px 18px 22px;
   }
 
   .auth-simple-logo {
-    margin-bottom: 100px;
+    margin-bottom: clamp(70px, 12vh, 100px);
   }
 
   .auth-simple-logo img {
@@ -1107,7 +1109,7 @@
 
 @media screen and (max-width: 480px) {
   .auth-simple-logo {
-    margin-bottom: 80px;
+    margin-bottom: 58px;
   }
 
   .auth-simple-box h1 {
@@ -1638,5 +1640,98 @@
     font-size: 24px !important;
     letter-spacing: 0.2px !important;
     white-space: nowrap !important;
+  }
+}
+
+/* =========================
+   Login page responsive final
+   ========================= */
+
+@media screen and (max-width: 768px) {
+  .auth-page-body {
+    overflow: hidden;
+  }
+
+  .auth-page-body .auth-simple-page {
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+    padding: 26px 18px 22px;
+  }
+
+  .auth-page-body .auth-simple-logo {
+    margin-bottom: clamp(58px, 10vh, 88px);
+  }
+
+  .auth-page-body .auth-simple-logo img {
+    width: 140px;
+  }
+
+  .auth-page-body .auth-simple-box {
+    max-width: 430px;
+  }
+
+  .auth-page-body .auth-simple-box h1 {
+    font-size: 25px;
+    margin-bottom: 6px;
+  }
+
+  .auth-page-body .auth-simple-box > p {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .auth-page-body .auth-social-btn {
+    height: 50px;
+  }
+
+  .auth-page-body .auth-email-box {
+    height: 54px;
+  }
+
+  .auth-page-body .auth-check-row {
+    font-size: 14px;
+    line-height: 1.45;
+    margin-top: 16px;
+  }
+
+  .auth-page-body .auth-note {
+    font-size: 12px;
+    white-space: normal;
+    max-width: 360px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .auth-page-body .auth-privacy {
+    bottom: 14px;
+    font-size: 13px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .auth-page-body .auth-simple-page {
+    padding-top: 22px;
+  }
+
+  .auth-page-body .auth-simple-logo {
+    margin-bottom: 48px;
+  }
+
+  .auth-page-body .auth-simple-logo img {
+    width: 130px;
+  }
+
+  .auth-page-body .auth-simple-box h1 {
+    font-size: 24px;
+  }
+
+  .auth-page-body .auth-check-row {
+    font-size: 13px;
+  }
+
+  .auth-page-body .auth-note {
+    font-size: 11.5px;
+    line-height: 1.45;
   }
 }

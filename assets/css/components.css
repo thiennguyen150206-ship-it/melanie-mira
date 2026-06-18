@@ -2416,18 +2416,19 @@
    ========================= */
 
 .auth-simple-page {
-  min-height: 100vh;
+  height: 100vh;
   background-color: var(--color-white);
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
-  padding: 34px 16px 64px;
+  overflow: hidden;
+  padding: 34px 16px 24px;
 }
 
 .auth-simple-logo {
-  margin-top: 8px;
-  margin-bottom: 145px;
+  margin-top: 4px;
+  margin-bottom: clamp(92px, 15vh, 145px);
 }
 
 .auth-simple-logo a {
@@ -2462,18 +2463,20 @@
 
 .auth-social-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  grid-template-columns: 1fr;
+  gap: 0;
   margin-bottom: 24px;
 }
 
 .auth-social-btn {
+  width: 100%;
   height: 52px;
   border: 1px solid var(--color-border);
   border-radius: 8px;
   background-color: var(--color-white);
-  font-size: 22px;
-  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   transition: var(--transition-fast);
 }
@@ -2484,11 +2487,13 @@
 }
 
 .auth-google {
-  color: #4285f4;
+  color: var(--color-primary);
 }
 
-.auth-facebook {
-  color: #2563eb;
+.google-icon {
+  width: 22px;
+  height: 22px;
+  display: block;
 }
 
 .auth-divider {
@@ -2580,7 +2585,7 @@
 
 .auth-privacy {
   position: absolute;
-  bottom: 24px;
+  bottom: 18px;
   color: #2563eb;
   font-size: 14px;
 }
@@ -3514,4 +3519,97 @@
   object-fit: cover;
   object-position: center center;
   background-color: var(--color-white);
+}
+
+/* =========================
+   Login page final layout
+   ========================= */
+
+.auth-page-body {
+  overflow: hidden;
+}
+
+.auth-page-body .auth-simple-page {
+  width: 100%;
+  height: 100dvh;
+  min-height: 100dvh;
+  overflow: hidden;
+
+  padding: 32px 16px 24px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.auth-page-body .auth-simple-logo {
+  margin-top: 0;
+  margin-bottom: clamp(78px, 13vh, 125px);
+}
+
+.auth-page-body .auth-simple-logo img {
+  width: 160px;
+}
+
+.auth-page-body .auth-simple-box {
+  width: 100%;
+  max-width: 430px;
+}
+
+.auth-page-body .auth-social-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  margin-bottom: 22px;
+}
+
+.auth-page-body .auth-social-btn {
+  width: 100%;
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-page-body .google-icon {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+.auth-page-body .auth-divider {
+  margin-bottom: 22px;
+}
+
+.auth-page-body .auth-email-box {
+  height: 58px;
+}
+
+.auth-page-body .auth-check-row {
+  margin-top: 18px;
+}
+
+.auth-page-body .auth-note {
+  margin-top: 24px;
+  margin-bottom: 0;
+
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.auth-page-body .auth-note a {
+  white-space: nowrap;
+}
+
+.auth-page-body .auth-privacy {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+
+  font-size: 14px;
+  color: #2563eb;
+  white-space: nowrap;
 }
