@@ -750,8 +750,8 @@
   /* Main footer links */
   .footer-links {
     align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 32px;
+    gap: 14px;
+    margin-bottom: 28px;
   }
 
   .footer-main-links-row {
@@ -1327,9 +1327,9 @@
     justify-content: flex-start;
     gap: 16px;
 
-    /* Khoảng cách từ chữ Sản phẩm xuống icon */
-    margin-top: 14px;
-    margin-bottom: 34px;
+    /* Sau khi bỏ Chính sách, khoảng cách footer gọn hơn */
+    margin-top: 10px;
+    margin-bottom: 28px;
   }
 
   .footer-category-svg-link {

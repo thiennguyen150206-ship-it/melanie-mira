@@ -826,7 +826,7 @@ function initSharedCartModalEvents() {
    ========================= */
 
 function getCurrentLanguage() {
-  return localStorage.getItem("language") || "vi";
+  return localStorage.getItem("language") || "en";
 }
 
 function setCurrentLanguage(language) {
@@ -984,7 +984,7 @@ const translations = {
     "checkout.shopNow": "Mua sắm ngay",
 
     "footer.about": "Giới thiệu",
-    "footer.policy": "Chính sách",
+
     "footer.products": "Sản phẩm",
     "footer.contact": "Liên hệ",
     "footer.copyright": "© 2026 Melanie Mira. Đã đăng ký bản quyền.",
@@ -1124,7 +1124,7 @@ const translations = {
     "checkout.shopNow": "Shop now",
 
     "footer.about": "About",
-    "footer.policy": "Policy",
+
     "footer.products": "Products",
     "footer.contact": "Contact",
     "footer.copyright": "© 2026 Melanie Mira. All rights reserved.",
