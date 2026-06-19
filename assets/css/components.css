@@ -3510,6 +3510,10 @@
   overflow: hidden;
   background-color: var(--color-white);
   line-height: 0;
+
+  /* Video chỉ đóng vai trò banner, không tương tác */
+  pointer-events: none;
+  user-select: none;
 }
 
 .home-video {
@@ -3519,6 +3523,24 @@
   object-fit: cover;
   object-position: center center;
   background-color: var(--color-white);
+
+  /* Không cho click/chạm/kéo video */
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Ẩn tối đa controls mặc định của trình duyệt mobile */
+.home-video::-webkit-media-controls {
+  display: none !important;
+}
+
+.home-video::-webkit-media-controls-panel {
+  display: none !important;
+}
+
+.home-video::-webkit-media-controls-play-button {
+  display: none !important;
 }
 
 /* =========================

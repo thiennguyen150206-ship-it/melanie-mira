@@ -752,22 +752,98 @@ function initHomeVideoAutoplay() {
     return;
   }
 
+  /*
+    Cấu hình video như banner thời trang:
+    - Tự chạy
+    - Tắt tiếng
+    - Lặp lại
+    - Không controls
+    - Không picture-in-picture
+  */
   homeVideo.muted = true;
+  homeVideo.defaultMuted = true;
+  homeVideo.loop = true;
+  homeVideo.autoplay = true;
   homeVideo.playsInline = true;
+  homeVideo.controls = false;
 
-  homeVideo.play().catch(function () {
-    console.log(
-      "Video chưa autoplay được, sẽ chạy sau khi người dùng chạm màn hình.",
-    );
+  homeVideo.setAttribute("muted", "");
+  homeVideo.setAttribute("loop", "");
+  homeVideo.setAttribute("autoplay", "");
+  homeVideo.setAttribute("playsinline", "");
+  homeVideo.setAttribute("webkit-playsinline", "");
+  homeVideo.removeAttribute("controls");
+
+  if ("disablePictureInPicture" in homeVideo) {
+    homeVideo.disablePictureInPicture = true;
+  }
+
+  if ("disableRemotePlayback" in homeVideo) {
+    homeVideo.disableRemotePlayback = true;
+  }
+
+  function playHomeVideo() {
+    let playPromise = homeVideo.play();
+
+    if (playPromise !== undefined) {
+      playPromise.catch(function () {
+        /*
+          Một số trình duyệt mobile có thể chặn autoplay lần đầu.
+          Khi người dùng chạm/click trang, video sẽ được gọi chạy lại bên dưới.
+        */
+      });
+    }
+  }
+
+  /*
+    Khi video sẵn sàng thì tự chạy.
+  */
+  homeVideo.addEventListener("loadedmetadata", function () {
+    playHomeVideo();
   });
 
-  document.addEventListener(
-    "touchstart",
-    function () {
-      homeVideo.play().catch(function () {});
-    },
-    { once: true },
-  );
+  homeVideo.addEventListener("canplay", function () {
+    playHomeVideo();
+  });
+
+  /*
+    Backup cho loop:
+    Bình thường thuộc tính loop đã đủ,
+    đoạn này chỉ để chắc chắn nếu trình duyệt xử lý loop lỗi.
+  */
+  homeVideo.addEventListener("ended", function () {
+    homeVideo.currentTime = 0;
+    playHomeVideo();
+  });
+
+  /*
+    Khi quay lại tab/trang, video tiếp tục chạy.
+  */
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden) {
+      playHomeVideo();
+    }
+  });
+
+  window.addEventListener("pageshow", function () {
+    playHomeVideo();
+  });
+
+  /*
+    Fallback mobile:
+    Nếu autoplay bị chặn, sau lần chạm/click đầu tiên trên trang thì chạy lại.
+    Video vẫn không có chức năng khi bấm trực tiếp vì CSS đã pointer-events: none.
+  */
+  document.addEventListener("touchstart", playHomeVideo, {
+    once: true,
+    passive: true,
+  });
+
+  document.addEventListener("click", playHomeVideo, {
+    once: true,
+  });
+
+  playHomeVideo();
 }
 /* =========================
    Document ready

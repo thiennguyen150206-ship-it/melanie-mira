@@ -1525,6 +1525,7 @@
 }
 /* =========================
    Home video banner mobile
+   Video hoạt động như banner: tự chạy, lặp lại, không tương tác
    ========================= */
 
 @media screen and (max-width: 768px) {
@@ -1535,6 +1536,9 @@
     padding: 0 !important;
     overflow: hidden;
     line-height: 0;
+
+    pointer-events: none;
+    user-select: none;
   }
 
   .home-video {
@@ -1543,6 +1547,10 @@
     display: block;
     object-fit: cover;
     object-position: center center;
+
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
   }
 
   .home-video-banner + .home-horizontal-banner {
