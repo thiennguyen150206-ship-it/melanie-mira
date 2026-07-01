@@ -22,3 +22,10 @@ Thumbs.db
 
 # Editor
 .vscode/
+
+# Local database exports
+backend/database/*_export.sql
+backend/database/*clean*.sql
+
+# Local certificates
+*.pem
