@@ -97,10 +97,10 @@ function createCheckoutModal() {
                   <div class="checkout-title-row">
                     <h2>${t("checkout.shippingAddress")}</h2>
 
-                    <p>
-                      <span>${t("checkout.hasAccount")}</span>
-                      <a href="login.html">${t("account.login")}</a>
-                    </p>
+                  <p id="checkoutAccountHint">
+  <span>${t("checkout.hasAccount")}</span>
+  <a href="login.html">${t("account.login")}</a>
+</p>
                   </div>
 
                   <div class="checkout-field">
@@ -129,6 +129,15 @@ function createCheckoutModal() {
                     />
                     <span class="form-error" id="errModalCustomerPhone"></span>
                   </div>
+
+                  <div class="checkout-field">
+  <input
+    type="email"
+    id="modalCustomerEmail"
+    placeholder="Email"
+  />
+  <span class="form-error" id="errModalCustomerEmail"></span>
+</div>
 
                   <!-- 3. Phương thức vận chuyển -->
                   <div class="checkout-shipping-method">
@@ -271,6 +280,7 @@ function cloneCheckoutItems(items) {
       image: items[i].image,
       size: items[i].size,
       quantity: items[i].quantity,
+      stock: items[i].stock,
     });
   }
 
@@ -337,9 +347,143 @@ function resetCheckoutModalForm() {
   $("#modalCustomerName").val("");
   $("#modalCustomerAddress").val("");
   $("#modalCustomerPhone").val("");
+  $("#modalCustomerEmail").val("");
   $("#modalDiscountCode").val("");
 
   $("#checkoutModal .form-error").text("");
+}
+
+function getCustomerTokenForCheckout() {
+  return localStorage.getItem("customerToken");
+}
+
+function isDefaultAddress(address) {
+  return (
+    address.is_default === 1 ||
+    address.is_default === true ||
+    address.is_default === "1"
+  );
+}
+
+function buildCheckoutAddressText(address) {
+  let parts = [];
+
+  if (address.address) {
+    parts.push(address.address);
+  }
+
+  if (address.city) {
+    parts.push(address.city);
+  }
+
+  if (address.country) {
+    parts.push(address.country);
+  }
+
+  return parts.join(", ");
+}
+
+async function fetchCheckoutProfile() {
+  const token = getCustomerTokenForCheckout();
+
+  if (!token) {
+    return null;
+  }
+
+  const response = await fetch(API_BASE_URL + "/my/profile", {
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+
+  const result = await response.json();
+
+  if (!result.success) {
+    return null;
+  }
+
+  return result.data;
+}
+
+async function fetchCheckoutAddresses() {
+  const token = getCustomerTokenForCheckout();
+
+  if (!token) {
+    return [];
+  }
+
+  const response = await fetch(API_BASE_URL + "/my/addresses", {
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+
+  const result = await response.json();
+
+  if (!result.success) {
+    return [];
+  }
+
+  return result.data;
+}
+
+async function prefillCheckoutModalFromAccount() {
+  const token = getCustomerTokenForCheckout();
+
+  if (!token) {
+    updateCheckoutAccountHint(null);
+    return;
+  }
+
+  try {
+    const profile = await fetchCheckoutProfile();
+    const addresses = await fetchCheckoutAddresses();
+    updateCheckoutAccountHint(profile);
+
+    if (profile) {
+      $("#modalCustomerName").val(profile.full_name || "");
+      $("#modalCustomerPhone").val(profile.phone || "");
+      $("#modalCustomerEmail").val(profile.email || "");
+    }
+
+    if (addresses.length > 0) {
+      let defaultAddress = addresses.find(function (address) {
+        return isDefaultAddress(address);
+      });
+
+      if (!defaultAddress) {
+        defaultAddress = addresses[0];
+      }
+
+      $("#modalCustomerName").val(
+        defaultAddress.full_name || $("#modalCustomerName").val(),
+      );
+      $("#modalCustomerPhone").val(
+        defaultAddress.phone || $("#modalCustomerPhone").val(),
+      );
+      $("#modalCustomerAddress").val(buildCheckoutAddressText(defaultAddress));
+    }
+  } catch (error) {
+    console.log("Cannot prefill checkout modal:", error);
+  }
+}
+
+function updateCheckoutAccountHint(profile) {
+  if (profile) {
+    $("#checkoutAccountHint").html(`
+      <span>Đang mua với tài khoản:</span>
+      <strong>${profile.email}</strong>
+    `);
+
+    return;
+  }
+
+  $("#checkoutAccountHint").html(`
+    <span>${t("checkout.hasAccount")}</span>
+    <a href="login.html">${t("account.login")}</a>
+  `);
 }
 
 function openCheckoutModal(mode, items) {
@@ -359,6 +503,7 @@ function openCheckoutModal(mode, items) {
   createCheckoutModal();
   resetCheckoutModalForm();
   renderCheckoutModalSummary();
+  prefillCheckoutModalFromAccount();
 
   /*
     Nếu đang mở cart modal thì đóng lại trước,
@@ -407,35 +552,8 @@ function validateCheckoutModalForm() {
   return isValid;
 }
 
-function saveOrderDemo() {
-  let orders = JSON.parse(localStorage.getItem("orders")) || [];
-
-  let subtotal = 0;
-
-  for (let i = 0; i < checkoutModalItems.length; i++) {
-    subtotal += checkoutModalItems[i].price * checkoutModalItems[i].quantity;
-  }
-
-  orders.push({
-    customerName: $("#modalCustomerName").val().trim(),
-    customerAddress: $("#modalCustomerAddress").val().trim(),
-    customerPhone: $("#modalCustomerPhone").val().trim(),
-    paymentMethod: "qr",
-    items: checkoutModalItems,
-    total: subtotal,
-    createdAt: new Date().toISOString(),
-  });
-
-  localStorage.setItem("orders", JSON.stringify(orders));
-
-  return subtotal;
-}
-
 async function submitOrderToApi() {
-  let apiUrl =
-    typeof API_BASE_URL !== "undefined"
-      ? API_BASE_URL
-      : "http://localhost:5000/api";
+  let apiUrl = window.MELANIE_MIRA_CONFIG.API_BASE_URL;
 
   let orderItems = [];
 
@@ -449,7 +567,7 @@ async function submitOrderToApi() {
 
   let orderData = {
     customer_name: $("#modalCustomerName").val().trim(),
-    customer_email: null,
+    customer_email: $("#modalCustomerEmail").val().trim() || null,
     customer_phone: $("#modalCustomerPhone").val().trim(),
     customer_address: $("#modalCustomerAddress").val().trim(),
     note: $("#modalDiscountCode").val().trim()
@@ -466,11 +584,19 @@ async function submitOrderToApi() {
     items: orderItems,
   };
 
+  let headers = {
+    "Content-Type": "application/json",
+  };
+
+  let customerToken = getCustomerTokenForCheckout();
+
+  if (customerToken) {
+    headers.Authorization = "Bearer " + customerToken;
+  }
+
   let response = await fetch(apiUrl + "/orders", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: headers,
     body: JSON.stringify(orderData),
   });
 
@@ -483,6 +609,27 @@ async function submitOrderToApi() {
   return result.data;
 }
 
+function validateCheckoutItemsStock() {
+  for (let i = 0; i < checkoutModalItems.length; i++) {
+    let item = checkoutModalItems[i];
+    let stock = getCartItemStock(item);
+
+    if (stock !== null && item.quantity > stock) {
+      alert(
+        "Sản phẩm size " +
+          item.size +
+          " chỉ còn " +
+          stock +
+          " sản phẩm. Vui lòng giảm số lượng.",
+      );
+
+      return false;
+    }
+  }
+
+  return true;
+}
+
 async function submitCheckoutModal() {
   if (checkoutModalItems.length === 0) {
     alert(t("alert.cartEmpty"));
@@ -490,6 +637,10 @@ async function submitCheckoutModal() {
   }
 
   if (!validateCheckoutModalForm()) {
+    return;
+  }
+
+  if (!validateCheckoutItemsStock()) {
     return;
   }
 
@@ -520,6 +671,12 @@ async function submitCheckoutModal() {
 
     $("#checkoutModalForm").hide();
     $("#checkoutSuccessBox").show();
+    $(document).trigger("melanie:order-created");
+    if (getCustomerTokenForCheckout()) {
+      $("#btnCheckoutSuccessClose").text("Xem đơn hàng");
+    } else {
+      $("#btnCheckoutSuccessClose").text(t("checkout.continueShopping"));
+    }
   } catch (error) {
     console.log("Create order failed:", error);
     alert(error.message || "Không thể tạo đơn hàng. Vui lòng thử lại.");
@@ -549,6 +706,11 @@ function initCheckoutModalEvents() {
 
   $(document).on("click", "#btnCheckoutSuccessClose", function () {
     closeCheckoutModal();
+
+    if (getCustomerTokenForCheckout()) {
+      window.location.href = "profile.html";
+      return;
+    }
 
     window.location.href = "products.html";
   });
@@ -642,6 +804,34 @@ function getCartProduct(cartItem) {
   });
 }
 
+function getCartItemStock(cartItem) {
+  /*
+    Ưu tiên lấy stock đã lưu trong cart.
+    Stock này được thêm từ product-detail.js khi user chọn size.
+  */
+  if (cartItem.stock !== undefined && cartItem.stock !== null) {
+    return Number(cartItem.stock);
+  }
+
+  /*
+    Nếu sản phẩm trong products-data.js có sizes thì lấy tiếp từ đó.
+    Nếu không có thì trả null, nghĩa là chưa kiểm tra được tồn kho ở frontend.
+  */
+  let product = getCartProduct(cartItem);
+
+  if (!product || !product.sizes) {
+    return null;
+  }
+
+  for (let i = 0; i < product.sizes.length; i++) {
+    if (product.sizes[i].size === cartItem.size) {
+      return Number(product.sizes[i].stock);
+    }
+  }
+
+  return null;
+}
+
 function resetCartModalToNormal() {
   $("#cartSideModal").removeClass("buy-now-modal");
   $("#cartSideModal").removeData("buyNowItem");
@@ -693,7 +883,12 @@ function renderHeaderCartModal() {
           <div class="cart-modal-name-price">
             <div class="cart-modal-product-text">
               <h4>${productName}</h4>
-              <p>Size: ${cart[i].size}</p>
+            <p>Size: ${cart[i].size}</p>
+${
+  getCartItemStock(cart[i]) !== null
+    ? `<p>Còn lại: ${getCartItemStock(cart[i])}</p>`
+    : ""
+}
             </div>
 
             <span>${formatCartMoney(cart[i].price)}</span>
@@ -747,6 +942,13 @@ function changeHeaderCartQuantity(index, type) {
   }
 
   if (type === "plus") {
+    let stock = getCartItemStock(cart[index]);
+
+    if (stock !== null && cart[index].quantity >= stock) {
+      alert("Bạn đã thêm tối đa số lượng còn lại của size này.");
+      return;
+    }
+
     cart[index].quantity += 1;
   }
 
@@ -1223,11 +1425,25 @@ function applyStaticLanguage() {
 /* Chạy sớm để products.js dùng được dữ liệu đúng ngôn ngữ */
 applyProductLanguageData();
 
+function updateAccountIconLink() {
+  const customerToken = localStorage.getItem("customerToken");
+
+  if (customerToken) {
+    $(".account-toggle").attr("href", "profile.html");
+    $(".account-toggle").attr("title", "Tài khoản của tôi");
+    return;
+  }
+
+  $(".account-toggle").attr("href", "login.html");
+  $(".account-toggle").attr("title", "Đăng nhập");
+}
+
 $(document).ready(function () {
   applyLanguageFont();
   createSharedCartModal();
   updateCartCount();
   applyStaticLanguage();
+  updateAccountIconLink();
   initSharedCartModalEvents();
   initCheckoutModalEvents();
 

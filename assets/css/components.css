@@ -3553,7 +3553,8 @@
 }
 
 /* =========================
-   Login page final layout
+   Auth pages final layout
+   Dùng cho login.html và verify-email.html
    ========================= */
 
 .auth-page-body {
@@ -3643,4 +3644,817 @@
   font-size: 14px;
   color: #2563eb;
   white-space: nowrap;
+}
+/* =========================
+   Verify email page
+   ========================= */
+
+.verify-email-box {
+  max-width: 430px;
+}
+
+.verify-email-desc {
+  color: var(--color-muted);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.verify-email-desc span {
+  color: var(--color-muted);
+}
+
+.verify-email-desc a {
+  color: #2563eb;
+  margin-left: 10px;
+  font-weight: 500;
+}
+
+.otp-input-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+
+.otp-input {
+  width: 100%;
+  height: 64px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-primary);
+  outline: none;
+  transition: var(--transition-fast);
+}
+
+.otp-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px #2563eb;
+}
+
+.verify-submit-btn {
+  width: 100%;
+  height: 52px;
+  margin-top: 22px;
+
+  border: none;
+  border-radius: 8px;
+
+  background-color: var(--color-primary) !important;
+  color: var(--color-white) !important;
+
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1;
+
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.verify-submit-btn:hover {
+  background-color: var(--color-secondary) !important;
+}
+
+.verify-submit-btn:active {
+  transform: scale(0.98);
+}
+
+.resend-code-btn {
+  display: block;
+  margin: 18px auto 0;
+
+  border: none;
+  background-color: transparent;
+
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.resend-code-btn:hover {
+  text-decoration: underline;
+}
+/* =========================
+   Customer profile page
+   ========================= */
+
+.profile-page-body {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.profile-page {
+  min-height: 100dvh;
+  background-color: var(--color-white);
+  color: var(--color-primary);
+  overflow-x: hidden;
+}
+
+.profile-container {
+  width: min(1120px, calc(100% - 36px));
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 20px 0 18px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-logo {
+  margin-bottom: 24px;
+}
+
+.profile-logo a {
+  display: inline-flex;
+  align-items: center;
+}
+
+.profile-logo img {
+  width: 150px;
+  height: auto;
+  object-fit: contain;
+}
+
+.profile-layout {
+  display: grid;
+  grid-template-columns: 210px 1fr;
+  gap: 70px;
+  align-items: flex-start;
+}
+
+.profile-sidebar {
+  padding-top: 68px;
+}
+
+.profile-sidebar-link {
+  display: block;
+  color: var(--color-muted);
+  font-size: 19px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.profile-sidebar-link.active {
+  color: var(--color-primary);
+  font-weight: 800;
+}
+
+.profile-content {
+  max-width: 680px;
+}
+
+.profile-top,
+.profile-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.profile-top h1,
+.profile-section-title h2 {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: 0;
+}
+
+.profile-outline-btn {
+  height: 40px;
+  padding: 0 17px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background-color: var(--color-white);
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.profile-outline-btn:hover {
+  border-color: var(--color-primary);
+}
+
+.profile-card {
+  width: 100%;
+  min-height: 58px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-white);
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.04);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+
+  padding: 0 18px;
+}
+
+.profile-info-card {
+  margin-bottom: 28px;
+}
+
+.profile-card span {
+  color: var(--color-muted);
+  font-size: 14px;
+}
+
+.profile-card strong {
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: right;
+  word-break: break-word;
+}
+
+.profile-empty-box {
+  min-height: 58px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background-color: #f7f7f7;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 0 18px;
+  margin-bottom: 28px;
+}
+
+.profile-empty-box span {
+  color: var(--color-muted);
+  font-size: 18px;
+}
+
+.profile-empty-box p {
+  color: var(--color-muted);
+  font-size: 14px;
+  margin-bottom: 0;
+}
+
+.marketing-title {
+  margin-bottom: 14px;
+}
+
+.profile-marketing-card {
+  margin-bottom: 28px;
+}
+
+.profile-switch {
+  position: relative;
+  width: 46px;
+  height: 26px;
+  margin-bottom: 0;
+  cursor: pointer;
+}
+
+.profile-switch input {
+  display: none;
+}
+
+.profile-switch span {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background-color: #d4d4d4;
+  transition: var(--transition-fast);
+}
+
+.profile-switch span::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  left: 3px;
+  top: 3px;
+  border-radius: 50%;
+  background-color: var(--color-white);
+  transition: var(--transition-fast);
+}
+
+.profile-switch input:checked + span {
+  background-color: #2563eb;
+}
+
+.profile-switch input:checked + span::after {
+  transform: translateX(20px);
+}
+
+.profile-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.profile-logout-btn {
+  height: 46px;
+  padding: 0 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background-color: var(--color-white);
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.profile-logout-btn:hover {
+  border-color: var(--color-primary);
+}
+
+.profile-logout-all-btn {
+  border: none;
+  background-color: transparent;
+  color: #2563eb;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.profile-footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  padding-top: 20px;
+}
+
+.profile-footer a {
+  color: #2563eb;
+  font-size: 13px;
+  text-decoration: underline;
+}
+/* =========================
+   Profile edit modal
+   ========================= */
+
+.profile-phone-card {
+  margin-bottom: 28px;
+}
+
+.profile-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 7000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.profile-modal-overlay.active {
+  display: flex;
+}
+
+.profile-modal {
+  width: min(620px, 100%);
+  background-color: var(--color-white);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+  padding: 24px;
+}
+
+.profile-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.profile-modal-header h2 {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: 0;
+}
+
+.profile-modal-header button {
+  border: none;
+  background-color: transparent;
+  color: var(--color-muted);
+  font-size: 32px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.profile-modal-field {
+  margin-bottom: 14px;
+}
+
+.profile-modal-field label {
+  display: block;
+  color: var(--color-muted);
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.profile-modal-field input {
+  width: 100%;
+  height: 50px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0 14px;
+  outline: none;
+  font-size: 14px;
+  color: var(--color-primary);
+}
+
+.profile-modal-field input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px #2563eb;
+}
+
+.profile-modal-field input:disabled {
+  background-color: #f7f7f7;
+  color: var(--color-muted);
+}
+
+.profile-modal-field small {
+  display: block;
+  color: var(--color-muted);
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+.profile-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.profile-cancel-btn,
+.profile-save-btn {
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.profile-cancel-btn {
+  border: none;
+  background-color: transparent;
+  color: #2563eb;
+}
+
+.profile-save-btn {
+  border: none;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.profile-save-btn:hover {
+  background-color: var(--color-secondary);
+}
+/* =========================
+   Profile address section
+   ========================= */
+.profile-address-card {
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-white);
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.04);
+  padding: 16px 18px;
+  margin-bottom: 22px;
+}
+
+.profile-address-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.profile-address-card-header strong {
+  color: var(--color-primary);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.address-default-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background-color: #eef4ff;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.profile-address-card p {
+  color: var(--color-muted);
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.profile-address-card p:last-child {
+  margin-bottom: 0;
+}
+
+.address-modal {
+  max-width: 680px;
+}
+
+.address-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.address-default-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+  color: var(--color-primary);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.address-default-row input {
+  width: 18px;
+  height: 18px;
+}
+/* =========================
+   Address action buttons
+   ========================= */
+
+.address-action-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.address-action-btn {
+  border: none;
+  background-color: transparent;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+
+.address-action-btn:hover {
+  text-decoration: underline;
+}
+
+.address-delete-btn {
+  color: #dc2626;
+}
+/* =========================
+   Profile panels and orders
+   ========================= */
+
+.profile-sidebar-link {
+  border: none;
+  background-color: transparent;
+  text-align: left;
+  padding: 0;
+  cursor: pointer;
+}
+
+.profile-panel {
+  display: none;
+}
+
+.profile-panel.active {
+  display: block;
+}
+
+.profile-order-card {
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-white);
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.04);
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+
+.profile-order-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.profile-order-top strong {
+  color: var(--color-primary);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.profile-order-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background-color: #eef4ff;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.profile-order-card p {
+  color: var(--color-muted);
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.profile-order-card p:last-child {
+  margin-bottom: 0;
+}
+
+.profile-order-total {
+  color: var(--color-primary) !important;
+  font-weight: 800;
+}
+/* =========================
+   Order detail in profile
+   ========================= */
+
+.order-detail-btn {
+  border: none;
+  background-color: transparent;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 0;
+  margin-top: 8px;
+  cursor: pointer;
+}
+
+.order-detail-btn:hover {
+  text-decoration: underline;
+}
+
+.order-detail-box {
+  display: none;
+  margin-top: 14px;
+  border-top: 1px solid var(--color-border);
+  padding-top: 14px;
+}
+
+.order-detail-box.active {
+  display: block;
+}
+
+.order-detail-content h3 {
+  font-size: 14px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.order-product-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.order-product-row:last-child {
+  border-bottom: none;
+}
+
+.order-product-row strong {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.order-product-row p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.order-product-row span {
+  font-size: 14px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+/* =========================
+   Product size stock state
+   ========================= */
+
+.size-option.disabled,
+.size-option:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.product-action-icon:disabled,
+.product-buy-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+/* =========================
+   Cancel order button
+   ========================= */
+
+.order-action-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.order-cancel-btn {
+  border: none;
+  background-color: transparent;
+  color: #dc2626;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 0;
+  cursor: pointer;
+}
+
+.order-cancel-btn:hover {
+  text-decoration: underline;
+}
+/* =========================
+   Order status colors
+   ========================= */
+
+.profile-order-status.status-pending {
+  background-color: #eef4ff;
+  color: #2563eb;
+}
+
+.profile-order-status.status-confirmed {
+  background-color: #f3e8ff;
+  color: #7e22ce;
+}
+
+.profile-order-status.status-shipping {
+  background-color: #fff7ed;
+  color: #ea580c;
+}
+
+.profile-order-status.status-completed {
+  background-color: #ecfdf5;
+  color: #059669;
+}
+
+.profile-order-status.status-cancelled {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+
+.profile-order-status.status-default {
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+/* =========================
+   Order filter
+   ========================= */
+
+.order-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.order-filter-btn {
+  border: 1px solid var(--color-border);
+  background-color: var(--color-white);
+  color: var(--color-muted);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.order-filter-btn:hover,
+.order-filter-btn.active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-white);
 }

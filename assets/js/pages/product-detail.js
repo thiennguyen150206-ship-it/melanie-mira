@@ -66,10 +66,17 @@ async function loadProductDetail() {
       if (result.success) {
         currentProduct = convertApiProduct(result.data);
       }
+    } else if (productId) {
+      let response = await fetch(API_BASE_URL + "/products/" + productId);
+      let result = await response.json();
+
+      if (result.success) {
+        currentProduct = convertApiProduct(result.data);
+      }
     }
 
     /*
-      Nếu chưa có currentProduct thì dùng dữ liệu dự phòng từ products-data.js.
+    Nếu chưa có currentProduct thì dùng dữ liệu dự phòng từ products-data.js.
       Trường hợp này dùng khi:
       - Backend chưa chạy
       - API lỗi
@@ -120,6 +127,33 @@ function createProductImages(product) {
 
   return [product.image];
 }
+
+function getProductSizeStock(product, size) {
+  if (!product || !product.sizes || product.sizes.length === 0) {
+    return null;
+  }
+
+  for (let i = 0; i < product.sizes.length; i++) {
+    if (product.sizes[i].size === size) {
+      return Number(product.sizes[i].stock);
+    }
+  }
+
+  return null;
+}
+
+function getCartQuantityByProductAndSize(productId, size) {
+  let cart = getCart();
+
+  for (let i = 0; i < cart.length; i++) {
+    if (cart[i].id === productId && cart[i].size === size) {
+      return Number(cart[i].quantity);
+    }
+  }
+
+  return 0;
+}
+
 /* =========================
    Product cart helpers
    ========================= */
@@ -131,6 +165,7 @@ function createCurrentCartItem() {
     image: currentProduct.image,
     size: selectedSize,
     quantity: 1,
+    stock: getProductSizeStock(currentProduct, selectedSize),
   };
 }
 
@@ -200,6 +235,60 @@ function renderProductImages(product) {
   $("#productDetailGallery").html(html);
 }
 
+function renderProductSizes(product) {
+  let sizes = product.sizes || [];
+  let html = "";
+
+  /*
+    Nếu API chưa trả sizes thì dùng tạm S/M/L như cũ.
+    Trường hợp này giúp web không bị hỏng khi backend lỗi.
+  */
+  if (sizes.length === 0) {
+    sizes = [
+      { size: "S", stock: 1 },
+      { size: "M", stock: 1 },
+      { size: "L", stock: 1 },
+    ];
+  }
+
+  for (let i = 0; i < sizes.length; i++) {
+    let sizeItem = sizes[i];
+    let disabledClass = "";
+    let disabledAttr = "";
+
+    if (Number(sizeItem.stock) <= 0) {
+      disabledClass = " disabled";
+      disabledAttr = "disabled";
+    }
+
+    html += `
+      <button
+        type="button"
+        class="size-option${disabledClass}"
+        data-size="${sizeItem.size}"
+        ${disabledAttr}
+      >
+        ${sizeItem.size}
+      </button>
+    `;
+  }
+
+  $(".size-options").html(html);
+
+  let hasStock = sizes.some(function (sizeItem) {
+    return Number(sizeItem.stock) > 0;
+  });
+
+  if (!hasStock) {
+    $("#sizeMessage").text("Sản phẩm hiện đã hết hàng.");
+    $("#btnAddToCartDetail").prop("disabled", true);
+    $("#btnBuyNow").prop("disabled", true);
+  } else {
+    $("#btnAddToCartDetail").prop("disabled", false);
+    $("#btnBuyNow").prop("disabled", false);
+  }
+}
+
 function renderProductInfo(product) {
   let name = getProductName(product);
   let description = getProductDescription(product);
@@ -214,6 +303,7 @@ function renderProductInfo(product) {
     <li>${t("product.defaultDetail1")}</li>
     <li>${t("product.defaultDetail2")}</li>
   `);
+  renderProductSizes(product);
 }
 function renderRecommendProducts(product) {
   let maxRecommend = 4;
@@ -292,6 +382,24 @@ function addProductToCart() {
     return;
   }
 
+  let selectedStock = getProductSizeStock(currentProduct, selectedSize);
+  let currentCartQuantity = getCartQuantityByProductAndSize(
+    currentProduct.id,
+    selectedSize,
+  );
+
+  if (selectedStock !== null && selectedStock <= 0) {
+    $("#sizeMessage").text("Size này hiện đã hết hàng.");
+    return;
+  }
+
+  if (selectedStock !== null && currentCartQuantity >= selectedStock) {
+    $("#sizeMessage").text(
+      "Bạn đã thêm tối đa số lượng còn lại của size " + selectedSize + ".",
+    );
+    return;
+  }
+
   let cart = getCart();
 
   let index = cart.findIndex(function (item) {
@@ -338,6 +446,13 @@ function openBuyNowCheckoutModal() {
 
   if (selectedSize === "") {
     $("#sizeMessage").text(t("product.sizeNeed"));
+    return;
+  }
+
+  let selectedStock = getProductSizeStock(currentProduct, selectedSize);
+
+  if (selectedStock !== null && selectedStock <= 0) {
+    $("#sizeMessage").text("Size này hiện đã hết hàng.");
     return;
   }
 
@@ -448,7 +563,11 @@ $(document).ready(async function () {
   renderProductDetail();
   initProductImageZoom();
 
-  $(".size-option").click(function () {
+  $(document).on("click", ".size-option", function () {
+    if ($(this).hasClass("disabled") || $(this).prop("disabled")) {
+      return;
+    }
+
     $(".size-option").removeClass("active");
     $(this).addClass("active");
 
@@ -479,5 +598,14 @@ $(document).ready(async function () {
     } else {
       $(".detail-toggle-icon").text("+");
     }
+  });
+  $(document).on("melanie:order-created", async function () {
+    selectedSize = "";
+    currentProduct = null;
+
+    await loadProductDetail();
+    renderProductDetail();
+
+    $("#sizeMessage").text(t("product.sizeRequired"));
   });
 });

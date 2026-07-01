@@ -1743,3 +1743,98 @@
     line-height: 1.45;
   }
 }
+/* =========================
+   Customer profile responsive
+   ========================= */
+
+@media screen and (max-width: 768px) {
+  .profile-page-body {
+    overflow: auto;
+  }
+
+  .profile-page {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .profile-container {
+    width: calc(100% - 32px);
+    height: auto;
+    min-height: 100dvh;
+    padding: 24px 0 22px;
+  }
+
+  .profile-logo {
+    margin-bottom: 30px;
+  }
+
+  .profile-logo img {
+    width: 135px;
+  }
+
+  .profile-layout {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+
+  .profile-sidebar {
+    display: flex;
+    gap: 18px;
+    padding-top: 0;
+  }
+
+  .profile-sidebar-link {
+    font-size: 18px;
+    margin-bottom: 0;
+  }
+
+  .profile-content {
+    max-width: 100%;
+  }
+
+  .profile-card {
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    padding: 14px 16px;
+    gap: 6px;
+  }
+
+  .profile-card strong {
+    text-align: left;
+  }
+
+  .profile-marketing-card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .profile-actions {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .profile-footer {
+    gap: 14px;
+    padding-top: 36px;
+  }
+}
+/* =========================
+   Profile address responsive
+   ========================= */
+
+@media screen and (max-width: 768px) {
+  .address-field-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .profile-address-card-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+}

@@ -92,7 +92,7 @@ function createProductItem(product) {
 
   let detailUrl = product.slug
     ? "product-detail.html?slug=" + product.slug
-    : "product-detail.html?id=" + product.id;
+    : "product-detail.html?slug=" + product.slug;
 
   return `
     <div class="col-lg-3 col-md-4 col-6">

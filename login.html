@@ -10,8 +10,8 @@
     <link rel="stylesheet" href="assets/css/components.css" />
     <link rel="stylesheet" href="assets/css/responsive.css" />
     <script defer src="assets/js/jquery-4.0.0.min.js"></script>
+    <script defer src="assets/js/core/config.js"></script>
     <script defer src="assets/js/core/api.js"></script>
-    <script defer src="assets/js/core/header.js"></script>
     <script defer src="assets/js/pages/auth.js"></script>
   </head>
 
@@ -24,8 +24,8 @@
       </div>
 
       <section class="auth-simple-box">
-        <h1>Log in</h1>
-        <p>Log in or create an account</p>
+        <h1 id="authTitle">Log in</h1>
+        <p id="authSubtitle">Log in or create an account</p>
 
         <div class="auth-social-row">
           <button
@@ -57,7 +57,7 @@
 
         <div class="auth-divider">
           <span></span>
-          <p>or</p>
+          <p id="authOrText">or</p>
           <span></span>
         </div>
 
@@ -71,20 +71,20 @@
 
           <label class="auth-check-row">
             <input type="checkbox" id="authReceiveNews" />
-            <span>
+            <span id="authReceiveNewsText">
               I agree to receive information and promotions from Melanie Mira
               via Email/Zalo.
             </span>
           </label>
 
           <p class="auth-note">
-            By continuing, you agree to the
-            <a href="#">Terms of Service</a>
+            <span id="authNoteText">By continuing, you agree to the</span>
+            <a href="#" id="authTermsText">Terms of Service</a>
           </p>
         </form>
       </section>
 
-      <a href="#" class="auth-privacy">Privacy Policy</a>
+      <a href="#" class="auth-privacy" id="authPrivacyText">Privacy Policy</a>
     </main>
   </body>
 </html>

@@ -1,0 +1,1113 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - Melanie Mira</title>
+
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+
+    <style>
+      body {
+        background: #f8f9fa;
+      }
+
+      .admin-page {
+        padding: 30px 0;
+      }
+
+      .admin-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      }
+
+      .order-status {
+        min-width: 130px;
+      }
+
+      .admin-message {
+        min-height: 24px;
+        margin-top: 10px;
+        font-weight: 600;
+      }
+
+      .admin-message-success {
+        color: #059669;
+      }
+
+      .admin-message-error {
+        color: #dc2626;
+      }
+
+      .admin-order-detail {
+        background: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        padding: 18px;
+      }
+
+      .admin-order-detail h3 {
+        font-size: 22px;
+        margin-bottom: 12px;
+      }
+
+      #orderDetailInfo p {
+        margin-bottom: 6px;
+      }
+      .admin-stats-row {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 12px;
+      }
+
+      .admin-stat-card {
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        background: #fff;
+        padding: 12px;
+      }
+
+      .admin-stat-card span {
+        display: block;
+        color: #6c757d;
+        font-size: 13px;
+        margin-bottom: 4px;
+      }
+
+      .admin-stat-card strong {
+        font-size: 22px;
+        color: #111;
+      }
+
+      @media (max-width: 992px) {
+        .admin-stats-row {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      @media (max-width: 576px) {
+        .admin-stats-row {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      .order-status.status-pending {
+        background-color: #eef4ff;
+        color: #2563eb;
+        font-weight: 700;
+      }
+
+      .order-status.status-confirmed {
+        background-color: #f3e8ff;
+        color: #7e22ce;
+        font-weight: 700;
+      }
+
+      .order-status.status-shipping {
+        background-color: #fff7ed;
+        color: #ea580c;
+        font-weight: 700;
+      }
+
+      .order-status.status-completed {
+        background-color: #ecfdf5;
+        color: #059669;
+        font-weight: 700;
+      }
+
+      .order-status.status-cancelled {
+        background-color: #fef2f2;
+        color: #dc2626;
+        font-weight: 700;
+      }
+
+      .order-status:disabled {
+        opacity: 0.9;
+        cursor: not-allowed;
+      }
+
+      .btn-update-status:disabled {
+        cursor: not-allowed;
+      }
+      .admin-stat-filter {
+        cursor: pointer;
+        transition: 0.2s ease;
+      }
+
+      .admin-stat-filter:hover {
+        transform: translateY(-2px);
+        border-color: #212529;
+      }
+
+      .admin-stat-filter.active {
+        border-color: #212529;
+        box-shadow: 0 0 0 2px rgba(33, 37, 41, 0.08);
+      }
+      .admin-stock-section {
+        margin-top: 40px;
+      }
+
+      .stock-product-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .stock-product-image {
+        width: 48px;
+        height: 64px;
+        object-fit: cover;
+        border-radius: 6px;
+        background-color: #f3f4f6;
+      }
+
+      .stock-product-name {
+        font-weight: 700;
+      }
+
+      .stock-product-slug {
+        font-size: 13px;
+        color: #6b7280;
+      }
+
+      .stock-input {
+        width: 80px;
+        text-align: center;
+      }
+
+      .stock-low {
+        background-color: #fef2f2;
+        color: #dc2626;
+        font-weight: 700;
+      }
+
+      .stock-ok {
+        background-color: #ecfdf5;
+        color: #059669;
+        font-weight: 700;
+      }
+      .admin-stock-stats-row {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 12px;
+      }
+
+      .stock-stat-filter {
+        cursor: pointer;
+        transition: 0.2s ease;
+      }
+
+      .stock-stat-filter:hover {
+        transform: translateY(-2px);
+        border-color: #212529;
+      }
+
+      .stock-stat-filter.active {
+        border-color: #212529;
+        box-shadow: 0 0 0 2px rgba(33, 37, 41, 0.08);
+      }
+
+      @media (max-width: 992px) {
+        .admin-stock-stats-row {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      @media (max-width: 576px) {
+        .admin-stock-stats-row {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      .admin-product-section {
+        margin-top: 40px;
+      }
+
+      .product-admin-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .product-admin-image {
+        width: 52px;
+        height: 68px;
+        object-fit: cover;
+        border-radius: 6px;
+        background-color: #f3f4f6;
+      }
+
+      .product-admin-name {
+        font-weight: 700;
+      }
+
+      .product-admin-slug {
+        font-size: 13px;
+        color: #6b7280;
+      }
+
+      .product-status-badge {
+        display: inline-block;
+        min-width: 90px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 700;
+        text-align: center;
+      }
+
+      .product-status-visible {
+        background-color: #ecfdf5;
+        color: #059669;
+      }
+
+      .product-status-hidden {
+        background-color: #fef2f2;
+        color: #dc2626;
+      }
+
+      .product-action-row {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .product-stock-mini {
+        font-size: 13px;
+        color: #374151;
+        line-height: 1.5;
+      }
+      .product-modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background-color: rgba(0, 0, 0, 0.45);
+      }
+
+      .product-modal-overlay.active {
+        display: flex;
+      }
+
+      .product-modal {
+        width: 100%;
+        max-width: 900px;
+        max-height: 90vh;
+        overflow-y: auto;
+        background: #fff;
+        border-radius: 14px;
+        padding: 22px;
+      }
+
+      .product-modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+
+      .product-modal-header h3 {
+        margin: 0;
+      }
+
+      .product-modal-close {
+        border: 0;
+        background: transparent;
+        font-size: 28px;
+        line-height: 1;
+      }
+
+      .product-form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+      }
+
+      .product-form-field label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+
+      .product-form-field.full {
+        grid-column: 1 / -1;
+      }
+
+      .product-form-error {
+        display: block;
+        margin-top: 4px;
+        color: #dc2626;
+        font-size: 13px;
+      }
+
+      .product-size-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+
+      @media (max-width: 768px) {
+        .product-form-grid,
+        .product-size-row {
+          grid-template-columns: 1fr;
+        }
+      }
+      .admin-category-section {
+        margin-top: 40px;
+      }
+
+      .category-action-row {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .category-slug-text {
+        color: #6b7280;
+        font-size: 13px;
+      }
+      .admin-quick-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 16px 0 24px;
+      }
+
+      .admin-quick-nav a {
+        text-decoration: none;
+        border: 1px solid #dee2e6;
+        border-radius: 999px;
+        padding: 8px 14px;
+        color: #212529;
+        background: #fff;
+        font-weight: 600;
+        font-size: 14px;
+        transition: 0.2s ease;
+      }
+
+      .admin-quick-nav a:hover {
+        border-color: #212529;
+        background: #f8f9fa;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container admin-page">
+      <div class="admin-card">
+        <h1 class="mb-3">Quản trị Melanie Mira</h1>
+
+        <div class="admin-quick-nav">
+          <a href="#adminOrderSection">Đơn hàng</a>
+          <a href="#adminStockSection">Tồn kho</a>
+          <a href="#adminCategorySection">Danh mục</a>
+          <a href="#adminProductSection">Sản phẩm</a>
+        </div>
+
+        <p id="adminOrderSection">Quản lý đơn hàng</p>
+        <div class="admin-stats-row mb-4">
+          <div
+            class="admin-stat-card admin-stat-filter active"
+            data-status="all"
+          >
+            <span>Tổng đơn</span>
+            <strong id="statAllOrders">0</strong>
+          </div>
+
+          <div class="admin-stat-card admin-stat-filter" data-status="pending">
+            <span>Chờ xác nhận</span>
+            <strong id="statPendingOrders">0</strong>
+          </div>
+
+          <div
+            class="admin-stat-card admin-stat-filter"
+            data-status="confirmed"
+          >
+            <span>Đã xác nhận</span>
+            <strong id="statConfirmedOrders">0</strong>
+          </div>
+
+          <div class="admin-stat-card admin-stat-filter" data-status="shipping">
+            <span>Đang giao</span>
+            <strong id="statShippingOrders">0</strong>
+          </div>
+
+          <div
+            class="admin-stat-card admin-stat-filter"
+            data-status="completed"
+          >
+            <span>Hoàn thành</span>
+            <strong id="statCompletedOrders">0</strong>
+          </div>
+
+          <div
+            class="admin-stat-card admin-stat-filter"
+            data-status="cancelled"
+          >
+            <span>Đã hủy</span>
+            <strong id="statCancelledOrders">0</strong>
+          </div>
+        </div>
+
+        <div class="row mb-3 align-items-center" id="adminLoginRow">
+          <div class="col-md-6" id="adminKeyBox">
+            <input
+              type="password"
+              id="adminKeyInput"
+              class="form-control"
+              placeholder="Nhập admin key"
+            />
+          </div>
+
+          <div class="col-md-3" id="adminLoadBox">
+            <button id="btnLoadOrders" class="btn btn-dark w-100">
+              Tải đơn hàng
+            </button>
+          </div>
+
+          <div class="col-md-3" id="adminLogoutBox">
+            <button id="btnAdminLogout" class="btn btn-outline-danger w-100">
+              Đăng xuất admin
+            </button>
+          </div>
+        </div>
+
+        <div id="adminLoginStatus" class="mb-3 text-muted">
+          Chưa đăng nhập admin
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <select id="orderStatusFilter" class="form-select">
+              <option value="all">Tất cả trạng thái</option>
+              <option value="pending">Chờ xác nhận</option>
+              <option value="confirmed">Đã xác nhận</option>
+              <option value="shipping">Đang giao</option>
+              <option value="completed">Hoàn thành</option>
+              <option value="cancelled">Đã hủy</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <input
+              type="text"
+              id="orderSearchInput"
+              class="form-control"
+              placeholder="Tìm theo mã đơn, tên khách, số điện thoại, địa chỉ..."
+            />
+          </div>
+
+          <div class="col-md-2">
+            <button
+              id="btnClearOrderFilter"
+              class="btn btn-outline-secondary w-100"
+            >
+              Xóa lọc
+            </button>
+          </div>
+        </div>
+
+        <div id="adminMessage" class="admin-message"></div>
+
+        <div class="table-responsive mt-4">
+          <table class="table table-bordered align-middle">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Ngày đặt</th>
+                <th>Khách hàng</th>
+                <th>SĐT</th>
+                <th>Địa chỉ</th>
+                <th>Tổng tiền</th>
+                <th>Thanh toán</th>
+                <th>Trạng thái</th>
+                <th>Cập nhật</th>
+                <th>Chi tiết</th>
+              </tr>
+            </thead>
+
+            <tbody id="ordersTableBody">
+              <tr>
+                <td colspan="10" class="text-center">Chưa tải đơn hàng</td>
+              </tr>
+            </tbody>
+          </table>
+          <!-- Phân trang đơn hàng admin -->
+          <div
+            class="d-flex justify-content-between align-items-center mt-3"
+            id="orderPaginationBox"
+          >
+            <button
+              type="button"
+              class="btn btn-outline-dark btn-sm"
+              id="btnPrevOrderPage"
+            >
+              Trang trước
+            </button>
+
+            <span id="orderPaginationInfo" class="text-muted">
+              Trang 1 / 1
+            </span>
+
+            <button
+              type="button"
+              class="btn btn-outline-dark btn-sm"
+              id="btnNextOrderPage"
+            >
+              Trang sau
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="admin-order-detail mt-4"
+          id="orderDetailBox"
+          style="display: none"
+        >
+          <h3>Chi tiết đơn hàng #<span id="detailOrderId"></span></h3>
+
+          <div id="orderDetailInfo" class="mb-3"></div>
+
+          <div class="table-responsive">
+            <table class="table table-bordered align-middle">
+              <thead>
+                <tr>
+                  <th>Sản phẩm</th>
+                  <th>Size</th>
+                  <th>Số lượng</th>
+                  <th>Giá</th>
+                  <th>Tạm tính</th>
+                </tr>
+              </thead>
+
+              <tbody id="orderDetailItems"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <hr class="my-5" />
+
+        <section class="admin-stock-section" id="adminStockSection">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h3 class="mb-1">Quản lý tồn kho</h3>
+              <p class="text-muted mb-0">
+                Cập nhật số lượng sản phẩm theo từng size S, M, L.
+              </p>
+            </div>
+
+            <button id="btnLoadProductStock" class="btn btn-dark">
+              Tải tồn kho
+            </button>
+          </div>
+
+          <div id="stockMessage" class="mb-3"></div>
+
+          <div class="admin-stock-stats-row mb-3">
+            <div
+              class="admin-stat-card stock-stat-filter active"
+              data-stock-filter="all"
+            >
+              <span>Tổng sản phẩm</span>
+              <strong id="statStockProducts">0</strong>
+            </div>
+
+            <div
+              class="admin-stat-card stock-stat-filter"
+              data-stock-filter="out"
+            >
+              <span>Có size hết hàng</span>
+              <strong id="statOutStockProducts">0</strong>
+            </div>
+
+            <div
+              class="admin-stat-card stock-stat-filter"
+              data-stock-filter="low"
+            >
+              <span>Có size sắp hết</span>
+              <strong id="statLowStockProducts">0</strong>
+            </div>
+
+            <div
+              class="admin-stat-card stock-stat-filter"
+              data-stock-filter="available"
+            >
+              <span>Còn hàng đầy đủ</span>
+              <strong id="statAvailableStockProducts">0</strong>
+            </div>
+
+            <div class="admin-stat-card">
+              <span>Tổng tồn kho</span>
+              <strong id="statTotalStockItems">0</strong>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-7">
+              <input
+                type="text"
+                id="stockSearchInput"
+                class="form-control"
+                placeholder="Tìm theo ID, tên sản phẩm, slug, danh mục..."
+              />
+            </div>
+
+            <div class="col-md-3">
+              <select id="stockStatusFilter" class="form-select">
+                <option value="all">Tất cả tồn kho</option>
+                <option value="out">Có size hết hàng</option>
+                <option value="low">Có size sắp hết</option>
+                <option value="available">Còn hàng đầy đủ</option>
+              </select>
+            </div>
+
+            <div class="col-md-2">
+              <button
+                id="btnClearStockFilter"
+                class="btn btn-outline-secondary w-100"
+              >
+                Xóa lọc
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-bordered align-middle">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Sản phẩm</th>
+                  <th>Danh mục</th>
+                  <th>Size S</th>
+                  <th>Size M</th>
+                  <th>Size L</th>
+                  <th>Cập nhật</th>
+                </tr>
+              </thead>
+
+              <tbody id="stockTableBody">
+                <tr>
+                  <td colspan="7" class="text-center">Chưa tải tồn kho</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <hr class="my-5" />
+
+        <section class="admin-category-section" id="adminCategorySection">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h3 class="mb-1">Quản lý danh mục</h3>
+              <p class="text-muted mb-0">
+                Thêm và chỉnh sửa danh mục sản phẩm.
+              </p>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button id="btnOpenCategoryModal" class="btn btn-outline-dark">
+                Thêm danh mục
+              </button>
+
+              <button id="btnLoadAdminCategories" class="btn btn-dark">
+                Tải danh mục
+              </button>
+            </div>
+          </div>
+
+          <div id="categoryAdminMessage" class="mb-3"></div>
+
+          <div class="table-responsive">
+            <table class="table table-bordered align-middle">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Tên tiếng Việt</th>
+                  <th>Tên tiếng Anh</th>
+                  <th>Slug</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+
+              <tbody id="adminCategoriesTableBody">
+                <tr>
+                  <td colspan="5" class="text-center">Chưa tải danh mục</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <section class="admin-product-section" id="adminProductSection">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h3 class="mb-1">Quản lý sản phẩm</h3>
+              <p class="text-muted mb-0">
+                Xem, tìm kiếm, lọc và ẩn/hiện sản phẩm trên website.
+              </p>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button
+                id="btnOpenCreateProductModal"
+                class="btn btn-outline-dark"
+              >
+                Thêm sản phẩm
+              </button>
+
+              <button id="btnLoadAdminProducts" class="btn btn-dark">
+                Tải sản phẩm
+              </button>
+            </div>
+          </div>
+
+          <div id="productAdminMessage" class="mb-3"></div>
+
+          <div class="row mb-3">
+            <div class="col-md-5">
+              <input
+                type="text"
+                id="adminProductSearchInput"
+                class="form-control"
+                placeholder="Tìm theo ID, tên sản phẩm, slug..."
+              />
+            </div>
+
+            <div class="col-md-3">
+              <select id="adminProductCategoryFilter" class="form-select">
+                <option value="all">Tất cả danh mục</option>
+              </select>
+            </div>
+
+            <div class="col-md-2">
+              <select id="adminProductStatusFilter" class="form-select">
+                <option value="all">Tất cả trạng thái</option>
+                <option value="visible">Đang hiển thị</option>
+                <option value="hidden">Đang ẩn</option>
+              </select>
+            </div>
+
+            <div class="col-md-2">
+              <button
+                id="btnClearAdminProductFilter"
+                class="btn btn-outline-secondary w-100"
+              >
+                Xóa lọc
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-bordered align-middle">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Sản phẩm</th>
+                  <th>Danh mục</th>
+                  <th>Giá</th>
+                  <th>Tồn kho</th>
+                  <th>Trạng thái</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+
+              <tbody id="adminProductsTableBody">
+                <tr>
+                  <td colspan="7" class="text-center">Chưa tải sản phẩm</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
+    <div class="product-modal-overlay" id="createProductModalOverlay">
+      <div class="product-modal">
+        <div class="product-modal-header">
+          <h3 id="productFormTitle">Thêm sản phẩm mới</h3>
+          <button
+            type="button"
+            class="product-modal-close"
+            id="btnCloseCreateProductModal"
+          >
+            ×
+          </button>
+        </div>
+
+        <form id="createProductForm">
+          <input type="hidden" id="editingProductId" />
+          <div class="product-form-grid">
+            <div class="product-form-field">
+              <label>Danh mục</label>
+              <select id="createProductCategory" class="form-select">
+                <option value="">Chọn danh mục</option>
+              </select>
+              <span class="product-form-error" id="errCreateCategory"></span>
+            </div>
+
+            <div class="product-form-field">
+              <label>Trạng thái</label>
+              <select id="createProductStatus" class="form-select">
+                <option value="1">Đang hiển thị</option>
+                <option value="0">Đang ẩn</option>
+              </select>
+            </div>
+
+            <div class="product-form-field">
+              <label>Tên sản phẩm tiếng Việt</label>
+              <input
+                type="text"
+                id="createProductNameVi"
+                class="form-control"
+                placeholder="Ví dụ: Áo croptop nữ"
+              />
+              <span class="product-form-error" id="errCreateNameVi"></span>
+            </div>
+
+            <div class="product-form-field">
+              <label>Tên sản phẩm tiếng Anh</label>
+              <input
+                type="text"
+                id="createProductNameEn"
+                class="form-control"
+                placeholder="Example: Women's Croptop"
+              />
+            </div>
+
+            <div class="product-form-field">
+              <label>Slug</label>
+              <input
+                type="text"
+                id="createProductSlug"
+                class="form-control"
+                placeholder="vi-du-ao-croptop"
+              />
+              <span class="product-form-error" id="errCreateSlug"></span>
+            </div>
+
+            <div class="product-form-field">
+              <label>Badge</label>
+              <input
+                type="text"
+                id="createProductBadge"
+                class="form-control"
+                placeholder="New / Hot / Sale"
+              />
+            </div>
+
+            <div class="product-form-field">
+              <label>Giá bán</label>
+              <input
+                type="number"
+                id="createProductPrice"
+                class="form-control"
+                min="1"
+                placeholder="199000"
+              />
+              <span class="product-form-error" id="errCreatePrice"></span>
+            </div>
+
+            <div class="product-form-field">
+              <label>Giá cũ</label>
+              <input
+                type="number"
+                id="createProductOldPrice"
+                class="form-control"
+                min="0"
+                placeholder="250000"
+              />
+              <span class="product-form-error" id="errCreateOldPrice"></span>
+            </div>
+
+            <div class="product-form-field">
+              <label>Ảnh chính</label>
+              <input
+                type="text"
+                id="createProductImage"
+                class="form-control"
+                placeholder="assets/img/products/TEST/test.jpg"
+              />
+            </div>
+
+            <div class="product-form-field">
+              <label>Ảnh hover</label>
+              <input
+                type="text"
+                id="createProductHoverImage"
+                class="form-control"
+                placeholder="assets/img/products/TEST/test1.jpg"
+              />
+            </div>
+
+            <div class="product-form-field full">
+              <label>Ảnh phụ</label>
+              <textarea
+                id="createProductImages"
+                class="form-control"
+                rows="3"
+                placeholder="Mỗi dòng là 1 đường dẫn ảnh"
+              ></textarea>
+            </div>
+
+            <div class="product-form-field full">
+              <label>Mô tả tiếng Việt</label>
+              <textarea
+                id="createProductDescriptionVi"
+                class="form-control"
+                rows="3"
+              ></textarea>
+            </div>
+
+            <div class="product-form-field full">
+              <label>Mô tả tiếng Anh</label>
+              <textarea
+                id="createProductDescriptionEn"
+                class="form-control"
+                rows="3"
+              ></textarea>
+            </div>
+
+            <div class="product-form-field full">
+              <label>Tồn kho theo size</label>
+
+              <div class="product-size-row">
+                <div>
+                  <input
+                    type="number"
+                    id="createProductStockS"
+                    class="form-control"
+                    min="0"
+                    max="999"
+                    value="0"
+                    placeholder="Size S"
+                  />
+                </div>
+
+                <div>
+                  <input
+                    type="number"
+                    id="createProductStockM"
+                    class="form-control"
+                    min="0"
+                    max="999"
+                    value="0"
+                    placeholder="Size M"
+                  />
+                </div>
+
+                <div>
+                  <input
+                    type="number"
+                    id="createProductStockL"
+                    class="form-control"
+                    min="0"
+                    max="999"
+                    value="0"
+                    placeholder="Size L"
+                  />
+                </div>
+              </div>
+
+              <span class="product-form-error" id="errCreateStock"></span>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 mt-4">
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              id="btnCancelCreateProduct"
+            >
+              Hủy
+            </button>
+
+            <button
+              type="submit"
+              class="btn btn-dark"
+              id="btnSaveCreateProduct"
+            >
+              Lưu sản phẩm
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="product-modal-overlay" id="categoryModalOverlay">
+      <div class="product-modal">
+        <div class="product-modal-header">
+          <h3 id="categoryFormTitle">Thêm danh mục mới</h3>
+          <button
+            type="button"
+            class="product-modal-close"
+            id="btnCloseCategoryModal"
+          >
+            ×
+          </button>
+        </div>
+
+        <form id="categoryForm">
+          <input type="hidden" id="editingCategoryId" />
+
+          <div class="product-form-grid">
+            <div class="product-form-field">
+              <label>Tên danh mục tiếng Việt</label>
+              <input
+                type="text"
+                id="categoryNameVi"
+                class="form-control"
+                placeholder="Ví dụ: Phụ kiện"
+              />
+              <span class="product-form-error" id="errCategoryNameVi"></span>
+            </div>
+
+            <div class="product-form-field">
+              <label>Tên danh mục tiếng Anh</label>
+              <input
+                type="text"
+                id="categoryNameEn"
+                class="form-control"
+                placeholder="Example: Accessories"
+              />
+            </div>
+
+            <div class="product-form-field full">
+              <label>Slug danh mục</label>
+              <input
+                type="text"
+                id="categorySlug"
+                class="form-control"
+                placeholder="phu-kien"
+              />
+              <span class="product-form-error" id="errCategorySlug"></span>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 mt-4">
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              id="btnCancelCategoryForm"
+            >
+              Hủy
+            </button>
+
+            <button type="submit" class="btn btn-dark" id="btnSaveCategory">
+              Lưu danh mục
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script src="assets/js/jquery-4.0.0.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/core/config.js"></script>
+    <script src="assets/js/core/api.js"></script>
+    <script src="assets/js/pages/admin-orders.js"></script>
+    <script src="assets/js/pages/admin-products.js"></script>
+  </body>
+</html>

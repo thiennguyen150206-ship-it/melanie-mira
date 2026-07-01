@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nhập mã xác minh - Melanie Mira</title>
+
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+    <link rel="stylesheet" href="assets/css/responsive.css" />
+
+    <script defer src="assets/js/jquery-4.0.0.min.js"></script>
+    <script defer src="assets/js/core/config.js"></script>
+    <script defer src="assets/js/core/api.js"></script>
+    <script defer src="assets/js/pages/verify-email.js"></script>
+  </head>
+
+  <body class="lang-vi auth-page-body">
+    <main class="auth-simple-page">
+      <div class="auth-simple-logo">
+        <a href="index.html">
+          <img src="assets/img/logo/logo.jpg" alt="Melanie Mira" />
+        </a>
+      </div>
+
+      <section class="auth-simple-box verify-email-box">
+        <h1>Nhập mã</h1>
+
+        <p class="verify-email-desc">
+          Đã gửi đến <span id="verifyEmailText"></span>
+          <a href="login.html">Thay đổi</a>
+        </p>
+
+        <form id="verifyEmailForm">
+          <div class="otp-input-row">
+            <input type="text" maxlength="1" class="otp-input" />
+            <input type="text" maxlength="1" class="otp-input" />
+            <input type="text" maxlength="1" class="otp-input" />
+            <input type="text" maxlength="1" class="otp-input" />
+            <input type="text" maxlength="1" class="otp-input" />
+            <input type="text" maxlength="1" class="otp-input" />
+          </div>
+
+          <span class="form-error" id="errVerifyCode"></span>
+
+          <button type="submit" class="auth-submit-btn verify-submit-btn">
+            Xác minh
+          </button>
+        </form>
+
+        <button type="button" class="resend-code-btn" id="btnResendCode">
+          Gửi lại mã
+        </button>
+      </section>
+
+      <a href="#" class="auth-privacy">Chính sách quyền riêng tư</a>
+    </main>
+  </body>
+</html>
