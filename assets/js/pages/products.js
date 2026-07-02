@@ -13,6 +13,7 @@ function convertApiProduct(product) {
   return {
     id: product.id,
     slug: product.slug,
+    productSlug: product.slug,
     nameVi: product.name_vi,
     nameEn: product.name_en,
     categoryVi: product.category_vi,
@@ -90,9 +91,11 @@ function getCategoryTitle(categorySlug) {
 function createProductItem(product) {
   let hoverImage = product.hoverImage || product.images?.[1] || product.image;
 
-  let detailUrl = product.slug
-    ? "product-detail.html?slug=" + product.slug
-    : "product-detail.html?slug=" + product.slug;
+  let productSlug = product.slug || product.productSlug || "";
+
+  let detailUrl = productSlug
+    ? "product-detail.html?slug=" + encodeURIComponent(productSlug)
+    : "products.html";
 
   return `
     <div class="col-lg-3 col-md-4 col-6">
