@@ -7,7 +7,7 @@
 */
 
 window.MELANIE_MIRA_CONFIG = {
-  API_BASE_URL: "http://localhost:5000/api",
+  API_BASE_URL: "https://melanie-mira-backend.onrender.com/api",
 
   PAYMENT_QR_BASE_URL: "https://qr.sepay.vn/img",
   PAYMENT_BANK_ACCOUNT: "SO_TAI_KHOAN_CUA_SHOP",
