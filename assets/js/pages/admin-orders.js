@@ -99,8 +99,12 @@ function getAdminStatusClass(status) {
   );
 }
 
-function getAdminKey() {
-  return $("#adminKeyInput").val().trim();
+function getAdminEmail() {
+  return $("#adminEmailInput").val().trim().toLowerCase();
+}
+
+function getAdminPassword() {
+  return $("#adminPasswordInput").val();
 }
 
 function getAdminToken() {
@@ -162,7 +166,7 @@ function handleAdminSessionExpired() {
   updateAdminLoginStatus();
   resetAdminDataView();
 
-  throw new Error("Phiên admin đã hết hạn. Vui lòng nhập admin key lại.");
+  throw new Error("Phiên admin đã hết hạn. Vui lòng đăng nhập lại.");
 }
 
 function updateAdminLoginStatus() {
@@ -173,8 +177,11 @@ function updateAdminLoginStatus() {
     $("#adminLoginStatus").removeClass("text-muted text-danger");
     $("#adminLoginStatus").addClass("text-success");
 
-    $("#adminKeyBox").hide();
-    $("#adminLoadBox").removeClass("col-md-3").addClass("col-md-6");
+    $("#adminLoginEmailBox").hide();
+    $("#adminLoginPasswordBox").hide();
+
+    $("#adminLoadBox").removeClass("col-md-2").addClass("col-md-8");
+
     $("#adminLogoutBox").show();
 
     return;
@@ -184,16 +191,20 @@ function updateAdminLoginStatus() {
   $("#adminLoginStatus").removeClass("text-success text-danger");
   $("#adminLoginStatus").addClass("text-muted");
 
-  $("#adminKeyBox").show();
-  $("#adminLoadBox").removeClass("col-md-6").addClass("col-md-3");
+  $("#adminLoginEmailBox").show();
+  $("#adminLoginPasswordBox").show();
+
+  $("#adminLoadBox").removeClass("col-md-8").addClass("col-md-2");
+
   $("#adminLogoutBox").hide();
 }
 
 async function loginAdmin() {
-  let adminKey = getAdminKey();
+  let adminEmail = getAdminEmail();
+  let adminPassword = getAdminPassword();
 
-  if (adminKey === "") {
-    throw new Error("Vui lòng nhập admin key.");
+  if (adminEmail === "" || adminPassword === "") {
+    throw new Error("Vui lòng nhập email và mật khẩu admin.");
   }
 
   let response = await fetch(API_BASE_URL + "/auth/admin/login", {
@@ -202,7 +213,8 @@ async function loginAdmin() {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      admin_key: adminKey,
+      email: adminEmail,
+      password: adminPassword,
     }),
   });
 
@@ -219,7 +231,7 @@ async function loginAdmin() {
   }
 
   saveAdminToken(token);
-  $("#adminKeyInput").val("");
+  $("#adminPasswordInput").val("");
   updateAdminLoginStatus();
 
   return token;
@@ -227,9 +239,9 @@ async function loginAdmin() {
 
 async function getValidAdminToken() {
   /*
-    Ưu tiên dùng adminToken đã lưu.
-    Chỉ login bằng admin key khi chưa có token.
-  */
+  Ưu tiên dùng adminToken đã lưu.
+  Chỉ login bằng email/mật khẩu khi chưa có token.
+*/
   let token = getAdminToken();
 
   if (token) {
@@ -1006,6 +1018,18 @@ function updateStockSaveButtonState(productId) {
 
 $(document).ready(function () {
   updateAdminLoginStatus();
+  $("#adminEmailInput, #adminPasswordInput").on(
+    "keydown",
+    async function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+
+        currentOrderPage = 1;
+        await loadOrderStats();
+        await loadOrders();
+      }
+    },
+  );
 
   /*
     Nếu adminToken còn trong localStorage,
@@ -1101,7 +1125,8 @@ $(document).ready(function () {
 
     clearAdminToken();
 
-    $("#adminKeyInput").val("");
+    $("#adminEmailInput").val("");
+    $("#adminPasswordInput").val("");
 
     $("#orderStatusFilter").val("all");
     $("#orderSearchInput").val("");

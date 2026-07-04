@@ -20,7 +20,6 @@ const MAX_NAME_LENGTH = 100;
 const MAX_EMAIL_LENGTH = 150;
 const MAX_PHONE_LENGTH = 20;
 const MAX_PASSWORD_LENGTH = 100;
-const MAX_ADMIN_KEY_LENGTH = 100;
 
 function isTooLong(value, maxLength) {
   if (!value) {
@@ -610,36 +609,94 @@ async function verifyEmailCode(req, res) {
 }
 
 // POST /api/auth/admin/login
-function adminLogin(req, res) {
+async function adminLogin(req, res) {
   try {
-    const { admin_key } = req.body;
+    const { email, password } = req.body;
 
-    const adminKey = admin_key ? String(admin_key).trim() : "";
+    const adminEmail = email ? String(email).trim().toLowerCase() : "";
+    const adminPassword = password ? String(password) : "";
 
-    if (!adminKey) {
+    if (!adminEmail || !adminPassword) {
       return res.status(400).json({
         success: false,
-        message: "Admin key is required",
+        message: "Admin email and password are required",
       });
     }
 
-    if (isTooLong(adminKey, MAX_ADMIN_KEY_LENGTH)) {
+    if (!isValidEmail(adminEmail)) {
       return res.status(400).json({
         success: false,
-        message: "Admin key is too long",
+        message: "Invalid admin email",
       });
     }
 
-    if (adminKey !== process.env.ADMIN_KEY) {
+    if (
+      isTooLong(adminEmail, MAX_EMAIL_LENGTH) ||
+      isTooLong(adminPassword, MAX_PASSWORD_LENGTH)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Admin login information is too long",
+      });
+    }
+
+    const [admins] = await pool.query(
+      `
+      SELECT
+        id,
+        full_name,
+        email,
+        password_hash,
+        role,
+        is_active
+      FROM admin_users
+      WHERE email = ?
+      LIMIT 1
+      `,
+      [adminEmail],
+    );
+
+    if (admins.length === 0) {
       return res.status(401).json({
         success: false,
-        message: "Invalid admin key",
+        message: "Invalid admin email or password",
       });
     }
+
+    const admin = admins[0];
+
+    if (Number(admin.is_active) !== 1) {
+      return res.status(403).json({
+        success: false,
+        message: "Admin account is disabled",
+      });
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(
+      adminPassword,
+      admin.password_hash,
+    );
+
+    if (!isPasswordCorrect) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid admin email or password",
+      });
+    }
+
+    await pool.query(
+      `
+      UPDATE admin_users
+      SET last_login_at = NOW()
+      WHERE id = ?
+      `,
+      [admin.id],
+    );
+
     const token = createAuthToken({
-      id: 1,
-      email: "admin@melaniemira.vn",
-      role: "admin",
+      id: admin.id,
+      email: admin.email,
+      role: admin.role || "admin",
     });
 
     res.json({
@@ -647,6 +704,12 @@ function adminLogin(req, res) {
       message: "Admin login successfully",
       data: {
         token: token,
+        admin: {
+          id: admin.id,
+          full_name: admin.full_name,
+          email: admin.email,
+          role: admin.role || "admin",
+        },
       },
     });
   } catch (error) {

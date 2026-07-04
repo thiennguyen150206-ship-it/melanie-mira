@@ -454,23 +454,36 @@
           </div>
         </div>
 
-        <div class="row mb-3 align-items-center" id="adminLoginRow">
-          <div class="col-md-6" id="adminKeyBox">
+        <div class="row mb-3 align-items-end" id="adminLoginRow">
+          <div class="col-md-4 mb-2" id="adminLoginEmailBox">
+            <label for="adminEmailInput" class="form-label">Email admin</label>
             <input
-              type="password"
-              id="adminKeyInput"
+              type="email"
+              id="adminEmailInput"
               class="form-control"
-              placeholder="Nhập admin key"
+              placeholder="Nhập email admin"
+              autocomplete="username"
             />
           </div>
 
-          <div class="col-md-3" id="adminLoadBox">
+          <div class="col-md-4 mb-2" id="adminLoginPasswordBox">
+            <label for="adminPasswordInput" class="form-label">Mật khẩu</label>
+            <input
+              type="password"
+              id="adminPasswordInput"
+              class="form-control"
+              placeholder="Nhập mật khẩu admin"
+              autocomplete="current-password"
+            />
+          </div>
+
+          <div class="col-md-2 mb-2" id="adminLoadBox">
             <button id="btnLoadOrders" class="btn btn-dark w-100">
               Tải đơn hàng
             </button>
           </div>
 
-          <div class="col-md-3" id="adminLogoutBox">
+          <div class="col-md-2 mb-2" id="adminLogoutBox">
             <button id="btnAdminLogout" class="btn btn-outline-danger w-100">
               Đăng xuất admin
             </button>
