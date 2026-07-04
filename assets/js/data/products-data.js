@@ -17,6 +17,7 @@ const products = [
       "assets/img/products/ARUL/arul5.jpg",
       "assets/img/products/ARUL/arul6.jpg",
     ],
+    sizeGuideImage: "assets/img/size-guides/arul-size.jpg",
     badge: "New",
     descriptionVi: "Thiết kế dáng xòe thanh lịch, phù hợp đi tiệc và chụp ảnh.",
     descriptionEn:
@@ -41,6 +42,7 @@ const products = [
       "assets/img/products/LUNA/luna5.jpg",
       "assets/img/products/LUNA/luna6.jpg",
     ],
+    sizeGuideImage: "assets/img/size-guides/luna-size.jpg",
     badge: "New",
     descriptionVi: "Chất liệu lụa mềm mại, phối ren nữ tính và nổi bật.",
     descriptionEn:
@@ -65,6 +67,7 @@ const products = [
       "assets/img/products/CAMI/cami5.jpg",
       "assets/img/products/CAMI/cami6.jpg",
     ],
+    sizeGuideImage: "assets/img/size-guides/cami-size.jpg",
     badge: "New",
     descriptionVi: "Dáng váy nhẹ nhàng, tôn dáng, phù hợp đi chơi và dự tiệc.",
     descriptionEn:
@@ -89,6 +92,7 @@ const products = [
       "assets/img/products/DONNA/donna5.jpg",
       "assets/img/products/DONNA/donna6.jpg",
     ],
+    sizeGuideImage: "assets/img/size-guides/donna-size.jpg",
     badge: "Sale",
     descriptionVi: "Thiết kế xếp tầng bồng bềnh, phù hợp phong cách nổi bật.",
     descriptionEn:
@@ -113,6 +117,7 @@ const products = [
       "assets/img/products/IVY/ivy5.jpg",
       "assets/img/products/IVY/ivy6.jpg",
     ],
+    sizeGuideImage: "assets/img/size-guides/ivy-size.jpg",
     badge: "Hot",
     descriptionVi: "Áo ren nữ tính, dễ phối với chân váy hoặc quần dài.",
     descriptionEn:
@@ -137,6 +142,7 @@ const products = [
       "assets/img/products/LIA/lia5.jpg",
       "assets/img/products/LIA/lia6.jpg",
     ],
+    sizeGuideImage: "assets/img/size-guides/lia-size.jpg",
     badge: "New",
     descriptionVi: "Chất vải co giãn, form ôm nhẹ, phù hợp mặc hằng ngày.",
     descriptionEn:
@@ -161,6 +167,7 @@ const products = [
       "assets/img/products/CHARVI SET/charvi5.jpg",
       "assets/img/products/CHARVI SET/charvi6.jpg",
     ],
+    sizeGuideImage: "assets/img/size-guides/charvi-size.jpg",
     badge: "Office",
     descriptionVi:
       "Set quần áo thanh lịch, phù hợp đi làm hoặc gặp khách hàng.",
@@ -186,6 +193,7 @@ const products = [
       "assets/img/products/CROPTOP/croptop5.jpg",
       "assets/img/products/CROPTOP/croptop6.jpg",
     ],
+    sizeGuideImage: "assets/img/size-guides/croptop-size.jpg",
     badge: "New",
     descriptionVi:
       "Áo croptop co giãn, dễ phối đồ, phù hợp đi chơi hoặc dạo phố.",

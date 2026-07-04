@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const pool = require("../config/db");
 const sendServerError = require("../utils/errorResponse");
 const parsePositiveInt = require("../utils/parseId");
@@ -9,7 +10,54 @@ const MAX_CUSTOMER_EMAIL_LENGTH = 150;
 const MAX_CUSTOMER_PHONE_LENGTH = 20;
 const MAX_CUSTOMER_ADDRESS_LENGTH = 255;
 const MAX_ORDER_NOTE_LENGTH = 500;
-const MAX_ADMIN_ORDER_LIMIT = 50;
+
+function padTwoDigits(value) {
+  return String(value).padStart(2, "0");
+}
+
+function createOrderCode() {
+  const now = new Date();
+
+  const year = now.getFullYear();
+  const month = padTwoDigits(now.getMonth() + 1);
+  const day = padTwoDigits(now.getDate());
+  const hour = padTwoDigits(now.getHours());
+  const minute = padTwoDigits(now.getMinutes());
+  const second = padTwoDigits(now.getSeconds());
+  const randomNumber = crypto.randomInt(1000, 10000);
+
+  return "MM" + year + month + day + hour + minute + second + randomNumber;
+}
+
+async function createUniqueOrderCode(connection) {
+  for (let i = 0; i < 5; i++) {
+    const orderCode = createOrderCode();
+
+    const [existingOrders] = await connection.query(
+      `
+      SELECT id
+      FROM orders
+      WHERE order_code = ?
+      LIMIT 1
+      `,
+      [orderCode],
+    );
+
+    if (existingOrders.length === 0) {
+      return orderCode;
+    }
+  }
+
+  throw new Error("Cannot generate unique order code");
+}
+
+function buildPaymentContent(orderCode) {
+  return orderCode;
+}
+
+function isValidOrderCode(orderCode) {
+  return /^MM[0-9A-Z]+$/.test(orderCode);
+}
 
 function isValidPhoneNumber(phone) {
   return /^0\d{9}$/.test(phone);
@@ -260,22 +308,31 @@ async function createOrder(req, res) {
 
     // Tạo đơn hàng
 
+    const orderCode = await createUniqueOrderCode(connection);
+    const paymentStatus = "unpaid";
+    const paidAmount = 0;
+    const paymentContent = buildPaymentContent(orderCode);
     const [orderResult] = await connection.query(
       `
-  INSERT INTO orders (
-    user_id,
-    customer_name,
-    customer_email,
-    customer_phone,
-    customer_address,
-    note,
-    total_amount,
-    payment_method,
-    status
-  )
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `,
+      INSERT INTO orders (
+        order_code,
+        user_id,
+        customer_name,
+        customer_email,
+        customer_phone,
+        customer_address,
+        note,
+        total_amount,
+        payment_method,
+        payment_status,
+        paid_amount,
+        payment_content,
+        status
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `,
       [
+        orderCode,
         userId,
         customerName,
         customerEmail,
@@ -284,6 +341,9 @@ async function createOrder(req, res) {
         orderNote,
         totalAmount,
         paymentMethod,
+        paymentStatus,
+        paidAmount,
+        paymentContent,
         "pending",
       ],
     );
@@ -345,7 +405,12 @@ async function createOrder(req, res) {
       message: "Order created successfully",
       data: {
         order_id: orderId,
+        order_code: orderCode,
         total_amount: totalAmount,
+        payment_method: paymentMethod,
+        payment_status: paymentStatus,
+        paid_amount: paidAmount,
+        payment_content: paymentContent,
         status: "pending",
       },
     });
@@ -355,6 +420,71 @@ async function createOrder(req, res) {
     return sendServerError(res, "Cannot create order", error);
   } finally {
     connection.release();
+  }
+}
+
+// GET /api/orders/payment-status/:orderCode
+async function getPaymentStatus(req, res) {
+  try {
+    const orderCode = req.params.orderCode
+      ? String(req.params.orderCode).trim().toUpperCase()
+      : "";
+
+    if (!orderCode || orderCode.length > 30 || !isValidOrderCode(orderCode)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid order code",
+      });
+    }
+
+    const [orders] = await pool.query(
+      `
+      SELECT
+        id,
+        order_code,
+        total_amount,
+        payment_method,
+        payment_status,
+        paid_amount,
+        paid_at,
+        payment_content,
+        payment_note,
+        status,
+        created_at
+      FROM orders
+      WHERE order_code = ?
+      LIMIT 1
+      `,
+      [orderCode],
+    );
+
+    if (orders.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    const order = orders[0];
+
+    res.json({
+      success: true,
+      data: {
+        order_id: order.id,
+        order_code: order.order_code,
+        total_amount: Number(order.total_amount),
+        payment_method: order.payment_method,
+        payment_status: order.payment_status,
+        paid_amount: Number(order.paid_amount || 0),
+        paid_at: order.paid_at,
+        payment_content: order.payment_content,
+        payment_note: order.payment_note,
+        status: order.status,
+        created_at: order.created_at,
+      },
+    });
+  } catch (error) {
+    return sendServerError(res, "Cannot get payment status", error);
   }
 }
 
@@ -419,7 +549,8 @@ async function getAllOrders(req, res) {
     if (search) {
       whereConditions.push(`
     (
-      CAST(id AS CHAR) LIKE ?
+           CAST(id AS CHAR) LIKE ?
+      OR order_code LIKE ?
       OR customer_name LIKE ?
       OR customer_email LIKE ?
       OR customer_phone LIKE ?
@@ -430,6 +561,7 @@ async function getAllOrders(req, res) {
       const searchKeyword = `%${search}%`;
 
       queryParams.push(
+        searchKeyword,
         searchKeyword,
         searchKeyword,
         searchKeyword,
@@ -457,8 +589,9 @@ async function getAllOrders(req, res) {
 
     const [orders] = await pool.query(
       `
-      SELECT
+         SELECT
         id,
+        order_code,
         user_id,
         customer_name,
         customer_email,
@@ -467,6 +600,11 @@ async function getAllOrders(req, res) {
         note,
         total_amount,
         payment_method,
+        payment_status,
+        paid_amount,
+        paid_at,
+        payment_content,
+        payment_note,
         status,
         created_at
       FROM orders
@@ -545,8 +683,9 @@ async function getOrderById(req, res) {
 
     const [orders] = await pool.query(
       `
-      SELECT 
+            SELECT 
         id,
+        order_code,
         customer_name,
         customer_email,
         customer_phone,
@@ -554,6 +693,11 @@ async function getOrderById(req, res) {
         note,
         total_amount,
         payment_method,
+        payment_status,
+        paid_amount,
+        paid_at,
+        payment_content,
+        payment_note,
         status,
         created_at
       FROM orders
@@ -767,6 +911,7 @@ async function updateOrderStatus(req, res) {
 }
 module.exports = {
   createOrder,
+  getPaymentStatus,
   getAllOrders,
   getOrderStats,
   getOrderById,

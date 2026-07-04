@@ -51,6 +51,7 @@ function convertApiProduct(product) {
     descriptionVi: product.description_vi,
     descriptionEn: product.description_en,
     sizes: product.sizes || [],
+    sizeGuideImage: product.size_guide_image,
   };
 }
 
@@ -235,6 +236,105 @@ function renderProductImages(product) {
   $("#productDetailGallery").html(html);
 }
 
+/* =========================
+   Product size guide modal
+   ========================= */
+
+function getProductSizeGuideImage(product) {
+  if (!product) {
+    return "";
+  }
+
+  if (product.sizeGuideImage) {
+    return product.sizeGuideImage;
+  }
+
+  /*
+    Nếu sản phẩm lấy từ API nhưng API chưa có size_guide_image,
+    thì lấy ảnh bảng size dự phòng từ products-data.js.
+  */
+  if (typeof products !== "undefined") {
+    let localProduct = products.find(function (item) {
+      return item.id === product.id || item.slug === product.slug;
+    });
+
+    if (localProduct && localProduct.sizeGuideImage) {
+      return localProduct.sizeGuideImage;
+    }
+  }
+
+  return "";
+}
+
+function renderProductSizeGuide(product) {
+  let sizeGuideImage = getProductSizeGuideImage(product);
+
+  if (sizeGuideImage === "") {
+    $("#btnOpenSizeGuide").hide();
+    $("#sizeGuideImage").attr("src", "");
+    return;
+  }
+
+  $("#btnOpenSizeGuide").show();
+  $("#sizeGuideImage").attr("src", sizeGuideImage);
+  $("#sizeGuideImage").attr("alt", getProductName(product) + " Size Guide");
+}
+
+function openSizeGuideModal() {
+  if (!currentProduct) {
+    return;
+  }
+
+  let sizeGuideImage = getProductSizeGuideImage(currentProduct);
+
+  if (sizeGuideImage === "") {
+    return;
+  }
+
+  $("#sizeGuideImage").attr("src", sizeGuideImage);
+  $("#sizeGuideImage").attr(
+    "alt",
+    getProductName(currentProduct) + " Size Guide",
+  );
+
+  $("#sizeGuideModal").addClass("active");
+  $("#sizeGuideModal").attr("aria-hidden", "false");
+}
+
+function closeSizeGuideModal() {
+  $("#sizeGuideModal").removeClass("active");
+  $("#sizeGuideModal").attr("aria-hidden", "true");
+}
+
+function initSizeGuideModal() {
+  $(document).on("click", "#btnOpenSizeGuide", function () {
+    openSizeGuideModal();
+  });
+
+  $(document).on("click", "#btnCloseSizeGuide", function () {
+    closeSizeGuideModal();
+  });
+
+  /*
+    Bấm/click vùng ngoài ảnh thì đóng modal.
+    Mobile cũng chạy vì thao tác chạm sẽ phát sinh click.
+  */
+  $(document).on("click", "#sizeGuideModal", function (e) {
+    if (e.target === this) {
+      closeSizeGuideModal();
+    }
+  });
+
+  /*
+    Desktop: bấm Esc cũng đóng được.
+  */
+  $(document).on("keydown", function (e) {
+    if (e.key === "Escape") {
+      closeSizeGuideModal();
+    }
+  });
+}
+
 function renderProductSizes(product) {
   let sizes = product.sizes || [];
   let html = "";
@@ -303,7 +403,20 @@ function renderProductInfo(product) {
     <li>${t("product.defaultDetail1")}</li>
     <li>${t("product.defaultDetail2")}</li>
   `);
+
   renderProductSizes(product);
+  renderProductSizeGuide(product);
+}
+function getProductDetailLink(product) {
+  if (product.slug) {
+    return "product-detail.html?slug=" + encodeURIComponent(product.slug);
+  }
+
+  if (product.id) {
+    return "product-detail.html?id=" + encodeURIComponent(product.id);
+  }
+
+  return "products.html";
 }
 function renderRecommendProducts(product) {
   let maxRecommend = 4;
@@ -341,7 +454,7 @@ function renderRecommendProducts(product) {
 
   for (let i = 0; i < suggestProducts.length; i++) {
     html += `
-      <a href="product-detail.html?slug=${suggestProducts[i].slug}" class="recommend-item">
+   <a href="${getProductDetailLink(suggestProducts[i])}" class="recommend-item">
        <img
   src="${suggestProducts[i].image}"
   alt="${getProductName(suggestProducts[i])}"
@@ -561,7 +674,9 @@ function initProductImageZoom() {
 $(document).ready(async function () {
   await loadProductDetail();
   renderProductDetail();
+
   initProductImageZoom();
+  initSizeGuideModal();
 
   $(document).on("click", ".size-option", function () {
     if ($(this).hasClass("disabled") || $(this).prop("disabled")) {

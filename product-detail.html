@@ -245,6 +245,17 @@
                   </div>
                 </div>
 
+                <div class="size-guide-row">
+                  <button
+                    type="button"
+                    class="size-guide-btn"
+                    id="btnOpenSizeGuide"
+                    data-i18n="product.sizeGuide"
+                  >
+                    Size Guide
+                  </button>
+                </div>
+
                 <p
                   class="size-message"
                   id="sizeMessage"
@@ -303,6 +314,27 @@
         </aside>
       </section>
     </main>
+
+    <!-- Size guide modal -->
+    <div class="size-guide-modal" id="sizeGuideModal" aria-hidden="true">
+      <div class="size-guide-modal-box">
+        <button
+          type="button"
+          class="size-guide-modal-close"
+          id="btnCloseSizeGuide"
+          aria-label="Close size guide"
+        >
+          &times;
+        </button>
+
+        <img
+          src=""
+          alt="Size Guide"
+          class="size-guide-modal-img"
+          id="sizeGuideImage"
+        />
+      </div>
+    </div>
 
     <!-- Footer / Contact -->
     <footer class="main-footer" id="footer-contact">

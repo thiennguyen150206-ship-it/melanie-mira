@@ -1838,3 +1838,110 @@
     gap: 8px;
   }
 }
+/* Checkout payment result responsive */
+@media screen and (max-width: 768px) {
+  .checkout-payment-box {
+    padding: 18px 2px 28px;
+  }
+
+  .checkout-payment-box > h3 {
+    font-size: 24px;
+  }
+
+  .checkout-payment-box .checkout-qr-box {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .checkout-payment-qr-col {
+    width: 100%;
+    min-height: 170px;
+  }
+
+  #checkoutPaymentQrImage {
+    width: 150px;
+  }
+
+  .checkout-payment-box .checkout-qr-info {
+    text-align: left;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .checkout-payment-box > h3 {
+    font-size: 22px;
+  }
+
+  .checkout-payment-box > p {
+    font-size: 13px;
+  }
+
+  .checkout-payment-box .checkout-qr-box {
+    padding: 14px;
+  }
+
+  .checkout-payment-qr-col {
+    min-height: 160px;
+  }
+
+  #checkoutPaymentQrImage {
+    width: 140px;
+  }
+
+  #btnCheckoutPaymentClose {
+    min-height: 52px;
+  }
+}
+/* =========================
+   Size guide modal responsive
+   ========================= */
+
+@media screen and (max-width: 768px) {
+  .size-guide-row {
+    justify-content: flex-end;
+    margin-top: 12px;
+  }
+
+  .size-guide-btn {
+    font-size: 13px;
+  }
+
+  .size-guide-modal {
+    padding: 14px;
+  }
+
+  .size-guide-modal-box {
+    width: min(88vw, 390px);
+    max-height: calc(100dvh - 28px);
+    border-radius: 16px;
+  }
+
+  .size-guide-modal-img {
+    max-height: calc(100dvh - 28px);
+    border-radius: 16px;
+  }
+
+  .size-guide-modal-close {
+    top: -10px;
+    right: -10px;
+    width: 32px;
+    height: 32px;
+    font-size: 24px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .size-guide-modal {
+    padding: 12px;
+  }
+
+  .size-guide-modal-box {
+    width: 92vw;
+  }
+
+  .size-guide-modal-close {
+    top: 8px;
+    right: 8px;
+    background-color: rgba(255, 255, 255, 0.92);
+  }
+}

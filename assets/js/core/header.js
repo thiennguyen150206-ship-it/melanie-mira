@@ -29,7 +29,14 @@ function formatCartMoney(price) {
    ========================= */
 
 let checkoutModalItems = [];
+
 let checkoutModalMode = "cart";
+let checkoutCreatedOrder = null;
+let checkoutPaymentPollingTimer = null;
+let checkoutPaymentPollCount = 0;
+
+const CHECKOUT_PAYMENT_POLL_INTERVAL_MS = 5000;
+const CHECKOUT_PAYMENT_POLL_LIMIT = 120;
 
 function createCheckoutModal() {
   if ($("#checkoutModalOverlay").length === 0) {
@@ -179,26 +186,13 @@ function createCheckoutModal() {
                       <div class="payment-option-desc">
                         ${t("checkout.qrPaymentDesc")}
                       </div>
-                    </div>
-
-                    <div class="checkout-qr-box">
-                      <div class="checkout-qr-fake">
-                        <span class="qr-corner qr-top-left"></span>
-                        <span class="qr-corner qr-top-right"></span>
-                        <span class="qr-corner qr-bottom-left"></span>
-                        <strong>QR</strong>
-                      </div>
-
-                      <div class="checkout-qr-info">
-                        <h4>${t("checkout.qrScanTitle")}</h4>
-                        <p>${t("checkout.qrScanNote")}</p>
-
-                        <p class="checkout-qr-amount">
-                          ${t("checkout.orderTotal")}:
-                          <strong id="checkoutQrAmount">0đ</strong>
-                        </p>
-                      </div>
-                    </div>
+                    </div>  
+                    <div class="checkout-payment-note">
+  <p>
+    Mã QR thanh toán sẽ được tạo sau khi bạn bấm
+    <strong>Đặt hàng</strong>.
+  </p>
+</div>           
                   </div>
 
                   <!-- 5. Nút đặt hàng -->
@@ -211,7 +205,62 @@ function createCheckoutModal() {
                 </section>
               </div>
             </form>
+<!-- Màn hình thanh toán QR sau khi đơn hàng đã được tạo -->
+<div class="checkout-payment-box" id="checkoutPaymentBox" style="display: none">
+  <h3>Quét mã QR để thanh toán</h3>
 
+  <p>
+    Đơn hàng của bạn đã được tạo. Vui lòng chuyển khoản đúng số tiền
+    và đúng nội dung bên dưới để hệ thống tự xác nhận.
+  </p>
+
+  <div class="checkout-qr-box">
+  <div class="checkout-payment-qr-col">
+  <img
+    id="checkoutPaymentQrImage"
+    src=""
+    alt="QR thanh toán Melanie Mira"
+  />
+
+  <div class="checkout-payment-qr-empty" id="checkoutPaymentQrEmpty">
+    QR thanh toán sẽ hiển thị sau khi cấu hình tài khoản ngân hàng.
+  </div>
+</div>
+
+    <div class="checkout-qr-info">
+      <h4>Thông tin thanh toán</h4>
+
+      <p>
+        Mã đơn:
+        <strong id="checkoutPaymentOrderCode"></strong>
+      </p>
+
+      <p>
+        Số tiền:
+        <strong id="checkoutPaymentAmount"></strong>
+      </p>
+
+      <p>
+        Nội dung chuyển khoản:
+        <strong id="checkoutPaymentContent"></strong>
+      </p>
+
+      <p id="checkoutPaymentBankInfo"></p>
+
+      <p class="checkout-payment-waiting">
+        Sau khi thanh toán, hệ thống sẽ tự kiểm tra giao dịch.
+        Vui lòng không tắt trang này ngay.
+      </p>
+      <p class="checkout-payment-status" id="checkoutPaymentStatusMessage">
+  Đang chờ thanh toán...
+</p>
+    </div>
+  </div>
+
+  <button type="button" id="btnCheckoutPaymentClose">
+    Tiếp tục mua sắm
+  </button>
+</div>
             <!-- Thông báo đặt hàng thành công -->
             <div class="checkout-success-box" id="checkoutSuccessBox">
               <div class="checkout-success-icon">✓</div>
@@ -302,7 +351,6 @@ function renderCheckoutModalSummary() {
     $("#checkoutModalSubtotal").text(formatCartMoney(0));
     $("#checkoutModalShipping").text(formatCartMoney(0));
     $("#checkoutModalTotal").text(formatCartMoney(0));
-    $("#checkoutQrAmount").text(formatCartMoney(0));
     return;
   }
 
@@ -337,12 +385,15 @@ function renderCheckoutModalSummary() {
   $("#checkoutModalSubtotal").text(formatCartMoney(subtotal));
   $("#checkoutModalShipping").text(formatCartMoney(shipping));
   $("#checkoutModalTotal").text(formatCartMoney(subtotal + shipping));
-  $("#checkoutQrAmount").text(formatCartMoney(subtotal + shipping));
 }
 
 function resetCheckoutModalForm() {
+  stopCheckoutPaymentPolling();
+
   $("#checkoutModalForm").show();
+  $("#checkoutPaymentBox").hide();
   $("#checkoutSuccessBox").hide();
+  checkoutCreatedOrder = null;
 
   $("#modalCustomerName").val("");
   $("#modalCustomerAddress").val("");
@@ -351,6 +402,96 @@ function resetCheckoutModalForm() {
   $("#modalDiscountCode").val("");
 
   $("#checkoutModal .form-error").text("");
+}
+
+function getPaymentConfig() {
+  return window.MELANIE_MIRA_CONFIG || {};
+}
+
+function isMissingPaymentConfig(value) {
+  if (!value) {
+    return true;
+  }
+
+  const text = String(value).trim();
+
+  return (
+    text === "" ||
+    text === "SO_TAI_KHOAN_CUA_SHOP" ||
+    text === "TEN_HOAC_CODE_NGAN_HANG"
+  );
+}
+
+function buildPaymentQrUrl(order) {
+  const config = getPaymentConfig();
+
+  const qrBaseUrl = config.PAYMENT_QR_BASE_URL || "https://qr.sepay.vn/img";
+  const bankAccount = config.PAYMENT_BANK_ACCOUNT || "";
+  const bankCode = config.PAYMENT_BANK_CODE || "";
+  const accountName = config.PAYMENT_ACCOUNT_NAME || "";
+  const storeName = config.PAYMENT_STORE_NAME || "Melanie Mira";
+  const template = config.PAYMENT_QR_TEMPLATE || "compact";
+
+  if (isMissingPaymentConfig(bankAccount) || isMissingPaymentConfig(bankCode)) {
+    return "";
+  }
+
+  const amount = Math.round(Number(order.total_amount || 0));
+  const paymentContent = order.payment_content || order.order_code;
+
+  const params = new URLSearchParams();
+
+  params.set("acc", bankAccount);
+  params.set("bank", bankCode);
+  params.set("amount", String(amount));
+  params.set("des", paymentContent);
+  params.set("template", template);
+  params.set("download", "false");
+  params.set("showinfo", "true");
+
+  if (accountName) {
+    params.set("holder", accountName);
+  }
+
+  if (storeName) {
+    params.set("store", storeName);
+  }
+
+  return qrBaseUrl + "?" + params.toString();
+}
+
+function showCheckoutPaymentBox(order) {
+  checkoutCreatedOrder = order;
+
+  const qrUrl = buildPaymentQrUrl(order);
+  const paymentContent = order.payment_content || order.order_code;
+  const amount = Number(order.total_amount || 0);
+  const config = getPaymentConfig();
+
+  $("#checkoutModalForm").hide();
+  $("#checkoutSuccessBox").hide();
+  $("#checkoutPaymentBox").show();
+
+  $("#checkoutPaymentOrderCode").text(order.order_code || order.order_id);
+  $("#checkoutPaymentAmount").text(formatCartMoney(amount));
+  $("#checkoutPaymentContent").text(paymentContent);
+
+  $("#checkoutPaymentBankInfo").html(`
+    Ngân hàng: <strong>${config.PAYMENT_BANK_CODE || "Chưa cấu hình"}</strong>
+    <br />
+    Tài khoản: <strong>${config.PAYMENT_BANK_ACCOUNT || "Chưa cấu hình"}</strong>
+    <br />
+    Chủ tài khoản: <strong>${config.PAYMENT_ACCOUNT_NAME || "Chưa cấu hình"}</strong>
+  `);
+
+  if (qrUrl) {
+    $("#checkoutPaymentQrImage").attr("src", qrUrl).show();
+    $("#checkoutPaymentQrEmpty").hide();
+  } else {
+    $("#checkoutPaymentQrImage").attr("src", "").hide();
+    $("#checkoutPaymentQrEmpty").show();
+  }
+  startCheckoutPaymentPolling();
 }
 
 function getCustomerTokenForCheckout() {
@@ -517,11 +658,162 @@ function openCheckoutModal(mode, items) {
   $("#checkoutModal").addClass("active");
 }
 
+function stopCheckoutPaymentPolling() {
+  if (checkoutPaymentPollingTimer) {
+    clearInterval(checkoutPaymentPollingTimer);
+    checkoutPaymentPollingTimer = null;
+  }
+
+  checkoutPaymentPollCount = 0;
+}
+
+function showCheckoutPaymentStatusMessage(message, type) {
+  $("#checkoutPaymentStatusMessage")
+    .removeClass(
+      "checkout-payment-status-waiting checkout-payment-status-success checkout-payment-status-error",
+    )
+    .text(message);
+
+  if (type === "success") {
+    $("#checkoutPaymentStatusMessage").addClass(
+      "checkout-payment-status-success",
+    );
+  } else if (type === "error") {
+    $("#checkoutPaymentStatusMessage").addClass(
+      "checkout-payment-status-error",
+    );
+  } else {
+    $("#checkoutPaymentStatusMessage").addClass(
+      "checkout-payment-status-waiting",
+    );
+  }
+}
+
+async function fetchCheckoutPaymentStatus(orderCode) {
+  const apiUrl = window.MELANIE_MIRA_CONFIG.API_BASE_URL;
+
+  const response = await fetch(
+    apiUrl + "/orders/payment-status/" + encodeURIComponent(orderCode),
+    {
+      method: "GET",
+    },
+  );
+
+  const result = await response.json();
+
+  if (!response.ok || !result.success) {
+    throw new Error(result.message || "Không thể kiểm tra thanh toán.");
+  }
+
+  return result.data;
+}
+
+function showCheckoutPaymentSuccess(paymentData) {
+  stopCheckoutPaymentPolling();
+
+  const isEnglish = getCurrentLanguage() === "en";
+  const paidAmount = Number(
+    paymentData.paid_amount || paymentData.total_amount || 0,
+  );
+
+  $("#checkoutPaymentBox").hide();
+  $("#checkoutModalForm").hide();
+
+  $("#checkoutSuccessBox h3").text(
+    isEnglish ? "Payment successful!" : "Thanh toán thành công!",
+  );
+
+  $("#checkoutSuccessBox > p")
+    .first()
+    .text(
+      isEnglish
+        ? "We have received your payment. Melanie Mira will confirm and process your order soon."
+        : "Melanie Mira đã nhận được thanh toán. Shop sẽ kiểm tra và xác nhận đơn hàng sớm nhất.",
+    );
+
+  $("#checkoutSuccessTotal").text(formatCartMoney(paidAmount));
+
+  $("#checkoutSuccessBox").show();
+  $("#btnCheckoutSuccessClose").text(
+    isEnglish ? "Continue shopping" : "Tiếp tục mua sắm",
+  );
+}
+
+async function checkCheckoutPaymentStatus() {
+  if (!checkoutCreatedOrder || !checkoutCreatedOrder.order_code) {
+    stopCheckoutPaymentPolling();
+    return;
+  }
+
+  checkoutPaymentPollCount++;
+
+  try {
+    const paymentData = await fetchCheckoutPaymentStatus(
+      checkoutCreatedOrder.order_code,
+    );
+
+    if (
+      paymentData.payment_status === "paid" ||
+      paymentData.payment_status === "overpaid"
+    ) {
+      showCheckoutPaymentSuccess(paymentData);
+      return;
+    }
+
+    if (paymentData.payment_status === "underpaid") {
+      showCheckoutPaymentStatusMessage(
+        "Shop đã nhận được một phần thanh toán. Vui lòng chuyển khoản bổ sung phần còn thiếu.",
+        "error",
+      );
+      return;
+    }
+
+    showCheckoutPaymentStatusMessage(
+      "Đang chờ thanh toán. Hệ thống sẽ tự kiểm tra sau vài giây...",
+      "waiting",
+    );
+
+    if (checkoutPaymentPollCount >= CHECKOUT_PAYMENT_POLL_LIMIT) {
+      stopCheckoutPaymentPolling();
+
+      showCheckoutPaymentStatusMessage(
+        "Chưa ghi nhận thanh toán. Nếu bạn đã chuyển khoản, vui lòng liên hệ shop để được kiểm tra.",
+        "error",
+      );
+    }
+  } catch (error) {
+    console.log("Cannot check payment status:", error);
+
+    showCheckoutPaymentStatusMessage(
+      "Tạm thời chưa kiểm tra được thanh toán. Hệ thống sẽ thử lại sau vài giây.",
+      "error",
+    );
+  }
+}
+
+function startCheckoutPaymentPolling() {
+  stopCheckoutPaymentPolling();
+
+  checkoutPaymentPollCount = 0;
+
+  showCheckoutPaymentStatusMessage(
+    "Đang chờ thanh toán. Hệ thống sẽ tự kiểm tra sau vài giây...",
+    "waiting",
+  );
+
+  checkCheckoutPaymentStatus();
+
+  checkoutPaymentPollingTimer = setInterval(function () {
+    checkCheckoutPaymentStatus();
+  }, CHECKOUT_PAYMENT_POLL_INTERVAL_MS);
+}
+
 function closeCheckoutModal() {
+  stopCheckoutPaymentPolling();
+
   $("#checkoutModalOverlay").removeClass("active");
   $("#checkoutModal").removeClass("active");
 }
-
 function validateCheckoutModalForm() {
   let isValid = true;
 
@@ -665,18 +957,9 @@ async function submitCheckoutModal() {
       }
     }
 
-    $("#checkoutSuccessTotal").text(
-      formatCartMoney(Number(orderResult.total_amount)),
-    );
+    showCheckoutPaymentBox(orderResult);
 
-    $("#checkoutModalForm").hide();
-    $("#checkoutSuccessBox").show();
     $(document).trigger("melanie:order-created");
-    if (getCustomerTokenForCheckout()) {
-      $("#btnCheckoutSuccessClose").text("Xem đơn hàng");
-    } else {
-      $("#btnCheckoutSuccessClose").text(t("checkout.continueShopping"));
-    }
   } catch (error) {
     console.log("Create order failed:", error);
     alert(error.message || "Không thể tạo đơn hàng. Vui lòng thử lại.");
@@ -702,6 +985,11 @@ function initCheckoutModalEvents() {
 
   $(document).on("click", "#btnModalApplyDiscount", function () {
     alert(t("alert.discountDemo"));
+  });
+
+  $(document).on("click", "#btnCheckoutPaymentClose", function () {
+    closeCheckoutModal();
+    window.location.href = "products.html";
   });
 
   $(document).on("click", "#btnCheckoutSuccessClose", function () {
@@ -1149,6 +1437,7 @@ const translations = {
       "Shop sẽ kiểm tra sản phẩm sau khi nhận lại. Nếu đúng điều kiện, khách sẽ được hỗ trợ đổi sản phẩm.",
 
     "product.detail": "Chi tiết sản phẩm",
+    "product.sizeGuide": "Hướng dẫn chọn size",
     "product.category": "Danh mục",
     "product.defaultDetail1":
       "Thiết kế phù hợp với phong cách nữ tính và thanh lịch.",
@@ -1232,13 +1521,13 @@ const translations = {
     "checkout.paymentDesc": "Toàn bộ các giao dịch được bảo mật và mã hóa.",
     "checkout.modalTitle": "Thanh toán",
     "checkout.modalDesc":
-      "Vui lòng kiểm tra đơn hàng và quét mã QR để thanh toán.",
+      "Vui lòng kiểm tra đơn hàng và nhập thông tin nhận hàng.",
     "checkout.qrPaymentTitle": "Thanh toán online bằng mã QR",
     "checkout.qrPaymentDesc":
       "Quét mã QR bằng ứng dụng ngân hàng hoặc ví điện tử để thanh toán đơn hàng.",
     "checkout.qrScanTitle": "Quét mã QR để thanh toán",
     "checkout.qrScanNote":
-      "Đây là mã QR demo để kiểm tra giao diện. Sau này có thể thay bằng ảnh QR thật.",
+      "Mã QR thanh toán sẽ được tạo sau khi đơn hàng được ghi nhận.",
     "checkout.successTitle": "Đặt hàng thành công!",
     "checkout.successDesc":
       "Cảm ơn bạn đã mua hàng tại Melanie Mira. Shop sẽ liên hệ xác nhận đơn hàng trong thời gian sớm nhất.",
@@ -1289,7 +1578,7 @@ const translations = {
     "policy.checkDesc":
       "The shop will inspect returned products. If eligible, customers will be supported with an exchange.",
 
-    "product.detail": "Product Details",
+    "product.sizeGuide": "Size Guide",
     "product.category": "Category",
     "product.defaultDetail1":
       "Designed for a feminine, elegant and modern style.",
@@ -1372,13 +1661,13 @@ const translations = {
     "checkout.paymentDesc": "All transactions are secure and encrypted.",
     "checkout.modalTitle": "Checkout",
     "checkout.modalDesc":
-      "Please review your order and scan the QR code to pay.",
+      "Please review your order and enter your shipping information.",
     "checkout.qrPaymentTitle": "Online payment by QR code",
     "checkout.qrPaymentDesc":
       "Scan the QR code using your banking app or e-wallet to complete the payment.",
     "checkout.qrScanTitle": "Scan QR code to pay",
     "checkout.qrScanNote":
-      "This is a demo QR code for testing. You can replace it with a real QR image later.",
+      "The payment QR code will be generated after your order is created.",
     "checkout.successTitle": "Order placed successfully!",
     "checkout.successDesc":
       "Thank you for shopping at Melanie Mira. We will contact you to confirm your order soon.",

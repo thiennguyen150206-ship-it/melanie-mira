@@ -1572,6 +1572,97 @@
   margin: 9px 0 0;
 }
 
+/* Size guide link */
+.size-guide-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.size-guide-btn {
+  border: none;
+  background-color: transparent;
+  color: var(--color-primary);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.size-guide-btn:hover {
+  color: var(--color-secondary);
+}
+
+/* =========================
+   Size guide modal
+   Ảnh bảng size 900x1200
+   Popup gọn kiểu shop thời trang
+   ========================= */
+
+.size-guide-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 6500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  background-color: rgba(0, 0, 0, 0.46);
+  backdrop-filter: blur(2px);
+}
+
+.size-guide-modal.active {
+  display: flex;
+}
+
+.size-guide-modal-box {
+  position: relative;
+  width: min(430px, calc(100vw - 56px));
+  max-height: calc(100dvh - 56px);
+  padding: 0;
+  background-color: transparent;
+  border-radius: 18px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+}
+
+.size-guide-modal-img {
+  width: 100%;
+  height: auto;
+  max-height: calc(100dvh - 56px);
+  display: block;
+  object-fit: contain;
+  object-position: center center;
+  border-radius: 18px;
+  background-color: var(--color-white);
+}
+
+/* Nút đóng nổi ra ngoài ảnh cho gọn */
+.size-guide-modal-close {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  z-index: 2;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--color-white);
+  color: var(--color-primary);
+  font-size: 26px;
+  line-height: 1;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+}
+
+.size-guide-modal-close:hover {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
 /* Action buttons */
 .product-detail-actions {
   order: 5;
@@ -4457,4 +4548,167 @@
   background-color: var(--color-primary);
   border-color: var(--color-primary);
   color: var(--color-white);
+}
+.checkout-payment-box {
+  padding: 24px;
+}
+
+.checkout-payment-box h3 {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.checkout-payment-box > p {
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.checkout-payment-waiting {
+  margin-top: 12px;
+  color: #666;
+  line-height: 1.5;
+}
+
+#btnCheckoutPaymentClose {
+  width: 100%;
+  margin-top: 18px;
+  padding: 14px 18px;
+  border: 0;
+  background: #111;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#btnCheckoutPaymentClose:hover {
+  background: #333;
+}
+/* =========================
+   Checkout payment result screen
+   Màn hình QR sau khi tạo đơn
+   ========================= */
+
+.checkout-payment-box {
+  padding: 22px 4px 30px;
+  color: var(--color-primary);
+}
+
+.checkout-payment-box > h3 {
+  font-size: 26px;
+  line-height: 1.25;
+  font-weight: 900;
+  margin-bottom: 10px;
+}
+
+.checkout-payment-box > p {
+  color: var(--color-muted);
+  font-size: 14px;
+  line-height: 1.65;
+  margin-bottom: 18px;
+}
+
+.checkout-payment-box .checkout-qr-box {
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  background-color: #fafafa;
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.checkout-payment-qr-col {
+  width: 150px;
+  min-height: 150px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+#checkoutPaymentQrImage {
+  width: 128px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.checkout-payment-qr-empty {
+  display: none;
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.checkout-payment-box .checkout-qr-info h4 {
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--color-primary);
+  margin-bottom: 12px;
+}
+
+.checkout-payment-box .checkout-qr-info p {
+  color: var(--color-muted);
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 9px;
+}
+
+.checkout-payment-box .checkout-qr-info strong {
+  color: var(--color-primary);
+  font-weight: 800;
+  word-break: break-word;
+}
+
+.checkout-payment-waiting {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-muted);
+}
+
+#btnCheckoutPaymentClose {
+  width: 100%;
+  min-height: 54px;
+  margin-top: 22px;
+  border: none;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#btnCheckoutPaymentClose:hover {
+  background-color: var(--color-secondary);
+}
+.checkout-payment-status {
+  margin-top: 12px;
+  padding: 11px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 700;
+}
+
+.checkout-payment-status-waiting {
+  background-color: #f8fafc;
+  color: #475569;
+}
+
+.checkout-payment-status-success {
+  background-color: #ecfdf5;
+  color: #047857;
+}
+
+.checkout-payment-status-error {
+  background-color: #fef2f2;
+  color: #dc2626;
 }
