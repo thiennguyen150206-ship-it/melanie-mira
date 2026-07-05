@@ -9,6 +9,7 @@ const productRoutes = require("./routes/product.routes");
 const orderRoutes = require("./routes/order.routes");
 const authRoutes = require("./routes/auth.routes");
 const myRoutes = require("./routes/my.routes");
+const webhookRoutes = require("./routes/webhook.routes");
 
 const { apiLimiter } = require("./middlewares/rateLimiter");
 
@@ -67,6 +68,9 @@ app.use(function (error, req, res, next) {
 app.get("/", function (req, res) {
   res.send("Melanie Mira Backend is running");
 });
+
+// Webhook từ SePay cần nhận ổn định, xác thực bằng API Key riêng
+app.use("/api/webhooks", webhookRoutes);
 
 // Giới hạn request cho tất cả route bắt đầu bằng /api
 app.use("/api", apiLimiter);

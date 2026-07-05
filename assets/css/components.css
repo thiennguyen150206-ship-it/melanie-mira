@@ -4570,7 +4570,9 @@
    ========================= */
 
 .checkout-payment-box {
-  padding: 22px 4px 30px;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 22px 30px;
   color: var(--color-primary);
 }
 
@@ -4590,28 +4592,29 @@
 
 .checkout-payment-box .checkout-qr-box {
   margin-top: 18px;
-  padding: 16px;
+  padding: 14px;
   border: 1px solid var(--color-border);
   background-color: #fafafa;
-  display: grid;
-  grid-template-columns: 150px 1fr;
-  gap: 18px;
-  align-items: start;
-}
 
-.checkout-payment-qr-col {
-  width: 150px;
-  min-height: 150px;
-  border: 1px solid var(--color-border);
-  background-color: var(--color-white);
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.checkout-payment-qr-col {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-white);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   padding: 10px;
 }
 
 #checkoutPaymentQrImage {
-  width: 128px;
+  width: 400px;
   max-width: 100%;
   height: auto;
   display: block;
@@ -4690,4 +4693,21 @@
 .checkout-payment-status-error {
   background-color: #fef2f2;
   color: #dc2626;
+}
+@media screen and (max-width: 768px) {
+  .checkout-payment-box {
+    padding: 20px 14px 28px;
+  }
+
+  .checkout-payment-box .checkout-qr-box {
+    padding: 14px;
+  }
+
+  .checkout-payment-qr-col {
+    padding: 12px;
+  }
+
+  #checkoutPaymentQrImage {
+    width: 300px;
+  }
 }

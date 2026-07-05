@@ -10,6 +10,7 @@ const MAX_CUSTOMER_EMAIL_LENGTH = 150;
 const MAX_CUSTOMER_PHONE_LENGTH = 20;
 const MAX_CUSTOMER_ADDRESS_LENGTH = 255;
 const MAX_ORDER_NOTE_LENGTH = 500;
+const MAX_ADMIN_ORDER_LIMIT = 100;
 
 function padTwoDigits(value) {
   return String(value).padStart(2, "0");
