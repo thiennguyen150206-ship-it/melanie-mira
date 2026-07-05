@@ -229,7 +229,7 @@ function applyProfileLanguage() {
   $("#btnAddAddress").text(pText("add"));
 
   $(".marketing-title h2").text(pText("marketingOptions"));
-  $(".profile-marketing-card span").text(pText("email"));
+  $(".profile-marketing-card > .profile-marketing-label").text(pText("email"));
 
   $("#btnLogout").text(pText("logout"));
   $(".profile-logout-all-btn").text(pText("logoutAll"));

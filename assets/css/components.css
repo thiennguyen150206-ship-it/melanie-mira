@@ -4043,8 +4043,18 @@
   transition: var(--transition-fast);
 }
 
-.profile-switch input:checked + .profile-switch-slider {
-  background-color: #2563eb;
+.profile-switch-slider {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border-radius: 999px;
+  background-color: #d4d4d4;
+  transition: var(--transition-fast);
+
+  font-size: 0 !important;
+  color: transparent !important;
+  line-height: 0;
+  overflow: hidden;
 }
 
 .profile-switch input:checked + .profile-switch-slider::after {
