@@ -3955,7 +3955,7 @@
   margin-bottom: 28px;
 }
 
-.profile-card span {
+.profile-card > span {
   color: var(--color-muted);
   font-size: 14px;
 }
@@ -3996,7 +3996,6 @@
 .marketing-title {
   margin-bottom: 14px;
 }
-
 .profile-marketing-card {
   margin-bottom: 28px;
 }
@@ -4027,8 +4026,13 @@
   inset: 0;
   display: block;
   border-radius: 999px;
-  background-color: #d4d4d4;
-  transition: var(--transition-fast);
+  background-color: #d6d6d6;
+  transition: 0.25s ease;
+
+  font-size: 0 !important;
+  color: transparent !important;
+  line-height: 0;
+  overflow: hidden;
 }
 
 .profile-switch-slider::after {
@@ -4039,22 +4043,13 @@
   left: 3px;
   top: 3px;
   border-radius: 50%;
-  background-color: var(--color-white);
-  transition: var(--transition-fast);
+  background-color: #ffffff;
+  transition: 0.25s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
-.profile-switch-slider {
-  position: absolute;
-  inset: 0;
-  display: block;
-  border-radius: 999px;
-  background-color: #d4d4d4;
-  transition: var(--transition-fast);
-
-  font-size: 0 !important;
-  color: transparent !important;
-  line-height: 0;
-  overflow: hidden;
+.profile-switch input:checked + .profile-switch-slider {
+  background-color: #713030;
 }
 
 .profile-switch input:checked + .profile-switch-slider::after {
@@ -4568,42 +4563,6 @@
   background-color: var(--color-primary);
   border-color: var(--color-primary);
   color: var(--color-white);
-}
-.checkout-payment-box {
-  padding: 24px;
-}
-
-.checkout-payment-box h3 {
-  font-size: 28px;
-  font-weight: 800;
-  margin-bottom: 12px;
-}
-
-.checkout-payment-box > p {
-  color: #555;
-  line-height: 1.6;
-  margin-bottom: 20px;
-}
-
-.checkout-payment-waiting {
-  margin-top: 12px;
-  color: #666;
-  line-height: 1.5;
-}
-
-#btnCheckoutPaymentClose {
-  width: 100%;
-  margin-top: 18px;
-  padding: 14px 18px;
-  border: 0;
-  background: #111;
-  color: #fff;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-#btnCheckoutPaymentClose:hover {
-  background: #333;
 }
 /* =========================
    Checkout payment result screen
