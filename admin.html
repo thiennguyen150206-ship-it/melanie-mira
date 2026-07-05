@@ -131,6 +131,40 @@
       .btn-update-status:disabled {
         cursor: not-allowed;
       }
+      .payment-badge {
+        display: inline-block;
+        margin-top: 4px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .payment-paid {
+        background-color: #ecfdf5;
+        color: #047857;
+      }
+
+      .payment-unpaid {
+        background-color: #fef3c7;
+        color: #92400e;
+      }
+
+      .payment-method-text {
+        font-weight: 600;
+      }
+
+      .payment-paid-amount {
+        margin-top: 4px;
+        color: #6b7280;
+        font-size: 12px;
+      }
+
+      .order-code-text {
+        font-weight: 700;
+        color: #111827;
+        word-break: break-word;
+      }
       .admin-stat-filter {
         cursor: pointer;
         transition: 0.2s ease;
@@ -532,6 +566,7 @@
             <thead>
               <tr>
                 <th>ID</th>
+                <th>Mã đơn</th>
                 <th>Ngày đặt</th>
                 <th>Khách hàng</th>
                 <th>SĐT</th>
@@ -546,7 +581,7 @@
 
             <tbody id="ordersTableBody">
               <tr>
-                <td colspan="10" class="text-center">Chưa tải đơn hàng</td>
+                <td colspan="11" class="text-center">Chưa tải đơn hàng</td>
               </tr>
             </tbody>
           </table>

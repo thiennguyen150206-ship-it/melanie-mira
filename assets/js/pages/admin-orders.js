@@ -90,6 +90,47 @@ function getAdminPaymentText(paymentMethod) {
   return paymentMethod || "Không rõ";
 }
 
+function getAdminPaymentStatusText(paymentStatus) {
+  if (paymentStatus === "paid") {
+    return "Đã thanh toán";
+  }
+
+  if (paymentStatus === "unpaid") {
+    return "Chưa thanh toán";
+  }
+
+  return paymentStatus || "Chưa thanh toán";
+}
+
+function getAdminPaymentStatusClass(paymentStatus) {
+  if (paymentStatus === "paid") {
+    return "payment-paid";
+  }
+
+  return "payment-unpaid";
+}
+
+function renderAdminPaymentCell(order) {
+  const paymentMethodText = getAdminPaymentText(order.payment_method);
+  const paymentStatus = String(order.payment_status || "unpaid")
+    .trim()
+    .toLowerCase();
+
+  return `
+    <div class="payment-method-text">
+      ${escapeHtml(paymentMethodText)}
+    </div>
+
+    <span class="payment-badge ${getAdminPaymentStatusClass(paymentStatus)}">
+      ${escapeHtml(getAdminPaymentStatusText(paymentStatus))}
+    </span>
+
+    <div class="payment-paid-amount">
+      Đã nhận: ${formatAdminMoney(order.paid_amount || 0)}
+    </div>
+  `;
+}
+
 function getAdminStatusClass(status) {
   return (
     "status-" +
@@ -148,7 +189,7 @@ function resetAdminDataView() {
 
   $("#ordersTableBody").html(`
     <tr>
-      <td colspan="10" class="text-center">Chưa tải đơn hàng</td>
+     <td colspan="11" class="text-center">Chưa tải đơn hàng</td>
     </tr>
   `);
 
@@ -453,7 +494,7 @@ function renderOrders(orders) {
   if (orders.length === 0) {
     $("#ordersTableBody").html(`
     <tr>
-      <td colspan="10" class="text-center">Chưa có đơn hàng</td>
+     <td colspan="11" class="text-center">Chưa có đơn hàng</td>
     </tr>
   `);
     return;
@@ -474,13 +515,18 @@ function renderOrders(orders) {
 
     html += `
       <tr>
-        <td>${order.id}</td>
-         <td>${formatAdminDate(order.created_at)}</td>
+     <td>${order.id}</td>
+<td>
+  <div class="order-code-text">
+    ${escapeHtml(order.order_code || "Chưa có")}
+  </div>
+</td>
+<td>${formatAdminDate(order.created_at)}</td>
 <td>${escapeHtml(order.customer_name)}</td>
 <td>${escapeHtml(order.customer_phone)}</td>
 <td>${escapeHtml(order.customer_address)}</td>
 <td>${formatAdminMoney(order.total_amount)}</td>
-<td>${escapeHtml(getAdminPaymentText(order.payment_method))}</td>
+<td>${renderAdminPaymentCell(order)}</td>
 <td>
   <select 
   class="form-select order-status ${getAdminStatusClass(orderStatus)}" 
@@ -623,14 +669,19 @@ function renderOrderDetail(order) {
   $("#detailOrderId").text(order.id);
 
   $("#orderDetailInfo").html(`
+  <p><strong>Mã đơn:</strong> ${escapeHtml(order.order_code || "Chưa có")}</p>
   <p><strong>Ngày đặt:</strong> ${formatAdminDate(order.created_at)}</p>
   <p><strong>Khách hàng:</strong> ${escapeHtml(order.customer_name)}</p>
   <p><strong>Số điện thoại:</strong> ${escapeHtml(order.customer_phone)}</p>
   <p><strong>Địa chỉ:</strong> ${escapeHtml(order.customer_address)}</p>
   <p><strong>Ghi chú:</strong> ${escapeHtml(order.note || "Không có")}</p>
-<p><strong>Trạng thái:</strong> ${escapeHtml(getAdminStatusText(order.status))}</p>
-<p><strong>Thanh toán:</strong> ${escapeHtml(getAdminPaymentText(order.payment_method))}</p>
-<p><strong>Tổng tiền:</strong> ${formatAdminMoney(order.total_amount)}</p>
+  <p><strong>Trạng thái đơn:</strong> ${escapeHtml(getAdminStatusText(order.status))}</p>
+  <p><strong>Phương thức thanh toán:</strong> ${escapeHtml(getAdminPaymentText(order.payment_method))}</p>
+  <p><strong>Trạng thái thanh toán:</strong> ${escapeHtml(getAdminPaymentStatusText(order.payment_status))}</p>
+  <p><strong>Đã nhận:</strong> ${formatAdminMoney(order.paid_amount || 0)}</p>
+  <p><strong>Thời gian thanh toán:</strong> ${formatAdminDate(order.paid_at)}</p>
+  <p><strong>Nội dung chuyển khoản:</strong> ${escapeHtml(order.payment_content || "Không có")}</p>
+  <p><strong>Tổng tiền:</strong> ${formatAdminMoney(order.total_amount)}</p>
 `);
 
   let html = "";
