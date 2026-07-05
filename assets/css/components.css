@@ -4711,3 +4711,49 @@
     width: 300px;
   }
 }
+.profile-shipping-box {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background-color: #f8fafc;
+  color: #111827;
+}
+
+.profile-shipping-box strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.profile-shipping-box p {
+  margin-bottom: 6px;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.profile-tracking-code {
+  color: #111827;
+  letter-spacing: 0.5px;
+}
+
+.profile-tracking-guide {
+  font-size: 13px;
+  color: #6b7280;
+}
+.profile-shipping-summary {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background-color: #f8fafc;
+  border: 1px solid #e5e7eb;
+}
+
+.profile-shipping-summary p {
+  margin-bottom: 4px;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.profile-shipping-summary strong {
+  color: #111827;
+}

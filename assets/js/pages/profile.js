@@ -86,7 +86,15 @@ const profileTranslations = {
     quantity: "Quantity",
 
     paymentCod: "Cash on delivery",
-    paymentBank: "Bank transfer",
+    orderCode: "Order code",
+    shippingInfo: "Shipping information",
+    shippingProvider: "Carrier",
+    trackingCode: "Tracking code",
+    shippingNote: "Shipping note",
+    shippedAt: "Updated at",
+    noTrackingCode: "Tracking code has not been updated yet.",
+    trackingGuide:
+      "Use this code to track your parcel on the carrier website or app.",
   },
 
   vi: {
@@ -176,7 +184,15 @@ const profileTranslations = {
     quantity: "Số lượng",
 
     paymentCod: "Thanh toán khi nhận hàng",
-    paymentBank: "Chuyển khoản ngân hàng",
+    orderCode: "Mã đơn",
+    shippingInfo: "Thông tin vận chuyển",
+    shippingProvider: "Đơn vị vận chuyển",
+    trackingCode: "Mã vận đơn",
+    shippingNote: "Ghi chú vận chuyển",
+    shippedAt: "Cập nhật lúc",
+    noTrackingCode: "Shop chưa cập nhật mã vận đơn.",
+    trackingGuide:
+      "Bạn dùng mã này để tra cứu hành trình trên website hoặc app của đơn vị vận chuyển.",
   },
 };
 
@@ -771,15 +787,104 @@ function getOrderStatusClass(status) {
 }
 
 function getPaymentMethodText(paymentMethod) {
-  if (paymentMethod === "cod") {
+  const method = String(paymentMethod || "")
+    .trim()
+    .toLowerCase();
+
+  if (method === "cod") {
     return pText("paymentCod");
   }
 
-  if (paymentMethod === "bank_transfer") {
+  if (method === "bank_transfer" || method === "paymentbank") {
     return pText("paymentBank");
   }
 
   return paymentMethod || "";
+}
+function getShippingProviderText(provider) {
+  const shippingProvider = String(provider || "")
+    .trim()
+    .toUpperCase();
+
+  if (shippingProvider === "GHTK") {
+    return "Giao Hàng Tiết Kiệm";
+  }
+
+  return provider || "";
+}
+
+function createShippingInfoHtml(order) {
+  const trackingCode = order.shipping_tracking_code
+    ? String(order.shipping_tracking_code).trim()
+    : "";
+
+  if (!trackingCode) {
+    return `
+      <div class="profile-shipping-box">
+      
+  <strong>${pText("shippingInfo")}</strong>
+        <p>${pText("noTrackingCode")}</p>
+      </div>
+    `;
+  }
+
+  const provider = getShippingProviderText(order.shipping_provider || "GHTK");
+
+  return `
+    <div class="profile-shipping-box">
+      <strong>${pText("shippingInfo")}</strong>
+
+      <p>
+        ${pText("shippingProvider")}:
+        <b>${escapeHtml(provider)}</b>
+      </p>
+
+      <p>
+        ${pText("trackingCode")}:
+        <b class="profile-tracking-code">${escapeHtml(trackingCode)}</b>
+      </p>
+
+      <p>
+        ${pText("shippingNote")}:
+        ${escapeHtml(order.shipping_note || pText("unknown"))}
+      </p>
+
+      <p>
+        ${pText("shippedAt")}:
+        ${formatProfileDate(order.shipped_at)}
+      </p>
+
+      <p class="profile-tracking-guide">
+        ${pText("trackingGuide")}
+      </p>
+    </div>
+  `;
+}
+
+function createShippingSummaryHtml(order) {
+  const trackingCode = order.shipping_tracking_code
+    ? String(order.shipping_tracking_code).trim()
+    : "";
+
+  if (!trackingCode) {
+    return "";
+  }
+
+  const provider = getShippingProviderText(order.shipping_provider || "GHTK");
+
+  return `
+    <div class="profile-shipping-summary">
+      <p>
+        ${pText("shippingProvider")}:
+        <strong>${escapeHtml(provider)}</strong>
+      </p>
+
+      <p>
+        ${pText("trackingCode")}:
+        <strong>${escapeHtml(trackingCode)}</strong>
+      </p>
+    </div>
+  `;
 }
 
 function createOrderItem(order) {
@@ -805,11 +910,18 @@ function createOrderItem(order) {
   return `
     <div class="profile-order-card">
       <div class="profile-order-top">
-        <strong>${pText("orderNumber")}${orderId}</strong>
+      <strong>
+  ${pText("orderNumber")}${orderId}
+</strong>
         <span class="profile-order-status ${getOrderStatusClass(orderStatus)}">
           ${escapeHtml(getOrderStatusText(orderStatus))}
         </span>
       </div>
+
+      <p>
+  ${pText("orderCode")}:
+  <strong>${escapeHtml(order.order_code || "Chưa có")}</strong>
+</p>
 
       <p>${pText("orderDate")}: ${formatProfileDate(order.created_at)}</p>
       <p>${pText("receiver")}: ${escapeHtml(order.customer_name)}</p>
@@ -819,6 +931,7 @@ function createOrderItem(order) {
       <p class="profile-order-total">
         ${pText("total")}: ${formatProfileMoney(order.total_amount)}
       </p>
+    ${createShippingSummaryHtml(order)}
 
       <div class="order-action-row">
         <button
@@ -957,11 +1070,13 @@ function createOrderDetailHtml(orderDetail) {
   }
 
   return `
-    <div class="order-detail-content">
-      <h3>${pText("productsInOrder")}</h3>
-      ${itemsHtml}
-    </div>
-  `;
+  <div class="order-detail-content">
+    <h3>${pText("productsInOrder")}</h3>
+    ${itemsHtml}
+
+    ${createShippingInfoHtml(orderDetail)}
+  </div>
+`;
 }
 
 function showProfilePanel(panelName) {

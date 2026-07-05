@@ -26,16 +26,23 @@ async function getMyOrders(req, res) {
     const [orders] = await pool.query(
       `
       SELECT
-        id,
-        customer_name,
-        customer_email,
-        customer_phone,
-        customer_address,
-        note,
-        total_amount,
-        payment_method,
-        status,
-        created_at
+  id,
+  order_code,
+  customer_name,
+  customer_email,
+  customer_phone,
+  customer_address,
+  note,
+  total_amount,
+  payment_method,
+  payment_status,
+  paid_amount,
+  status,
+  shipping_provider,
+  shipping_tracking_code,
+  shipping_note,
+  shipped_at,
+  created_at
       FROM orders
       WHERE user_id = ?
       ORDER BY created_at DESC
@@ -69,16 +76,23 @@ async function getMyOrderById(req, res) {
     const [orders] = await pool.query(
       `
       SELECT
-        id,
-        customer_name,
-        customer_email,
-        customer_phone,
-        customer_address,
-        note,
-        total_amount,
-        payment_method,
-        status,
-        created_at
+  id,
+  order_code,
+  customer_name,
+  customer_email,
+  customer_phone,
+  customer_address,
+  note,
+  total_amount,
+  payment_method,
+  payment_status,
+  paid_amount,
+  status,
+  shipping_provider,
+  shipping_tracking_code,
+  shipping_note,
+  shipped_at,
+  created_at
       FROM orders
       WHERE id = ? AND user_id = ?
       LIMIT 1
