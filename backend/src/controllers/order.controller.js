@@ -589,9 +589,18 @@ async function getAllOrders(req, res) {
     }
 
     if (shippingFilter === "no_tracking") {
-      whereConditions.push(
-        "(shipping_tracking_code IS NULL OR shipping_tracking_code = '')",
-      );
+      whereConditions.push(`
+    (
+      shipping_tracking_code IS NULL
+      OR shipping_tracking_code = ''
+    )
+  `);
+
+      whereConditions.push("payment_status = ?");
+      queryParams.push("paid");
+
+      whereConditions.push("status = ?");
+      queryParams.push("confirmed");
     }
 
     if (search) {
