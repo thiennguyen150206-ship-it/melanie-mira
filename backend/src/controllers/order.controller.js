@@ -759,6 +759,18 @@ function getAllowedNextStatuses(currentStatus) {
   return [];
 }
 
+function isUnpaidBankTransferOrder(order) {
+  return (
+    order.payment_method === "bank_transfer" && order.payment_status !== "paid"
+  );
+}
+
+function needPaidBeforeStatus(status) {
+  return (
+    status === "confirmed" || status === "shipping" || status === "completed"
+  );
+}
+
 // PATCH /api/orders/:id/status
 async function updateOrderStatus(req, res) {
   const connection = await pool.getConnection();
@@ -793,11 +805,12 @@ async function updateOrderStatus(req, res) {
 
     const [orders] = await connection.query(
       `
-      SELECT id, status
-      FROM orders
-      WHERE id = ?
-      LIMIT 1
-      `,
+  SELECT id, status, payment_method, payment_status
+  FROM orders
+  WHERE id = ?
+  LIMIT 1
+  FOR UPDATE
+  `,
       [orderId],
     );
 
@@ -810,7 +823,8 @@ async function updateOrderStatus(req, res) {
       });
     }
 
-    const oldStatus = orders[0].status;
+    const order = orders[0];
+    const oldStatus = order.status;
 
     if (oldStatus === status) {
       await connection.rollback();
@@ -841,6 +855,16 @@ async function updateOrderStatus(req, res) {
       return res.status(400).json({
         success: false,
         message: "Completed order cannot be changed",
+      });
+    }
+
+    if (isUnpaidBankTransferOrder(order) && needPaidBeforeStatus(status)) {
+      await connection.rollback();
+
+      return res.status(400).json({
+        success: false,
+        message:
+          "Đơn chuyển khoản chưa thanh toán, chưa thể xác nhận hoặc giao hàng.",
       });
     }
 
