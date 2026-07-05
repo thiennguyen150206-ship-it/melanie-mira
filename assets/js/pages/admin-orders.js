@@ -3,7 +3,7 @@ let allStockProducts = [];
 
 let currentOrderPage = 1;
 let totalOrderPages = 1;
-let totalOrderCount = 0;
+let currentDetailOrderId = null;
 
 const ORDER_PAGE_LIMIT = 10;
 const MAX_STOCK_PER_SIZE = 999;
@@ -663,8 +663,35 @@ async function loadOrderDetail(orderId) {
   }
 }
 
+function renderShippingInfo(order) {
+  const provider = order.shipping_provider || "GHTK";
+  const trackingCode = order.shipping_tracking_code || "";
+  const shippingNote = order.shipping_note || "";
+
+  $("#shippingProviderInput").val(provider);
+  $("#shippingTrackingInput").val(trackingCode);
+  $("#shippingNoteInput").val(shippingNote);
+  $("#shippingMessage")
+    .text("")
+    .removeClass("shipping-message-success shipping-message-error");
+
+  if (!trackingCode) {
+    $("#shippingCurrentInfo").html("Chưa có mã vận đơn.");
+    return;
+  }
+
+  $("#shippingCurrentInfo").html(`
+    <div><strong>Đơn vị:</strong> ${escapeHtml(provider)}</div>
+    <div><strong>Mã vận đơn:</strong> ${escapeHtml(trackingCode)}</div>
+    <div><strong>Ghi chú:</strong> ${escapeHtml(shippingNote || "Không có")}</div>
+    <div><strong>Thời gian cập nhật:</strong> ${formatAdminDate(order.shipped_at)}</div>
+  `);
+}
+
 function renderOrderDetail(order) {
   $("#orderDetailBox").show();
+  currentDetailOrderId = order.id;
+  renderShippingInfo(order);
 
   $("#detailOrderId").text(order.id);
 
@@ -701,6 +728,75 @@ function renderOrderDetail(order) {
   }
 
   $("#orderDetailItems").html(html);
+}
+
+async function updateOrderShipping() {
+  if (!currentDetailOrderId) {
+    return;
+  }
+
+  const shippingProvider = $("#shippingProviderInput").val().trim();
+  const shippingTrackingCode = $("#shippingTrackingInput").val().trim();
+  const shippingNote = $("#shippingNoteInput").val().trim();
+
+  if (shippingTrackingCode === "") {
+    $("#shippingMessage")
+      .removeClass("shipping-message-success")
+      .addClass("shipping-message-error")
+      .text("Vui lòng nhập mã vận đơn.");
+    return;
+  }
+
+  $("#btnSaveShipping").prop("disabled", true);
+  $("#shippingMessage")
+    .removeClass("shipping-message-success shipping-message-error")
+    .text("Đang lưu mã vận đơn...");
+
+  try {
+    const adminToken = await getValidAdminToken();
+
+    const response = await fetch(
+      API_BASE_URL + "/orders/" + currentDetailOrderId + "/shipping",
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + adminToken,
+        },
+        body: JSON.stringify({
+          shipping_provider: shippingProvider || "GHTK",
+          shipping_tracking_code: shippingTrackingCode,
+          shipping_note: shippingNote,
+        }),
+      },
+    );
+
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      if (response.status === 401 || response.status === 403) {
+        handleAdminSessionExpired();
+      }
+
+      throw new Error(result.message || "Không thể lưu mã vận đơn.");
+    }
+
+    $("#shippingMessage")
+      .removeClass("shipping-message-error")
+      .addClass("shipping-message-success")
+      .text("Đã lưu mã vận đơn.");
+
+    await loadOrderDetail(currentDetailOrderId);
+    await loadOrders();
+    await loadOrderStats();
+  } catch (error) {
+    $("#shippingMessage")
+      .removeClass("shipping-message-success")
+      .addClass("shipping-message-error")
+      .text(error.message);
+  } finally {
+    $("#btnSaveShipping").prop("disabled", false);
+  }
 }
 
 function getStockInputClass(stock) {
@@ -1136,6 +1232,10 @@ $(document).ready(function () {
     let orderId = $(this).data("id");
 
     loadOrderDetail(orderId);
+  });
+
+  $("#btnSaveShipping").click(function () {
+    updateOrderShipping();
   });
 
   $("#orderStatusFilter").change(function () {

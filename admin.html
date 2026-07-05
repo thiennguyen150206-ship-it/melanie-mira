@@ -428,6 +428,47 @@
         border-color: #212529;
         background: #f8f9fa;
       }
+      .shipping-box {
+        margin-top: 18px;
+        padding: 16px;
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        background-color: #f8fafc;
+      }
+
+      .shipping-box h4 {
+        margin-bottom: 12px;
+        font-size: 18px;
+        font-weight: 800;
+      }
+
+      .shipping-current-info {
+        margin-bottom: 12px;
+        color: #4b5563;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .shipping-form-row {
+        display: grid;
+        grid-template-columns: 160px 1fr;
+        gap: 10px;
+        margin-bottom: 10px;
+        align-items: center;
+      }
+
+      .shipping-message {
+        margin-top: 10px;
+        font-weight: 700;
+      }
+
+      .shipping-message-success {
+        color: #047857;
+      }
+
+      .shipping-message-error {
+        color: #dc2626;
+      }
     </style>
   </head>
 
@@ -636,6 +677,50 @@
               <tbody id="orderDetailItems"></tbody>
             </table>
           </div>
+        </div>
+
+        <div class="shipping-box" id="shippingBox">
+          <h4>Mã vận đơn</h4>
+
+          <div class="shipping-current-info" id="shippingCurrentInfo">
+            Chưa có thông tin vận chuyển.
+          </div>
+
+          <div class="shipping-form-row">
+            <label for="shippingProviderInput">Đơn vị vận chuyển</label>
+            <input
+              type="text"
+              class="form-control"
+              id="shippingProviderInput"
+              value="GHTK"
+            />
+          </div>
+
+          <div class="shipping-form-row">
+            <label for="shippingTrackingInput">Mã vận đơn</label>
+            <input
+              type="text"
+              class="form-control"
+              id="shippingTrackingInput"
+              placeholder="Ví dụ: S123456789"
+            />
+          </div>
+
+          <div class="shipping-form-row">
+            <label for="shippingNoteInput">Ghi chú</label>
+            <input
+              type="text"
+              class="form-control"
+              id="shippingNoteInput"
+              placeholder="Ví dụ: Đã tạo đơn trên Giao Hàng Tiết Kiệm"
+            />
+          </div>
+
+          <button type="button" class="btn btn-primary" id="btnSaveShipping">
+            Lưu mã vận đơn
+          </button>
+
+          <div class="shipping-message" id="shippingMessage"></div>
         </div>
 
         <hr class="my-5" />

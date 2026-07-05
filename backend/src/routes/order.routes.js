@@ -15,6 +15,9 @@ router.get("/stats", adminAuth, orderController.getOrderStats);
 // Cập nhật trạng thái đơn hàng
 router.patch("/:id/status", adminAuth, orderController.updateOrderStatus);
 
+// Cập nhật mã vận đơn
+router.patch("/:id/shipping", adminAuth, orderController.updateOrderShipping);
+
 // Kiểm tra trạng thái thanh toán theo mã đơn
 router.get("/payment-status/:orderCode", orderController.getPaymentStatus);
 

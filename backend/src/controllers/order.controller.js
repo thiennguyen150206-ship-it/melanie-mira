@@ -11,6 +11,9 @@ const MAX_CUSTOMER_PHONE_LENGTH = 20;
 const MAX_CUSTOMER_ADDRESS_LENGTH = 255;
 const MAX_ORDER_NOTE_LENGTH = 500;
 const MAX_ADMIN_ORDER_LIMIT = 100;
+const MAX_SHIPPING_PROVIDER_LENGTH = 50;
+const MAX_SHIPPING_TRACKING_CODE_LENGTH = 100;
+const MAX_SHIPPING_NOTE_LENGTH = 500;
 
 function padTwoDigits(value) {
   return String(value).padStart(2, "0");
@@ -130,6 +133,10 @@ function normalizeOrderItems(items) {
   }
 
   return normalizedItems;
+}
+
+function isValidShippingTrackingCode(code) {
+  return /^[A-Z0-9._-]{3,100}$/.test(code);
 }
 
 // POST /api/orders
@@ -606,8 +613,12 @@ async function getAllOrders(req, res) {
         paid_at,
         payment_content,
         payment_note,
-        status,
-        created_at
+       shipping_provider,
+shipping_tracking_code,
+shipping_note,
+shipped_at,
+status,
+created_at
       FROM orders
       ${whereSql}
       ORDER BY created_at DESC
@@ -699,6 +710,10 @@ async function getOrderById(req, res) {
         paid_at,
         payment_content,
         payment_note,
+        shipping_provider,
+        shipping_tracking_code,
+        shipping_note,
+        shipped_at,
         status,
         created_at
       FROM orders
@@ -934,6 +949,151 @@ async function updateOrderStatus(req, res) {
     connection.release();
   }
 }
+
+// PATCH /api/orders/:id/shipping
+async function updateOrderShipping(req, res) {
+  const connection = await pool.getConnection();
+
+  try {
+    const orderId = parsePositiveInt(req.params.id);
+
+    if (!orderId) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid order id",
+      });
+    }
+
+    const shippingProvider = req.body.shipping_provider
+      ? String(req.body.shipping_provider).trim().toUpperCase()
+      : "GHTK";
+
+    const shippingTrackingCode = req.body.shipping_tracking_code
+      ? String(req.body.shipping_tracking_code).trim().toUpperCase()
+      : "";
+
+    const shippingNote = req.body.shipping_note
+      ? String(req.body.shipping_note).trim()
+      : null;
+
+    if (!shippingTrackingCode) {
+      return res.status(400).json({
+        success: false,
+        message: "Shipping tracking code is required",
+      });
+    }
+
+    if (!isValidShippingTrackingCode(shippingTrackingCode)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid shipping tracking code",
+      });
+    }
+
+    if (
+      isTooLong(shippingProvider, MAX_SHIPPING_PROVIDER_LENGTH) ||
+      isTooLong(shippingTrackingCode, MAX_SHIPPING_TRACKING_CODE_LENGTH) ||
+      isTooLong(shippingNote, MAX_SHIPPING_NOTE_LENGTH)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Shipping information is too long",
+      });
+    }
+
+    await connection.beginTransaction();
+
+    const [orders] = await connection.query(
+      `
+      SELECT id, status, payment_method, payment_status
+      FROM orders
+      WHERE id = ?
+      LIMIT 1
+      FOR UPDATE
+      `,
+      [orderId],
+    );
+
+    if (orders.length === 0) {
+      await connection.rollback();
+
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    const order = orders[0];
+
+    if (order.status === "cancelled") {
+      await connection.rollback();
+
+      return res.status(400).json({
+        success: false,
+        message: "Cancelled order cannot be shipped",
+      });
+    }
+
+    if (
+      order.payment_method === "bank_transfer" &&
+      order.payment_status !== "paid"
+    ) {
+      await connection.rollback();
+
+      return res.status(400).json({
+        success: false,
+        message: "Đơn chuyển khoản chưa thanh toán, chưa thể nhập mã vận đơn.",
+      });
+    }
+
+    if (order.status === "pending") {
+      await connection.rollback();
+
+      return res.status(400).json({
+        success: false,
+        message: "Vui lòng xác nhận đơn trước khi nhập mã vận đơn.",
+      });
+    }
+
+    await connection.query(
+      `
+      UPDATE orders
+      SET
+        shipping_provider = ?,
+        shipping_tracking_code = ?,
+        shipping_note = ?,
+        shipped_at = NOW(),
+        status = CASE
+          WHEN status = 'confirmed' THEN 'shipping'
+          ELSE status
+        END
+      WHERE id = ?
+      `,
+      [shippingProvider, shippingTrackingCode, shippingNote, orderId],
+    );
+
+    await connection.commit();
+
+    res.json({
+      success: true,
+      message: "Shipping tracking code updated successfully",
+      data: {
+        order_id: Number(orderId),
+        shipping_provider: shippingProvider,
+        shipping_tracking_code: shippingTrackingCode,
+        shipping_note: shippingNote,
+        status: order.status === "confirmed" ? "shipping" : order.status,
+      },
+    });
+  } catch (error) {
+    await connection.rollback();
+
+    return sendServerError(res, "Cannot update shipping tracking code", error);
+  } finally {
+    connection.release();
+  }
+}
+
 module.exports = {
   createOrder,
   getPaymentStatus,
@@ -941,4 +1101,5 @@ module.exports = {
   getOrderStats,
   getOrderById,
   updateOrderStatus,
+  updateOrderShipping,
 };
