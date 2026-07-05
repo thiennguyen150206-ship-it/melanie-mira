@@ -569,8 +569,17 @@
           Chưa đăng nhập admin
         </div>
 
-        <div class="row mb-3">
-          <div class="col-md-4">
+        <div class="row mb-3 g-2">
+          <div class="col-lg-5 col-md-12">
+            <input
+              type="text"
+              id="orderSearchInput"
+              class="form-control"
+              placeholder="Tìm mã đơn, mã vận đơn, tên khách, SĐT, địa chỉ..."
+            />
+          </div>
+
+          <div class="col-lg-2 col-md-4">
             <select id="orderStatusFilter" class="form-select">
               <option value="all">Tất cả trạng thái</option>
               <option value="pending">Chờ xác nhận</option>
@@ -581,21 +590,28 @@
             </select>
           </div>
 
-          <div class="col-md-6">
-            <input
-              type="text"
-              id="orderSearchInput"
-              class="form-control"
-              placeholder="Tìm theo mã đơn, tên khách, số điện thoại, địa chỉ..."
-            />
+          <div class="col-lg-2 col-md-4">
+            <select id="orderPaymentFilter" class="form-select">
+              <option value="all">Tất cả thanh toán</option>
+              <option value="paid">Đã thanh toán</option>
+              <option value="unpaid">Chưa thanh toán</option>
+            </select>
           </div>
 
-          <div class="col-md-2">
+          <div class="col-lg-2 col-md-4">
+            <select id="orderShippingFilter" class="form-select">
+              <option value="all">Tất cả vận đơn</option>
+              <option value="has_tracking">Đã có mã vận đơn</option>
+              <option value="no_tracking">Chưa có mã vận đơn</option>
+            </select>
+          </div>
+
+          <div class="col-lg-1 col-md-12">
             <button
               id="btnClearOrderFilter"
               class="btn btn-outline-secondary w-100"
             >
-              Xóa lọc
+              Xóa
             </button>
           </div>
         </div>
@@ -677,50 +693,49 @@
               <tbody id="orderDetailItems"></tbody>
             </table>
           </div>
-        </div>
+          <div class="shipping-box" id="shippingBox">
+            <h4>Mã vận đơn</h4>
 
-        <div class="shipping-box" id="shippingBox">
-          <h4>Mã vận đơn</h4>
+            <div class="shipping-current-info" id="shippingCurrentInfo">
+              Chưa có thông tin vận chuyển.
+            </div>
 
-          <div class="shipping-current-info" id="shippingCurrentInfo">
-            Chưa có thông tin vận chuyển.
+            <div class="shipping-form-row">
+              <label for="shippingProviderInput">Đơn vị vận chuyển</label>
+              <input
+                type="text"
+                class="form-control"
+                id="shippingProviderInput"
+                value="GHTK"
+              />
+            </div>
+
+            <div class="shipping-form-row">
+              <label for="shippingTrackingInput">Mã vận đơn</label>
+              <input
+                type="text"
+                class="form-control"
+                id="shippingTrackingInput"
+                placeholder="Ví dụ: S123456789"
+              />
+            </div>
+
+            <div class="shipping-form-row">
+              <label for="shippingNoteInput">Ghi chú</label>
+              <input
+                type="text"
+                class="form-control"
+                id="shippingNoteInput"
+                placeholder="Ví dụ: Đã tạo đơn trên Giao Hàng Tiết Kiệm"
+              />
+            </div>
+
+            <button type="button" class="btn btn-primary" id="btnSaveShipping">
+              Lưu mã vận đơn
+            </button>
+
+            <div class="shipping-message" id="shippingMessage"></div>
           </div>
-
-          <div class="shipping-form-row">
-            <label for="shippingProviderInput">Đơn vị vận chuyển</label>
-            <input
-              type="text"
-              class="form-control"
-              id="shippingProviderInput"
-              value="GHTK"
-            />
-          </div>
-
-          <div class="shipping-form-row">
-            <label for="shippingTrackingInput">Mã vận đơn</label>
-            <input
-              type="text"
-              class="form-control"
-              id="shippingTrackingInput"
-              placeholder="Ví dụ: S123456789"
-            />
-          </div>
-
-          <div class="shipping-form-row">
-            <label for="shippingNoteInput">Ghi chú</label>
-            <input
-              type="text"
-              class="form-control"
-              id="shippingNoteInput"
-              placeholder="Ví dụ: Đã tạo đơn trên Giao Hàng Tiết Kiệm"
-            />
-          </div>
-
-          <button type="button" class="btn btn-primary" id="btnSaveShipping">
-            Lưu mã vận đơn
-          </button>
-
-          <div class="shipping-message" id="shippingMessage"></div>
         </div>
 
         <hr class="my-5" />

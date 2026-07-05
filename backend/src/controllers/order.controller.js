@@ -502,6 +502,12 @@ async function getAllOrders(req, res) {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
     const status = req.query.status ? req.query.status.trim() : "";
+    const paymentStatus = req.query.payment_status
+      ? String(req.query.payment_status).trim().toLowerCase()
+      : "";
+    const shippingFilter = req.query.shipping_filter
+      ? String(req.query.shipping_filter).trim().toLowerCase()
+      : "";
     const search = req.query.search ? req.query.search.trim() : "";
 
     const allowedStatuses = [
@@ -511,6 +517,9 @@ async function getAllOrders(req, res) {
       "completed",
       "cancelled",
     ];
+
+    const allowedPaymentStatuses = ["paid", "unpaid"];
+    const allowedShippingFilters = ["has_tracking", "no_tracking"];
 
     if (!Number.isInteger(page) || page < 1) {
       return res.status(400).json({
@@ -537,6 +546,20 @@ async function getAllOrders(req, res) {
       });
     }
 
+    if (paymentStatus && !allowedPaymentStatuses.includes(paymentStatus)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid payment status",
+      });
+    }
+
+    if (shippingFilter && !allowedShippingFilters.includes(shippingFilter)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid shipping filter",
+      });
+    }
+
     if (search.length > 100) {
       return res.status(400).json({
         success: false,
@@ -554,11 +577,29 @@ async function getAllOrders(req, res) {
       queryParams.push(status);
     }
 
+    if (paymentStatus) {
+      whereConditions.push("payment_status = ?");
+      queryParams.push(paymentStatus);
+    }
+
+    if (shippingFilter === "has_tracking") {
+      whereConditions.push(
+        "(shipping_tracking_code IS NOT NULL AND shipping_tracking_code != '')",
+      );
+    }
+
+    if (shippingFilter === "no_tracking") {
+      whereConditions.push(
+        "(shipping_tracking_code IS NULL OR shipping_tracking_code = '')",
+      );
+    }
+
     if (search) {
       whereConditions.push(`
     (
-           CAST(id AS CHAR) LIKE ?
+         CAST(id AS CHAR) LIKE ?
       OR order_code LIKE ?
+      OR shipping_tracking_code LIKE ?
       OR customer_name LIKE ?
       OR customer_email LIKE ?
       OR customer_phone LIKE ?
@@ -569,6 +610,7 @@ async function getAllOrders(req, res) {
       const searchKeyword = `%${search}%`;
 
       queryParams.push(
+        searchKeyword,
         searchKeyword,
         searchKeyword,
         searchKeyword,
@@ -637,6 +679,8 @@ created_at
         total: total,
         total_pages: totalPages,
         status: status || null,
+        payment_status: paymentStatus || null,
+        shipping_filter: shippingFilter || null,
         search: search || null,
       },
     });

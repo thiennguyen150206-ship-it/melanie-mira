@@ -443,6 +443,8 @@ async function loadOrders() {
     let adminToken = await getValidAdminToken();
 
     let statusFilter = $("#orderStatusFilter").val();
+    let paymentFilter = $("#orderPaymentFilter").val();
+    let shippingFilter = $("#orderShippingFilter").val();
     let keyword = $("#orderSearchInput").val().trim();
 
     let params = new URLSearchParams();
@@ -453,7 +455,13 @@ async function loadOrders() {
     if (statusFilter && statusFilter !== "all") {
       params.set("status", statusFilter);
     }
+    if (paymentFilter && paymentFilter !== "all") {
+      params.set("payment_status", paymentFilter);
+    }
 
+    if (shippingFilter && shippingFilter !== "all") {
+      params.set("shipping_filter", shippingFilter);
+    }
     if (keyword !== "") {
       params.set("search", keyword);
     }
@@ -1249,6 +1257,12 @@ $(document).ready(function () {
     loadOrders();
   });
 
+  $("#orderPaymentFilter, #orderShippingFilter").change(function () {
+    currentOrderPage = 1;
+    $("#orderDetailBox").hide();
+    loadOrders();
+  });
+
   $("#orderSearchInput").on("input", function () {
     clearTimeout(orderSearchTimer);
 
@@ -1263,6 +1277,8 @@ $(document).ready(function () {
     $("#orderStatusFilter").val("all");
     $("#orderSearchInput").val("");
     $("#orderDetailBox").hide();
+    $("#orderPaymentFilter").val("all");
+    $("#orderShippingFilter").val("all");
 
     $(".admin-stat-filter").removeClass("active");
     $('.admin-stat-filter[data-status="all"]').addClass("active");
@@ -1280,6 +1296,8 @@ $(document).ready(function () {
     $("#adminPasswordInput").val("");
 
     $("#orderStatusFilter").val("all");
+    $("#orderPaymentFilter").val("all");
+    $("#orderShippingFilter").val("all");
     $("#orderSearchInput").val("");
 
     $("#stockSearchInput").val("");
