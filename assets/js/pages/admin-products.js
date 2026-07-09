@@ -1130,10 +1130,19 @@ function initAdminProductEvents() {
   });
 
   $(document).on("click", ".btn-view-admin-product", function () {
-    const productId = $(this).data("id");
+    const productId = Number($(this).data("id"));
+
+    const product = allAdminProducts.find(function (item) {
+      return Number(item.id) === productId;
+    });
+
+    if (!product || !product.slug) {
+      alert("Không tìm thấy slug sản phẩm để mở trang xem.");
+      return;
+    }
 
     window.open(
-      "http://localhost:5000/api/products/admin/detail/" + productId,
+      "product-detail.html?slug=" + encodeURIComponent(product.slug),
       "_blank",
     );
   });

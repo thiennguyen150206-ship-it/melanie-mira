@@ -702,11 +702,12 @@ async function cancelMyOrder(req, res) {
 
     const [orders] = await connection.query(
       `
-      SELECT id, status
-      FROM orders
-      WHERE id = ? AND user_id = ?
-      LIMIT 1
-      `,
+  SELECT id, status, payment_method, payment_status, paid_amount
+FROM orders
+WHERE id = ? AND user_id = ?
+LIMIT 1
+FOR UPDATE
+  `,
       [orderId, userId],
     );
 
@@ -727,6 +728,23 @@ async function cancelMyOrder(req, res) {
       return res.status(400).json({
         success: false,
         message: "Only pending orders can be cancelled",
+      });
+    }
+
+    const paidAmount = Number(order.paid_amount || 0);
+
+    if (
+      order.payment_method === "bank_transfer" &&
+      (order.payment_status === "paid" ||
+        order.payment_status === "underpaid" ||
+        paidAmount > 0)
+    ) {
+      await connection.rollback();
+
+      return res.status(400).json({
+        success: false,
+        message:
+          "Đơn hàng đã có thanh toán, không thể tự hủy. Vui lòng liên hệ shop để được hỗ trợ.",
       });
     }
 

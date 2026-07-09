@@ -95,6 +95,10 @@ function getAdminPaymentStatusText(paymentStatus) {
     return "Đã thanh toán";
   }
 
+  if (paymentStatus === "underpaid") {
+    return "Thanh toán thiếu";
+  }
+
   if (paymentStatus === "unpaid") {
     return "Chưa thanh toán";
   }
@@ -105,6 +109,10 @@ function getAdminPaymentStatusText(paymentStatus) {
 function getAdminPaymentStatusClass(paymentStatus) {
   if (paymentStatus === "paid") {
     return "payment-paid";
+  }
+
+  if (paymentStatus === "underpaid") {
+    return "payment-underpaid";
   }
 
   return "payment-unpaid";
@@ -426,6 +434,28 @@ function renderOrderPagination(pagination) {
       " đơn",
   );
   updateOrderPaginationButtons();
+}
+
+function syncOrderQuickFilterActive() {
+  const status = $("#orderStatusFilter").val() || "all";
+  const payment = $("#orderPaymentFilter").val() || "all";
+  const shipping = $("#orderShippingFilter").val() || "all";
+
+  $(".admin-order-action-btn").removeClass("active");
+
+  const matchedButton = $(
+    '.admin-order-action-btn[data-status="' +
+      status +
+      '"][data-payment="' +
+      payment +
+      '"][data-shipping="' +
+      shipping +
+      '"]',
+  );
+
+  if (matchedButton.length) {
+    matchedButton.addClass("active");
+  }
 }
 
 async function loadOrders() {
@@ -1246,6 +1276,26 @@ $(document).ready(function () {
     updateOrderShipping();
   });
 
+  $(document).on("click", ".admin-order-action-btn", function () {
+    const status = $(this).data("status") || "all";
+    const payment = $(this).data("payment") || "all";
+    const shipping = $(this).data("shipping") || "all";
+
+    $("#orderStatusFilter").val(status);
+    $("#orderPaymentFilter").val(payment);
+    $("#orderShippingFilter").val(shipping);
+    $("#orderDetailBox").hide();
+
+    $(".admin-stat-filter").removeClass("active");
+    $('.admin-stat-filter[data-status="' + status + '"]').addClass("active");
+
+    $(".admin-order-action-btn").removeClass("active");
+    $(this).addClass("active");
+
+    currentOrderPage = 1;
+    loadOrders();
+  });
+
   $("#orderStatusFilter").change(function () {
     let status = $(this).val();
 
@@ -1254,12 +1304,14 @@ $(document).ready(function () {
     $(".admin-stat-filter").removeClass("active");
     $('.admin-stat-filter[data-status="' + status + '"]').addClass("active");
 
+    syncOrderQuickFilterActive();
     loadOrders();
   });
 
   $("#orderPaymentFilter, #orderShippingFilter").change(function () {
     currentOrderPage = 1;
     $("#orderDetailBox").hide();
+    syncOrderQuickFilterActive();
     loadOrders();
   });
 
@@ -1279,6 +1331,7 @@ $(document).ready(function () {
     $("#orderDetailBox").hide();
     $("#orderPaymentFilter").val("all");
     $("#orderShippingFilter").val("all");
+    syncOrderQuickFilterActive();
 
     $(".admin-stat-filter").removeClass("active");
     $('.admin-stat-filter[data-status="all"]').addClass("active");

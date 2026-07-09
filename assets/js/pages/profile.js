@@ -62,6 +62,8 @@ const profileTranslations = {
     cannotDeleteAddress: "Cannot delete address.",
     cannotLoadOrderDetail: "Cannot load order details.",
     cannotCancelOrder: "Cannot cancel order.",
+    paidOrderCannotCancel:
+      "This order has a payment record. Please contact the shop for support.",
 
     fullNameRequired: "Please enter your full name.",
     phoneRequired: "Please enter your phone number.",
@@ -86,6 +88,7 @@ const profileTranslations = {
     quantity: "Quantity",
 
     paymentCod: "Cash on delivery",
+    paymentBank: "Bank transfer",
     orderCode: "Order code",
     shippingInfo: "Shipping information",
     shippingProvider: "Carrier",
@@ -179,11 +182,14 @@ const profileTranslations = {
     viewDetail: "Xem chi tiết",
     hideDetail: "Ẩn chi tiết",
     cancelOrder: "Hủy đơn",
+    paidOrderCannotCancel:
+      "Đơn đã có thanh toán, vui lòng liên hệ shop nếu cần hỗ trợ.",
     productsInOrder: "Sản phẩm trong đơn",
     size: "Size",
     quantity: "Số lượng",
 
     paymentCod: "Thanh toán khi nhận hàng",
+    paymentBank: "Chuyển khoản ngân hàng",
     orderCode: "Mã đơn",
     shippingInfo: "Thông tin vận chuyển",
     shippingProvider: "Đơn vị vận chuyển",
@@ -886,16 +892,27 @@ function createShippingSummaryHtml(order) {
     </div>
   `;
 }
-
 function createOrderItem(order) {
   let cancelButton = "";
-  let orderStatus = String(order.status || "")
+
+  const orderStatus = String(order.status || "")
     .trim()
     .toLowerCase();
 
+  const paymentStatus = String(order.payment_status || "unpaid")
+    .trim()
+    .toLowerCase();
+
+  const paidAmount = Number(order.paid_amount || 0);
   const orderId = Number(order.id);
 
-  if (orderStatus === "pending") {
+  const hasAnyBankPayment =
+    order.payment_method === "bank_transfer" &&
+    (paymentStatus === "paid" ||
+      paymentStatus === "underpaid" ||
+      paidAmount > 0);
+
+  if (orderStatus === "pending" && !hasAnyBankPayment) {
     cancelButton = `
       <button
         type="button"
@@ -907,31 +924,42 @@ function createOrderItem(order) {
     `;
   }
 
+  if (orderStatus === "pending" && hasAnyBankPayment) {
+    cancelButton = `
+      <span class="order-paid-note">
+        ${pText("paidOrderCannotCancel")}
+      </span>
+    `;
+  }
+
   return `
     <div class="profile-order-card">
       <div class="profile-order-top">
-      <strong>
-  ${pText("orderNumber")}${orderId}
-</strong>
+        <strong>
+          ${pText("orderNumber")}${orderId}
+        </strong>
+
         <span class="profile-order-status ${getOrderStatusClass(orderStatus)}">
           ${escapeHtml(getOrderStatusText(orderStatus))}
         </span>
       </div>
 
       <p>
-  ${pText("orderCode")}:
-  <strong>${escapeHtml(order.order_code || "Chưa có")}</strong>
-</p>
+        ${pText("orderCode")}:
+        <strong>${escapeHtml(order.order_code || "Chưa có")}</strong>
+      </p>
 
       <p>${pText("orderDate")}: ${formatProfileDate(order.created_at)}</p>
       <p>${pText("receiver")}: ${escapeHtml(order.customer_name)}</p>
       <p>${pText("phone")}: ${escapeHtml(order.customer_phone)}</p>
       <p>${pText("address")}: ${escapeHtml(order.customer_address)}</p>
       <p>${pText("payment")}: ${escapeHtml(getPaymentMethodText(order.payment_method))}</p>
+
       <p class="profile-order-total">
         ${pText("total")}: ${formatProfileMoney(order.total_amount)}
       </p>
-    ${createShippingSummaryHtml(order)}
+
+      ${createShippingSummaryHtml(order)}
 
       <div class="order-action-row">
         <button

@@ -98,23 +98,33 @@ async function handleSePayWebhook(req, res) {
     if (transferAmount < totalAmount) {
       await connection.query(
         `
-        UPDATE orders
-        SET
-          paid_amount = ?,
-          paid_at = ?,
-          payment_note = ?
-        WHERE id = ?
-        `,
+      UPDATE orders
+      SET
+        payment_status = 'underpaid',
+        paid_amount = ?,
+        paid_at = ?,
+        payment_note = ?
+      WHERE id = ?
+    `,
         [
           transferAmount,
           transactionDate,
-          "Thanh toán thiếu. Nội dung: " + paymentNote,
+          "Thanh toán thiếu. Số tiền đã nhận: " +
+            transferAmount +
+            ". Tổng đơn: " +
+            totalAmount +
+            ". Nội dung: " +
+            paymentNote,
           order.id,
         ],
       );
 
       await connection.commit();
-      return res.json({ success: true });
+
+      return res.json({
+        success: true,
+        message: "Underpaid payment recorded",
+      });
     }
 
     await connection.query(

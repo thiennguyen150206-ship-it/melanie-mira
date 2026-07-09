@@ -4502,6 +4502,16 @@
 .order-cancel-btn:hover {
   text-decoration: underline;
 }
+.order-paid-note {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #8a5a00;
+  background: #fff7df;
+  border: 1px solid #ffe1a3;
+  border-radius: 999px;
+  padding: 7px 12px;
+}
 /* =========================
    Order status colors
    ========================= */

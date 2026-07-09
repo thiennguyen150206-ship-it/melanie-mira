@@ -145,6 +145,11 @@
         color: #047857;
       }
 
+      .payment-underpaid {
+        background-color: #fef2f2;
+        color: #dc2626;
+      }
+
       .payment-unpaid {
         background-color: #fef3c7;
         color: #92400e;
@@ -428,6 +433,37 @@
         border-color: #212529;
         background: #f8f9fa;
       }
+
+      .admin-order-action-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 4px 0 18px;
+      }
+
+      .admin-order-action-btn {
+        border: 1px solid #dee2e6;
+        background-color: #fff;
+        color: #212529;
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s ease;
+      }
+
+      .admin-order-action-btn:hover {
+        border-color: #212529;
+        background-color: #f8f9fa;
+      }
+
+      .admin-order-action-btn.active {
+        border-color: #212529;
+        background-color: #212529;
+        color: #fff;
+      }
+
       .shipping-box {
         margin-top: 18px;
         padding: 16px;
@@ -569,6 +605,58 @@
           Chưa đăng nhập admin
         </div>
 
+        <div class="admin-order-action-row">
+          <button
+            type="button"
+            class="admin-order-action-btn active"
+            data-status="all"
+            data-payment="all"
+            data-shipping="all"
+          >
+            Tất cả đơn
+          </button>
+
+          <button
+            type="button"
+            class="admin-order-action-btn"
+            data-status="pending"
+            data-payment="paid"
+            data-shipping="all"
+          >
+            Đã thanh toán chờ xác nhận
+          </button>
+
+          <button
+            type="button"
+            class="admin-order-action-btn"
+            data-status="all"
+            data-payment="underpaid"
+            data-shipping="all"
+          >
+            Thanh toán thiếu
+          </button>
+
+          <button
+            type="button"
+            class="admin-order-action-btn"
+            data-status="all"
+            data-payment="all"
+            data-shipping="no_tracking"
+          >
+            Cần nhập mã vận đơn
+          </button>
+
+          <button
+            type="button"
+            class="admin-order-action-btn"
+            data-status="shipping"
+            data-payment="all"
+            data-shipping="all"
+          >
+            Đang giao
+          </button>
+        </div>
+
         <div class="row mb-3 g-2">
           <div class="col-lg-5 col-md-12">
             <input
@@ -594,6 +682,7 @@
             <select id="orderPaymentFilter" class="form-select">
               <option value="all">Tất cả thanh toán</option>
               <option value="paid">Đã thanh toán</option>
+              <option value="underpaid">Thanh toán thiếu</option>
               <option value="unpaid">Chưa thanh toán</option>
             </select>
           </div>

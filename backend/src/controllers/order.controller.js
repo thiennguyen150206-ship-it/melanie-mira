@@ -475,6 +475,16 @@ async function getPaymentStatus(req, res) {
 
     const order = orders[0];
 
+    let paymentStatus = order.payment_status;
+
+    if (
+      order.payment_status === "unpaid" &&
+      Number(order.paid_amount) > 0 &&
+      Number(order.paid_amount) < Number(order.total_amount)
+    ) {
+      paymentStatus = "underpaid";
+    }
+
     res.json({
       success: true,
       data: {
@@ -482,7 +492,7 @@ async function getPaymentStatus(req, res) {
         order_code: order.order_code,
         total_amount: Number(order.total_amount),
         payment_method: order.payment_method,
-        payment_status: order.payment_status,
+        payment_status: paymentStatus,
         paid_amount: Number(order.paid_amount || 0),
         paid_at: order.paid_at,
         payment_content: order.payment_content,
@@ -518,7 +528,7 @@ async function getAllOrders(req, res) {
       "cancelled",
     ];
 
-    const allowedPaymentStatuses = ["paid", "unpaid"];
+    const allowedPaymentStatuses = ["all", "paid", "unpaid", "underpaid"];
     const allowedShippingFilters = ["has_tracking", "no_tracking"];
 
     if (!Number.isInteger(page) || page < 1) {
