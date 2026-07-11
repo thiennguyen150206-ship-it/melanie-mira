@@ -186,13 +186,13 @@ function createCheckoutModal() {
                       <div class="payment-option-desc">
                         ${t("checkout.qrPaymentDesc")}
                       </div>
-                    </div>  
+                    </div>
                     <div class="checkout-payment-note">
   <p>
     Mã QR thanh toán sẽ được tạo sau khi bạn bấm
     <strong>Đặt hàng</strong>.
   </p>
-</div>           
+</div>
                   </div>
 
                   <!-- 5. Nút đặt hàng -->
@@ -1182,7 +1182,7 @@ ${
             <span>${formatCartMoney(cart[i].price)}</span>
           </div>
 
-         
+
 
           <div class="cart-modal-quantity">
             <button type="button" class="cart-qty-minus" data-index="${i}">
@@ -1393,6 +1393,11 @@ function applyProductLanguageData() {
 
 const translations = {
   vi: {
+    "topbar.register": "Đăng ký tài khoản để theo dõi đơn hàng dễ dàng",
+    "topbar.freeship": "Freeship cho mọi đơn hàng",
+    "topbar.newItems": "Sản phẩm mới đã có mặt tại Melanie Mira",
+    "topbar.qrPayment": "Thanh toán QR nhanh chóng và an toàn",
+    "topbar.offers": "Theo dõi Melanie Mira để nhận ưu đãi mới nhất",
     "nav.home": "Trang chủ",
     "nav.products": "Sản phẩm",
     "nav.about": "Giới thiệu",
@@ -1524,7 +1529,7 @@ const translations = {
       "Vui lòng kiểm tra đơn hàng và nhập thông tin nhận hàng.",
     "checkout.qrPaymentTitle": "Thanh toán online bằng mã QR",
     "checkout.qrPaymentDesc":
-      "Quét mã QR bằng ứng dụng ngân hàng hoặc ví điện tử để thanh toán đơn hàng.",
+      'Vui lòng hoàn tất thanh toán trước khi chọn "Tiếp tục mua sắm"',
     "checkout.qrScanTitle": "Quét mã QR để thanh toán",
     "checkout.qrScanNote":
       "Mã QR thanh toán sẽ được tạo sau khi đơn hàng được ghi nhận.",
@@ -1535,6 +1540,11 @@ const translations = {
   },
 
   en: {
+    "topbar.register": "Create an account to track your orders easily",
+    "topbar.freeship": "Free shipping on every order",
+    "topbar.newItems": "New arrivals are now available at Melanie Mira",
+    "topbar.qrPayment": "Fast and secure QR payment",
+    "topbar.offers": "Follow Melanie Mira for the latest offers",
     "nav.home": "Home",
     "nav.products": "Shop",
     "nav.about": "About",
@@ -1664,7 +1674,7 @@ const translations = {
       "Please review your order and enter your shipping information.",
     "checkout.qrPaymentTitle": "Online payment by QR code",
     "checkout.qrPaymentDesc":
-      "Scan the QR code using your banking app or e-wallet to complete the payment.",
+      'Please complete your payment before choosing "Continue shopping"',
     "checkout.qrScanTitle": "Scan QR code to pay",
     "checkout.qrScanNote":
       "The payment QR code will be generated after your order is created.",
