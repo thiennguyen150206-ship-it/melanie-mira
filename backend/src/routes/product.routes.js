@@ -4,6 +4,12 @@ const router = express.Router();
 const productController = require("../controllers/product.controller");
 const adminAuth = require("../middlewares/adminAuth");
 
+const {
+  uploadSingleProductImage,
+} = require("../middlewares/productImageUpload");
+
+const { uploadProductImage } = require("../controllers/upload.controller");
+
 // Admin xem tồn kho sản phẩm
 router.get("/admin/stock", adminAuth, productController.getAdminProductStock);
 
@@ -33,6 +39,14 @@ router.patch(
   "/admin/categories/:id",
   adminAuth,
   productController.updateAdminCategory,
+);
+
+// Admin upload ảnh sản phẩm lên Cloudinary
+router.post(
+  "/admin/upload-image",
+  adminAuth,
+  uploadSingleProductImage,
+  uploadProductImage,
 );
 
 // Admin xem danh sách sản phẩm đầy đủ

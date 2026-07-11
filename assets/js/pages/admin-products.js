@@ -26,6 +26,239 @@ function escapeAdminProductHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
+function isValidImageUrl(value) {
+  const imageUrl = String(value || "").trim();
+
+  if (!imageUrl) {
+    return false;
+  }
+
+  return (
+    imageUrl.startsWith("http://") ||
+    imageUrl.startsWith("https://") ||
+    imageUrl.startsWith("assets/") ||
+    imageUrl.startsWith("./assets/") ||
+    imageUrl.startsWith("/assets/")
+  );
+}
+
+async function uploadProductImageFile(file) {
+  const adminToken = await getAdminProductToken();
+
+  const formData = new FormData();
+  formData.append("image", file);
+
+  const response = await fetch(API_BASE_URL + "/products/admin/upload-image", {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer " + adminToken,
+    },
+    body: formData,
+  });
+
+  const result = await response.json();
+
+  if (!response.ok || !result.success) {
+    handleAdminProductAuthError(response);
+    throw new Error(result.message || "Không thể upload ảnh.");
+  }
+
+  return result.data;
+}
+
+function setUploadNote(selector, message, type) {
+  const note = $(selector);
+
+  note.removeClass("is-loading is-success is-error").text(message || "");
+
+  if (type) {
+    note.addClass(type);
+  }
+}
+
+function clearProductUploadNotes() {
+  setUploadNote("#mainImageUploadNote", "", "");
+  setUploadNote("#hoverImageUploadNote", "", "");
+  setUploadNote("#galleryImageUploadNote", "", "");
+}
+
+async function handleMainImageUpload(file) {
+  try {
+    setUploadNote(
+      "#mainImageUploadNote",
+      "Đang upload ảnh chính...",
+      "is-loading",
+    );
+
+    const uploadData = await uploadProductImageFile(file);
+
+    $("#createProductImage").val(uploadData.image_url);
+
+    renderSingleImagePreview(
+      "#createProductImage",
+      "#previewMainImageBox",
+      "Chưa có ảnh chính",
+    );
+
+    setUploadNote(
+      "#mainImageUploadNote",
+      "Upload ảnh chính thành công.",
+      "is-success",
+    );
+  } catch (error) {
+    setUploadNote(
+      "#mainImageUploadNote",
+      error.message || "Upload ảnh chính thất bại.",
+      "is-error",
+    );
+  }
+}
+
+async function handleHoverImageUpload(file) {
+  try {
+    setUploadNote(
+      "#hoverImageUploadNote",
+      "Đang upload ảnh hover...",
+      "is-loading",
+    );
+
+    const uploadData = await uploadProductImageFile(file);
+
+    $("#createProductHoverImage").val(uploadData.image_url);
+
+    renderSingleImagePreview(
+      "#createProductHoverImage",
+      "#previewHoverImageBox",
+      "Chưa có ảnh hover",
+    );
+
+    setUploadNote(
+      "#hoverImageUploadNote",
+      "Upload ảnh hover thành công.",
+      "is-success",
+    );
+  } catch (error) {
+    setUploadNote(
+      "#hoverImageUploadNote",
+      error.message || "Upload ảnh hover thất bại.",
+      "is-error",
+    );
+  }
+}
+
+async function handleGalleryImagesUpload(files) {
+  try {
+    if (!files.length) {
+      return;
+    }
+
+    setUploadNote(
+      "#galleryImageUploadNote",
+      "Đang upload ảnh phụ...",
+      "is-loading",
+    );
+
+    const uploadedUrls = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const uploadData = await uploadProductImageFile(files[i]);
+      uploadedUrls.push(uploadData.image_url);
+    }
+
+    const oldValue = $("#createProductImages").val().trim();
+    const oldLines = oldValue ? oldValue.split("\n") : [];
+    const finalLines = oldLines.concat(uploadedUrls);
+
+    $("#createProductImages").val(finalLines.join("\n"));
+
+    renderGalleryImagePreview();
+
+    setUploadNote(
+      "#galleryImageUploadNote",
+      "Upload ảnh phụ thành công.",
+      "is-success",
+    );
+  } catch (error) {
+    setUploadNote(
+      "#galleryImageUploadNote",
+      error.message || "Upload ảnh phụ thất bại.",
+      "is-error",
+    );
+  }
+}
+
+function getInvalidImageUrls(imageUrls) {
+  return imageUrls.filter(function (imageUrl) {
+    return !isValidImageUrl(imageUrl);
+  });
+}
+
+function renderSingleImagePreview(inputSelector, previewSelector, emptyText) {
+  const imageUrl = String($(inputSelector).val() || "").trim();
+
+  if (!isValidImageUrl(imageUrl)) {
+    $(previewSelector).html("<span>" + emptyText + "</span>");
+    return;
+  }
+
+  $(previewSelector).html(
+    '<img src="' +
+      escapeAdminProductHtml(imageUrl) +
+      '" alt="Preview ảnh sản phẩm" />',
+  );
+}
+
+function renderGalleryImagePreview() {
+  const imageText = String($("#createProductImages").val() || "").trim();
+
+  if (!imageText) {
+    $("#previewGalleryImagesBox").html("<span>Chưa có ảnh phụ</span>");
+    return;
+  }
+
+  const imageUrls = imageText
+    .split("\n")
+    .map(function (item) {
+      return item.trim();
+    })
+    .filter(function (item) {
+      return isValidImageUrl(item);
+    });
+
+  if (imageUrls.length === 0) {
+    $("#previewGalleryImagesBox").html("<span>Chưa có ảnh phụ hợp lệ</span>");
+    return;
+  }
+
+  const html = imageUrls
+    .map(function (imageUrl) {
+      return (
+        '<img src="' +
+        escapeAdminProductHtml(imageUrl) +
+        '" alt="Preview ảnh phụ" />'
+      );
+    })
+    .join("");
+
+  $("#previewGalleryImagesBox").html(html);
+}
+
+function renderAllProductImagePreviews() {
+  renderSingleImagePreview(
+    "#createProductImage",
+    "#previewMainImageBox",
+    "Chưa có ảnh chính",
+  );
+
+  renderSingleImagePreview(
+    "#createProductHoverImage",
+    "#previewHoverImageBox",
+    "Chưa có ảnh hover",
+  );
+
+  renderGalleryImagePreview();
+}
+
 async function getAdminProductToken() {
   if (typeof getValidAdminToken === "function") {
     return await getValidAdminToken();
@@ -601,6 +834,10 @@ function clearCreateProductErrors() {
   $("#errCreatePrice").text("");
   $("#errCreateOldPrice").text("");
   $("#errCreateStock").text("");
+
+  $("#errCreateImage").text("");
+  $("#errCreateHoverImage").text("");
+  $("#errCreateImages").text("");
 }
 
 function resetCreateProductForm() {
@@ -613,6 +850,8 @@ function resetCreateProductForm() {
   $("#createProductStockL").val(0);
 
   clearCreateProductErrors();
+  renderAllProductImagePreviews();
+  clearProductUploadNotes();
 }
 
 function openCreateProductModal() {
@@ -640,6 +879,7 @@ function openCreateProductModal() {
 }
 
 function fillProductForm(product) {
+  clearProductUploadNotes();
   $("#editingProductId").val(product.id);
 
   $("#createProductCategory").val(product.category_id);
@@ -703,6 +943,7 @@ function fillProductForm(product) {
   }
 
   $("#createProductImages").val(imageText);
+  renderAllProductImagePreviews();
 }
 
 async function openEditProductModal(productId) {
@@ -749,6 +990,7 @@ function closeCreateProductModal() {
 
   $("#productFormTitle").text("Thêm sản phẩm mới");
   $("#btnSaveCreateProduct").text("Lưu sản phẩm");
+  renderAllProductImagePreviews();
 }
 
 function isValidCreateStockValue(value) {
@@ -804,6 +1046,32 @@ function validateCreateProductForm(data) {
     !isValidCreateStockValue(data.stock_l)
   ) {
     $("#errCreateStock").text("Tồn kho phải là số nguyên từ 0 đến 999.");
+    isValid = false;
+  }
+
+  if (!data.image || data.image.trim() === "") {
+    $("#errCreateImage").text("Vui lòng nhập ảnh chính của sản phẩm.");
+    isValid = false;
+  } else if (!isValidImageUrl(data.image)) {
+    $("#errCreateImage").text(
+      "Ảnh chính phải là link http/https hoặc đường dẫn assets/.",
+    );
+    isValid = false;
+  }
+
+  if (data.hover_image && !isValidImageUrl(data.hover_image)) {
+    $("#errCreateHoverImage").text(
+      "Ảnh hover phải là link http/https hoặc đường dẫn assets/.",
+    );
+    isValid = false;
+  }
+
+  const invalidGalleryImages = getInvalidImageUrls(data.images || []);
+
+  if (invalidGalleryImages.length > 0) {
+    $("#errCreateImages").text(
+      "Ảnh phụ có link không hợp lệ. Mỗi dòng phải là http/https hoặc assets/.",
+    );
     isValid = false;
   }
 
@@ -1154,4 +1422,68 @@ function initAdminProductEvents() {
 
 $(document).ready(function () {
   initAdminProductEvents();
+  $("#createProductImage").on("input", function () {
+    renderSingleImagePreview(
+      "#createProductImage",
+      "#previewMainImageBox",
+      "Chưa có ảnh chính",
+    );
+  });
+
+  $("#createProductHoverImage").on("input", function () {
+    renderSingleImagePreview(
+      "#createProductHoverImage",
+      "#previewHoverImageBox",
+      "Chưa có ảnh hover",
+    );
+  });
+
+  $("#createProductImages").on("input", function () {
+    renderGalleryImagePreview();
+  });
+
+  $("#btnChooseMainImage").click(function () {
+    $("#createProductImageFile").click();
+  });
+
+  $("#createProductImageFile").change(function () {
+    const file = this.files[0];
+
+    if (!file) {
+      return;
+    }
+
+    handleMainImageUpload(file);
+    $(this).val("");
+  });
+
+  $("#btnChooseHoverImage").click(function () {
+    $("#createProductHoverImageFile").click();
+  });
+
+  $("#createProductHoverImageFile").change(function () {
+    const file = this.files[0];
+
+    if (!file) {
+      return;
+    }
+
+    handleHoverImageUpload(file);
+    $(this).val("");
+  });
+
+  $("#btnChooseGalleryImages").click(function () {
+    $("#createProductGalleryFiles").click();
+  });
+
+  $("#createProductGalleryFiles").change(function () {
+    const files = Array.from(this.files || []);
+
+    if (!files.length) {
+      return;
+    }
+
+    handleGalleryImagesUpload(files);
+    $(this).val("");
+  });
 });
