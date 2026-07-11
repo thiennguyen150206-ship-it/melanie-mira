@@ -3,6 +3,7 @@ let allAdminProductCategories = [];
 let adminProductSearchTimer = null;
 let isLoadingAdminProducts = false;
 let isUpdatingAdminProductStatus = false;
+let isChangingAdminProductDeleteState = false;
 let productFormMode = "create";
 let editingProductId = null;
 let categoryFormMode = "create";
@@ -431,6 +432,65 @@ async function updateAdminProductStatus(productId, isActive) {
   return result.data;
 }
 
+async function softDeleteAdminProductById(productId) {
+  const adminToken = await getAdminProductToken();
+
+  const response = await fetch(
+    API_BASE_URL + "/products/admin/" + productId + "/delete",
+    {
+      method: "PATCH",
+      headers: {
+        Authorization: "Bearer " + adminToken,
+      },
+    },
+  );
+
+  const result = await response.json();
+
+  if (!response.ok || !result.success) {
+    handleAdminProductAuthError(response);
+    throw new Error(result.message || "Không thể xóa sản phẩm.");
+  }
+
+  return result.data;
+}
+
+async function restoreAdminProductById(productId) {
+  const adminToken = await getAdminProductToken();
+
+  const response = await fetch(
+    API_BASE_URL + "/products/admin/" + productId + "/restore",
+    {
+      method: "PATCH",
+      headers: {
+        Authorization: "Bearer " + adminToken,
+      },
+    },
+  );
+
+  const result = await response.json();
+
+  if (!response.ok || !result.success) {
+    handleAdminProductAuthError(response);
+    throw new Error(result.message || "Không thể khôi phục sản phẩm.");
+  }
+
+  return result.data;
+}
+
+function updateProductInAdminList(productId, data) {
+  for (let i = 0; i < allAdminProducts.length; i++) {
+    if (Number(allAdminProducts[i].id) === Number(productId)) {
+      allAdminProducts[i] = {
+        ...allAdminProducts[i],
+        ...data,
+      };
+
+      break;
+    }
+  }
+}
+
 async function createAdminProduct(data) {
   const adminToken = await getAdminProductToken();
 
@@ -556,12 +616,26 @@ function renderAdminCategories() {
   $("#adminCategoriesTableBody").html(html);
 }
 
+function isDeletedAdminProduct(product) {
+  return Boolean(product.deleted_at);
+}
+
 function getFilteredAdminProducts() {
   const keyword = $("#adminProductSearchInput").val().trim().toLowerCase();
   const categoryFilter = $("#adminProductCategoryFilter").val();
   const statusFilter = $("#adminProductStatusFilter").val();
 
   let products = allAdminProducts;
+
+  if (statusFilter === "deleted") {
+    products = products.filter(function (product) {
+      return isDeletedAdminProduct(product);
+    });
+  } else {
+    products = products.filter(function (product) {
+      return !isDeletedAdminProduct(product);
+    });
+  }
 
   if (keyword !== "") {
     products = products.filter(function (product) {
@@ -619,17 +693,73 @@ function renderAdminProducts() {
     const product = products[i];
     const productId = Number(product.id);
     const isActive = Number(product.is_active) === 1;
+    const isDeleted = isDeletedAdminProduct(product);
 
-    const statusClass = isActive
-      ? "product-status-visible"
-      : "product-status-hidden";
+    let statusClass = "product-status-hidden";
+    let statusText = "Đang ẩn";
 
-    const statusText = isActive ? "Đang hiển thị" : "Đang ẩn";
+    if (isDeleted) {
+      statusClass = "product-status-deleted";
+      statusText = "Đã xóa";
+    } else if (isActive) {
+      statusClass = "product-status-visible";
+      statusText = "Đang hiển thị";
+    }
+
     const toggleText = isActive ? "Ẩn" : "Hiện";
     const nextStatus = isActive ? 0 : 1;
 
+    let actionButtons = "";
+
+    if (isDeleted) {
+      actionButtons = `
+        <button
+          type="button"
+          class="btn btn-outline-success btn-sm btn-restore-admin-product"
+          data-id="${productId}"
+        >
+          Khôi phục
+        </button>
+      `;
+    } else {
+      actionButtons = `
+        <button
+          type="button"
+          class="btn btn-outline-dark btn-sm btn-view-admin-product"
+          data-id="${productId}"
+        >
+          Xem
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-outline-secondary btn-sm btn-edit-admin-product"
+          data-id="${productId}"
+        >
+          Sửa
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-outline-danger btn-sm btn-toggle-admin-product-status"
+          data-id="${productId}"
+          data-active="${nextStatus}"
+        >
+          ${toggleText}
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-danger btn-sm btn-delete-admin-product"
+          data-id="${productId}"
+        >
+          Xóa
+        </button>
+      `;
+    }
+
     html += `
-      <tr>
+      <tr class="${isDeleted ? "product-admin-deleted-row" : ""}">
         <td>${productId}</td>
 
         <td>
@@ -680,30 +810,7 @@ function renderAdminProducts() {
 
         <td>
           <div class="product-action-row">
-            <button
-              type="button"
-              class="btn btn-outline-dark btn-sm btn-view-admin-product"
-              data-id="${productId}"
-            >
-              Xem
-            </button>
-
-        <button
-  type="button"
-  class="btn btn-outline-secondary btn-sm btn-edit-admin-product"
-  data-id="${productId}"
->
-  Sửa
-</button>
-
-            <button
-              type="button"
-              class="btn btn-outline-danger btn-sm btn-toggle-admin-product-status"
-              data-id="${productId}"
-              data-active="${nextStatus}"
-            >
-              ${toggleText}
-            </button>
+            ${actionButtons}
           </div>
         </td>
       </tr>
@@ -796,6 +903,84 @@ async function toggleAdminProductStatus(productId, nextStatus) {
     $("#productAdminMessage").addClass("text-danger").text(error.message);
   } finally {
     isUpdatingAdminProductStatus = false;
+  }
+}
+
+async function restoreDeletedAdminProduct(productId) {
+  if (isChangingAdminProductDeleteState) {
+    return;
+  }
+
+  if (
+    !confirm(
+      "Bạn có chắc muốn khôi phục sản phẩm này không? Sau khi khôi phục, sản phẩm vẫn đang ẩn.",
+    )
+  ) {
+    return;
+  }
+
+  isChangingAdminProductDeleteState = true;
+
+  $("#productAdminMessage")
+    .removeClass("text-danger text-success")
+    .text("Đang khôi phục sản phẩm...");
+
+  try {
+    const restoredProduct = await restoreAdminProductById(productId);
+
+    updateProductInAdminList(productId, {
+      is_active: restoredProduct.is_active || 0,
+      deleted_at: null,
+    });
+
+    renderAdminProducts();
+
+    $("#productAdminMessage")
+      .addClass("text-success")
+      .text("Đã khôi phục sản phẩm. Sản phẩm hiện đang ẩn.");
+  } catch (error) {
+    $("#productAdminMessage").addClass("text-danger").text(error.message);
+  } finally {
+    isChangingAdminProductDeleteState = false;
+  }
+}
+
+async function softDeleteAdminProduct(productId) {
+  if (isChangingAdminProductDeleteState) {
+    return;
+  }
+
+  if (
+    !confirm(
+      "Bạn có chắc muốn xóa sản phẩm này không? Sản phẩm sẽ vào thùng rác và không hiện ngoài website.",
+    )
+  ) {
+    return;
+  }
+
+  isChangingAdminProductDeleteState = true;
+
+  $("#productAdminMessage")
+    .removeClass("text-danger text-success")
+    .text("Đang xóa sản phẩm...");
+
+  try {
+    const deletedProduct = await softDeleteAdminProductById(productId);
+
+    updateProductInAdminList(productId, {
+      is_active: 0,
+      deleted_at: deletedProduct.deleted_at || new Date().toISOString(),
+    });
+
+    renderAdminProducts();
+
+    $("#productAdminMessage")
+      .addClass("text-success")
+      .text("Đã xóa sản phẩm vào thùng rác.");
+  } catch (error) {
+    $("#productAdminMessage").addClass("text-danger").text(error.message);
+  } finally {
+    isChangingAdminProductDeleteState = false;
   }
 }
 
@@ -1395,6 +1580,18 @@ function initAdminProductEvents() {
     const productId = $(this).data("id");
 
     openEditProductModal(productId);
+  });
+
+  $(document).on("click", ".btn-delete-admin-product", function () {
+    const productId = $(this).data("id");
+
+    softDeleteAdminProduct(productId);
+  });
+
+  $(document).on("click", ".btn-restore-admin-product", function () {
+    const productId = $(this).data("id");
+
+    restoreDeletedAdminProduct(productId);
   });
 
   $(document).on("click", ".btn-view-admin-product", function () {

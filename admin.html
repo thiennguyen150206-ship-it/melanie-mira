@@ -306,6 +306,16 @@
         color: #dc2626;
       }
 
+      .product-status-deleted {
+        background-color: #f3f4f6;
+        color: #4b5563;
+      }
+
+      .product-admin-deleted-row {
+        background-color: #f9fafb;
+        opacity: 0.75;
+      }
+
       .product-action-row {
         display: flex;
         gap: 6px;
@@ -1109,9 +1119,10 @@
 
             <div class="col-md-2">
               <select id="adminProductStatusFilter" class="form-select">
-                <option value="all">Tất cả trạng thái</option>
+                <option value="all">Tất cả đang dùng</option>
                 <option value="visible">Đang hiển thị</option>
                 <option value="hidden">Đang ẩn</option>
+                <option value="deleted">Thùng rác</option>
               </select>
             </div>
 

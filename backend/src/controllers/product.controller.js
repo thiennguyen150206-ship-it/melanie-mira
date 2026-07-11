@@ -217,7 +217,8 @@ async function getAdminProducts(req, res) {
         products.description_vi,
         products.description_en,
         products.is_active,
-        products.created_at,
+products.deleted_at,
+products.created_at,
 
         categories.name_vi AS category_vi,
         categories.name_en AS category_en,
@@ -250,7 +251,8 @@ async function getAdminProducts(req, res) {
         products.description_vi,
         products.description_en,
         products.is_active,
-        products.created_at,
+products.deleted_at,
+products.created_at,
         categories.name_vi,
         categories.name_en,
         categories.slug
@@ -295,8 +297,9 @@ async function getAdminProductById(req, res) {
         products.badge,
         products.description_vi,
         products.description_en,
-        products.is_active,
-        products.created_at,
+       products.is_active,
+products.deleted_at,
+products.created_at,
 
         categories.name_vi AS category_vi,
         categories.name_en AS category_en,
@@ -901,11 +904,11 @@ async function updateAdminProductStatus(req, res) {
 
     const [products] = await pool.query(
       `
-      SELECT id, name_vi, slug, is_active
-      FROM products
-      WHERE id = ?
-      LIMIT 1
-      `,
+  SELECT id, name_vi, slug, is_active, deleted_at
+  FROM products
+  WHERE id = ?
+  LIMIT 1
+  `,
       [productId],
     );
 
@@ -913,6 +916,13 @@ async function updateAdminProductStatus(req, res) {
       return res.status(404).json({
         success: false,
         message: "Product not found",
+      });
+    }
+
+    if (products[0].deleted_at) {
+      return res.status(409).json({
+        success: false,
+        message: "Cannot change status of deleted product",
       });
     }
 
@@ -941,6 +951,132 @@ async function updateAdminProductStatus(req, res) {
   }
 }
 
+// PATCH /api/products/admin/:id/delete
+async function softDeleteAdminProduct(req, res) {
+  try {
+    const productId = parsePositiveInt(req.params.id);
+
+    if (!productId) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid product id",
+      });
+    }
+
+    const [products] = await pool.query(
+      `
+      SELECT id, name_vi, slug, deleted_at
+      FROM products
+      WHERE id = ?
+      LIMIT 1
+      `,
+      [productId],
+    );
+
+    if (products.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    if (products[0].deleted_at) {
+      return res.status(409).json({
+        success: false,
+        message: "Product already deleted",
+      });
+    }
+
+    await pool.query(
+      `
+      UPDATE products
+      SET
+        deleted_at = NOW(),
+        is_active = 0
+      WHERE id = ?
+      `,
+      [productId],
+    );
+
+    res.json({
+      success: true,
+      message: "Product deleted successfully",
+      data: {
+        id: productId,
+        name_vi: products[0].name_vi,
+        slug: products[0].slug,
+        is_active: 0,
+        deleted_at: new Date(),
+      },
+    });
+  } catch (error) {
+    return sendServerError(res, "Cannot delete product", error);
+  }
+}
+
+// PATCH /api/products/admin/:id/restore
+async function restoreAdminProduct(req, res) {
+  try {
+    const productId = parsePositiveInt(req.params.id);
+
+    if (!productId) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid product id",
+      });
+    }
+
+    const [products] = await pool.query(
+      `
+      SELECT id, name_vi, slug, deleted_at
+      FROM products
+      WHERE id = ?
+      LIMIT 1
+      `,
+      [productId],
+    );
+
+    if (products.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    if (!products[0].deleted_at) {
+      return res.status(409).json({
+        success: false,
+        message: "Product is not deleted",
+      });
+    }
+
+    await pool.query(
+      `
+      UPDATE products
+      SET
+        deleted_at = NULL,
+        is_active = 0
+      WHERE id = ?
+      `,
+      [productId],
+    );
+
+    res.json({
+      success: true,
+      message: "Product restored successfully",
+      data: {
+        id: productId,
+        name_vi: products[0].name_vi,
+        slug: products[0].slug,
+        is_active: 0,
+        deleted_at: null,
+      },
+    });
+  } catch (error) {
+    return sendServerError(res, "Cannot restore product", error);
+  }
+}
+
 // GET /api/products
 async function getAllProducts(req, res) {
   try {
@@ -964,7 +1100,8 @@ async function getAllProducts(req, res) {
       FROM products
       LEFT JOIN categories
       ON products.category_id = categories.id
-      WHERE products.is_active = 1
+     WHERE products.is_active = 1
+AND products.deleted_at IS NULL
       ORDER BY products.id DESC
     `);
 
@@ -1010,7 +1147,9 @@ async function getProductBySlug(req, res) {
       FROM products
       LEFT JOIN categories
       ON products.category_id = categories.id
-      WHERE products.slug = ? AND products.is_active = 1
+     WHERE products.slug = ?
+AND products.is_active = 1
+AND products.deleted_at IS NULL
       LIMIT 1
       `,
       [slug],
@@ -1083,7 +1222,8 @@ async function getAdminProductStock(req, res) {
       LEFT JOIN product_sizes
       ON products.id = product_sizes.product_id
 
-      WHERE products.is_active = 1
+     WHERE products.is_active = 1
+AND products.deleted_at IS NULL
 
       GROUP BY
         products.id,
@@ -1156,7 +1296,9 @@ async function updateAdminProductStock(req, res) {
       `
       SELECT id
       FROM products
-      WHERE id = ? AND is_active = 1
+     WHERE id = ?
+AND is_active = 1
+AND deleted_at IS NULL
       LIMIT 1
       `,
       [productId],
@@ -1212,6 +1354,8 @@ module.exports = {
   createAdminProduct,
   updateAdminProduct,
   updateAdminProductStatus,
+  softDeleteAdminProduct,
+  restoreAdminProduct,
   getAllProducts,
   getProductBySlug,
   getAdminProductStock,

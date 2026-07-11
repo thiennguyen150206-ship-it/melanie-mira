@@ -69,6 +69,20 @@ router.patch(
   productController.updateAdminProductStatus,
 );
 
+// Admin xóa mềm sản phẩm
+router.patch(
+  "/admin/:id/delete",
+  adminAuth,
+  productController.softDeleteAdminProduct,
+);
+
+// Admin khôi phục sản phẩm đã xóa mềm
+router.patch(
+  "/admin/:id/restore",
+  adminAuth,
+  productController.restoreAdminProduct,
+);
+
 // Admin sửa sản phẩm
 router.patch("/admin/:id", adminAuth, productController.updateAdminProduct);
 
