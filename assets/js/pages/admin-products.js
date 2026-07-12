@@ -1637,7 +1637,7 @@ function initAdminProductEvents() {
     }
 
     window.open(
-      "product-detail.html?slug=" + encodeURIComponent(product.slug),
+      "product-detail.html?id=" + encodeURIComponent(product.id),
       "_blank",
     );
   });
