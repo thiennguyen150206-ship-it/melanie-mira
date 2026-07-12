@@ -3,6 +3,7 @@ const sendServerError = require("../utils/errorResponse");
 const parsePositiveInt = require("../utils/parseId");
 const MAX_PRODUCT_STOCK = 999;
 const MAX_PRODUCT_SLUG_LENGTH = 100;
+const MAX_PRODUCT_GALLERY_IMAGES = 8;
 
 function isValidProductSlug(slug) {
   if (!slug || typeof slug !== "string") {
@@ -14,6 +15,20 @@ function isValidProductSlug(slug) {
   }
 
   return /^[a-z0-9-]+$/.test(slug);
+}
+
+function normalizeProductImages(images) {
+  if (!Array.isArray(images)) {
+    return [];
+  }
+
+  return images
+    .map(function (imageUrl) {
+      return String(imageUrl || "").trim();
+    })
+    .filter(function (imageUrl) {
+      return imageUrl !== "";
+    });
 }
 
 // GET /api/products/admin/categories
@@ -470,6 +485,15 @@ async function createAdminProduct(req, res) {
       }
     }
 
+    const galleryImages = normalizeProductImages(images);
+
+    if (galleryImages.length > MAX_PRODUCT_GALLERY_IMAGES) {
+      return res.status(400).json({
+        success: false,
+        message: "Chỉ được thêm tối đa 8 ảnh phụ cho mỗi sản phẩm.",
+      });
+    }
+
     const [categories] = await connection.query(
       `
       SELECT id
@@ -538,18 +562,14 @@ async function createAdminProduct(req, res) {
       );
     }
 
-    if (Array.isArray(images)) {
-      for (let i = 0; i < images.length; i++) {
-        if (images[i] && String(images[i]).trim() !== "") {
-          await connection.query(
-            `
-            INSERT INTO product_images (product_id, image_url, sort_order)
-            VALUES (?, ?, ?)
-            `,
-            [productId, String(images[i]).trim(), i + 1],
-          );
-        }
-      }
+    for (let i = 0; i < galleryImages.length; i++) {
+      await connection.query(
+        `
+    INSERT INTO product_images (product_id, image_url, sort_order)
+    VALUES (?, ?, ?)
+    `,
+        [productId, galleryImages[i], i + 1],
+      );
     }
 
     await connection.commit();
@@ -708,6 +728,15 @@ async function updateAdminProduct(req, res) {
       }
     }
 
+    const galleryImages = normalizeProductImages(images);
+
+    if (galleryImages.length > MAX_PRODUCT_GALLERY_IMAGES) {
+      return res.status(400).json({
+        success: false,
+        message: "Chỉ được thêm tối đa 8 ảnh phụ cho mỗi sản phẩm.",
+      });
+    }
+
     const [existingProducts] = await connection.query(
       `
       SELECT id
@@ -813,22 +842,20 @@ async function updateAdminProduct(req, res) {
     if (Array.isArray(images)) {
       await connection.query(
         `
-        DELETE FROM product_images
-        WHERE product_id = ?
-        `,
+    DELETE FROM product_images
+    WHERE product_id = ?
+    `,
         [productId],
       );
 
-      for (let i = 0; i < images.length; i++) {
-        if (images[i] && String(images[i]).trim() !== "") {
-          await connection.query(
-            `
-            INSERT INTO product_images (product_id, image_url, sort_order)
-            VALUES (?, ?, ?)
-            `,
-            [productId, String(images[i]).trim(), i + 1],
-          );
-        }
+      for (let i = 0; i < galleryImages.length; i++) {
+        await connection.query(
+          `
+      INSERT INTO product_images (product_id, image_url, sort_order)
+      VALUES (?, ?, ?)
+      `,
+          [productId, galleryImages[i], i + 1],
+        );
       }
     }
 

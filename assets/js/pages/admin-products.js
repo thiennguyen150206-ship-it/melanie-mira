@@ -9,6 +9,7 @@ let editingProductId = null;
 let categoryFormMode = "create";
 let editingCategoryId = null;
 let isSavingCategory = false;
+const MAX_GALLERY_IMAGES = 8;
 
 function formatAdminProductMoney(price) {
   return Number(price || 0).toLocaleString("vi-VN") + "đ";
@@ -146,10 +147,30 @@ async function handleHoverImageUpload(file) {
     );
   }
 }
-
 async function handleGalleryImagesUpload(files) {
   try {
     if (!files.length) {
+      return;
+    }
+
+    const currentGalleryImages = getGalleryImageLines();
+    const totalGalleryImages = currentGalleryImages.length + files.length;
+
+    if (totalGalleryImages > MAX_GALLERY_IMAGES) {
+      setUploadNote(
+        "#galleryImageUploadNote",
+        "Chỉ được chọn tối đa " +
+          MAX_GALLERY_IMAGES +
+          " ảnh phụ. Hiện có " +
+          currentGalleryImages.length +
+          " ảnh.",
+        "is-error",
+      );
+
+      $("#errCreateImages").text(
+        "Chỉ được thêm tối đa " + MAX_GALLERY_IMAGES + " ảnh phụ.",
+      );
+
       return;
     }
 
@@ -166,8 +187,7 @@ async function handleGalleryImagesUpload(files) {
       uploadedUrls.push(uploadData.image_url);
     }
 
-    const oldValue = $("#createProductImages").val().trim();
-    const oldLines = oldValue ? oldValue.split("\n") : [];
+    const oldLines = getGalleryImageLines();
     const finalLines = oldLines.concat(uploadedUrls);
 
     $("#createProductImages").val(finalLines.join("\n"));
@@ -186,6 +206,18 @@ async function handleGalleryImagesUpload(files) {
       "is-error",
     );
   }
+}
+
+function getGalleryImageLines() {
+  return $("#createProductImages")
+    .val()
+    .split("\n")
+    .map(function (line) {
+      return line.trim();
+    })
+    .filter(function (line) {
+      return line !== "";
+    });
 }
 
 function getInvalidImageUrls(imageUrls) {
@@ -1259,20 +1291,18 @@ function validateCreateProductForm(data) {
     );
     isValid = false;
   }
+  if ((data.images || []).length > MAX_GALLERY_IMAGES) {
+    $("#errCreateImages").text(
+      "Chỉ được thêm tối đa " + MAX_GALLERY_IMAGES + " ảnh phụ.",
+    );
+    isValid = false;
+  }
 
   return isValid;
 }
 
 function getCreateProductFormData() {
-  const imageLines = $("#createProductImages")
-    .val()
-    .split("\n")
-    .map(function (line) {
-      return line.trim();
-    })
-    .filter(function (line) {
-      return line !== "";
-    });
+  const imageLines = getGalleryImageLines();
 
   return {
     category_id: Number($("#createProductCategory").val()),
