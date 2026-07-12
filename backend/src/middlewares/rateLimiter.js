@@ -1,9 +1,40 @@
 const rateLimit = require("express-rate-limit");
 
-// Giới hạn chung cho tất cả API
+function isPublicProductReadRequest(req) {
+  const requestPath = req.originalUrl.split("?")[0];
+
+  if (req.method !== "GET") {
+    return false;
+  }
+
+  if (requestPath === "/api/products") {
+    return true;
+  }
+
+  if (
+    requestPath.startsWith("/api/products/") &&
+    !requestPath.startsWith("/api/products/admin")
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+function isHealthCheckRequest(req) {
+  const requestPath = req.originalUrl.split("?")[0];
+
+  return req.method === "GET" && requestPath === "/api/health";
+}
+
+// Giới hạn chung cho API quan trọng.
+// Bỏ qua API xem sản phẩm public để khách không bị chặn khi lướt shop.
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 phút
-  max: 100, // mỗi IP tối đa 100 request trong 15 phút
+  max: 100,
+  skip: function (req) {
+    return isPublicProductReadRequest(req) || isHealthCheckRequest(req);
+  },
   standardHeaders: true,
   legacyHeaders: false,
   message: {
