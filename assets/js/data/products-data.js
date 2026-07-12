@@ -202,8 +202,22 @@ const products = [
   },
 ];
 
+const productSlugById = {
+  1: "arul",
+  2: "luna",
+  3: "cami",
+  4: "donna",
+  5: "ivy",
+  6: "lia",
+  7: "charvi-set",
+  8: "croptop",
+};
+
 /* Giữ lại các field cũ để code hiện tại không bị lỗi */
 for (let i = 0; i < products.length; i++) {
+  products[i].slug = productSlugById[products[i].id] || products[i].slug;
+  products[i].productSlug = products[i].slug;
+
   products[i].name = products[i].nameVi;
   products[i].category = products[i].categoryVi;
   products[i].description = products[i].descriptionVi;

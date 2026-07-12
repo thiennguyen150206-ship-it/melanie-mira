@@ -1636,10 +1636,11 @@ function initAdminProductEvents() {
       return;
     }
 
-    window.open(
-      "product-detail.html?id=" + encodeURIComponent(product.id),
-      "_blank",
-    );
+    const detailUrl = product.slug
+      ? "product-detail.html?slug=" + encodeURIComponent(product.slug)
+      : "product-detail.html?id=" + encodeURIComponent(product.id);
+
+    window.open(detailUrl, "_blank");
   });
 
   $("#btnAdminLogout").click(function () {

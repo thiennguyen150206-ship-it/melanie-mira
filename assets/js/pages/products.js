@@ -9,6 +9,16 @@ function getUrlParam(name) {
 
 let productSource = [];
 
+let productLoadError = "";
+
+function isLocalDevHost() {
+  return (
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1" ||
+    window.location.protocol === "file:"
+  );
+}
+
 function convertApiProduct(product) {
   return {
     id: product.id,
@@ -31,20 +41,34 @@ function convertApiProduct(product) {
 }
 
 async function loadProducts() {
+  productLoadError = "";
+
   try {
     let response = await fetch(API_BASE_URL + "/products");
     let result = await response.json();
 
-    if (result.success) {
-      productSource = result.data.map(function (product) {
-        return convertApiProduct(product);
-      });
-    } else {
-      productSource = products;
+    if (!response.ok || !result.success) {
+      throw new Error(result.message || "Cannot load products from API");
     }
+
+    productSource = result.data.map(function (product) {
+      return convertApiProduct(product);
+    });
   } catch (error) {
     console.log("Cannot load products from API:", error);
-    productSource = products;
+
+    /*
+      Chỉ fallback products-data.js khi test local.
+      Trên domain thật, không fallback để tránh hiện ảnh cũ trong project.
+    */
+    if (isLocalDevHost() && typeof products !== "undefined") {
+      productSource = products;
+      return;
+    }
+
+    productSource = [];
+    productLoadError =
+      "Không thể tải sản phẩm từ hệ thống. Vui lòng thử lại sau.";
   }
 }
 
@@ -91,9 +115,13 @@ function getCategoryTitle(categorySlug) {
 function createProductItem(product) {
   let hoverImage = product.hoverImage || product.images?.[1] || product.image;
 
-  let detailUrl = product.id
-    ? "product-detail.html?id=" + encodeURIComponent(product.id)
-    : "products.html";
+  let productSlug = product.slug || product.productSlug || "";
+
+  let detailUrl = productSlug
+    ? "product-detail.html?slug=" + encodeURIComponent(productSlug)
+    : product.id
+      ? "product-detail.html?id=" + encodeURIComponent(product.id)
+      : "products.html";
 
   return `
     <div class="col-lg-3 col-md-4 col-6">
@@ -183,6 +211,12 @@ function renderProducts() {
   $("#productsList").html(html);
 
   if (result.length === 0) {
+    if (productLoadError) {
+      $("#productsEmpty").text(productLoadError);
+    } else {
+      $("#productsEmpty").text(t("product.notFound"));
+    }
+
     $("#productsEmpty").show();
   } else {
     $("#productsEmpty").hide();

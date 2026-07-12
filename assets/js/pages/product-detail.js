@@ -7,6 +7,14 @@ function formatMoney(price) {
   return price.toLocaleString("vi-VN") + "đ";
 }
 
+function isLocalDevHost() {
+  return (
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1" ||
+    window.location.protocol === "file:"
+  );
+}
+
 function getProductSlugFromUrl() {
   let params = new URLSearchParams(window.location.search);
   return params.get("slug");
@@ -15,6 +23,39 @@ function getProductSlugFromUrl() {
 function getProductIdFromUrl() {
   let params = new URLSearchParams(window.location.search);
   return Number(params.get("id"));
+}
+
+function findProductBySlugOrId(productList, slug, productId) {
+  if (!Array.isArray(productList)) {
+    return null;
+  }
+
+  if (slug) {
+    return productList.find(function (product) {
+      return product.slug === slug || product.productSlug === slug;
+    });
+  }
+
+  if (productId) {
+    return productList.find(function (product) {
+      return Number(product.id) === Number(productId);
+    });
+  }
+
+  return null;
+}
+
+async function loadPublicProductsFromApi() {
+  let response = await fetch(API_BASE_URL + "/products");
+  let result = await response.json();
+
+  if (!response.ok || !result.success) {
+    throw new Error(result.message || "Cannot load products from API");
+  }
+
+  return result.data.map(function (product) {
+    return convertApiProduct(product);
+  });
 }
 
 function convertApiProduct(product) {
@@ -59,60 +100,65 @@ async function loadProductDetail() {
   let slug = getProductSlugFromUrl();
   let productId = getProductIdFromUrl();
 
+  currentProduct = null;
+  productSource = [];
+
   try {
-    if (slug) {
-      let response = await fetch(API_BASE_URL + "/products/" + slug);
-      let result = await response.json();
+    /*
+      Load danh sách sản phẩm từ API trước.
+      Nhờ vậy nếu vào bằng ?id=8 vẫn tìm được slug từ database,
+      rồi tiếp tục lấy chi tiết theo slug.
+    */
+    productSource = await loadPublicProductsFromApi();
 
-      if (result.success) {
-        currentProduct = convertApiProduct(result.data);
+    let targetSlug = slug;
+
+    if (!targetSlug && productId) {
+      let productFromList = findProductBySlugOrId(
+        productSource,
+        null,
+        productId,
+      );
+
+      if (productFromList && productFromList.slug) {
+        targetSlug = productFromList.slug;
       }
-    } else if (productId) {
-      let response = await fetch(API_BASE_URL + "/products/" + productId);
+    }
+
+    if (targetSlug) {
+      let response = await fetch(
+        API_BASE_URL + "/products/" + encodeURIComponent(targetSlug),
+      );
+
       let result = await response.json();
 
-      if (result.success) {
+      if (response.ok && result.success) {
         currentProduct = convertApiProduct(result.data);
       }
     }
 
     /*
-    Nếu chưa có currentProduct thì dùng dữ liệu dự phòng từ products-data.js.
-      Trường hợp này dùng khi:
-      - Backend chưa chạy
-      - API lỗi
-      - Link cũ vẫn còn dạng product-detail.html?id=1
+      Nếu API chi tiết chưa lấy được, dùng danh sách API vừa load.
+      Vẫn là dữ liệu database, không phải ảnh cũ trong project.
     */
     if (!currentProduct) {
-      if (slug) {
-        currentProduct = products.find(function (product) {
-          return product.slug === slug;
-        });
-      } else {
-        currentProduct = products.find(function (product) {
-          return product.id === productId;
-        });
-      }
+      currentProduct = findProductBySlugOrId(productSource, slug, productId);
     }
 
-    productSource = products;
+    return;
   } catch (error) {
     console.log("Cannot load product detail from API:", error);
+  }
 
-    if (slug) {
-      currentProduct = products.find(function (product) {
-        return product.slug === slug;
-      });
-    } else {
-      currentProduct = products.find(function (product) {
-        return product.id === productId;
-      });
-    }
-
+  /*
+    Chỉ fallback local khi test local.
+    Trên domain thật không dùng products-data.js để tránh hiện ảnh cũ.
+  */
+  if (isLocalDevHost() && typeof products !== "undefined") {
     productSource = products;
+    currentProduct = findProductBySlugOrId(products, slug, productId);
   }
 }
-
 function getCart() {
   return JSON.parse(localStorage.getItem("cart")) || [];
 }
@@ -255,7 +301,11 @@ function getProductSizeGuideImage(product) {
   */
   if (typeof products !== "undefined") {
     let localProduct = products.find(function (item) {
-      return item.id === product.id || item.slug === product.slug;
+      return (
+        Number(item.id) === Number(product.id) ||
+        item.slug === product.slug ||
+        item.productSlug === product.slug
+      );
     });
 
     if (localProduct && localProduct.sizeGuideImage) {
