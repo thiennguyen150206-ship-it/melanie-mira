@@ -91,10 +91,8 @@ function getCategoryTitle(categorySlug) {
 function createProductItem(product) {
   let hoverImage = product.hoverImage || product.images?.[1] || product.image;
 
-  let productSlug = product.slug || product.productSlug || "";
-
-  let detailUrl = productSlug
-    ? "product-detail.html?slug=" + encodeURIComponent(productSlug)
+  let detailUrl = product.id
+    ? "product-detail.html?id=" + encodeURIComponent(product.id)
     : "products.html";
 
   return `
