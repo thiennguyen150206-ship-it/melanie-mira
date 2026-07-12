@@ -118,6 +118,35 @@ function getAdminPaymentStatusClass(paymentStatus) {
   return "payment-unpaid";
 }
 
+function renderAdminOrderTotalCell(order) {
+  const subtotalAmount = Number(
+    order.subtotal_amount || order.total_amount || 0,
+  );
+  const discountAmount = Number(order.discount_amount || 0);
+  const totalAmount = Number(order.total_amount || 0);
+  const couponCode = order.coupon_code || "";
+
+  if (discountAmount <= 0 || !couponCode) {
+    return `
+      <strong>${formatAdminMoney(totalAmount)}</strong>
+    `;
+  }
+
+  return `
+    <div>
+      <div class="text-muted small">
+        Tạm tính: ${formatAdminMoney(subtotalAmount)}
+      </div>
+
+      <div class="text-danger small">
+        Mã ${escapeHtml(couponCode)}: -${formatAdminMoney(discountAmount)}
+      </div>
+
+      <strong>${formatAdminMoney(totalAmount)}</strong>
+    </div>
+  `;
+}
+
 function renderAdminPaymentCell(order) {
   const paymentMethodText = getAdminPaymentText(order.payment_method);
   const paymentStatus = String(order.payment_status || "unpaid")
@@ -563,11 +592,11 @@ function renderOrders(orders) {
 <td>${escapeHtml(order.customer_name)}</td>
 <td>${escapeHtml(order.customer_phone)}</td>
 <td>${escapeHtml(order.customer_address)}</td>
-<td>${formatAdminMoney(order.total_amount)}</td>
+<td>${renderAdminOrderTotalCell(order)}</td>
 <td>${renderAdminPaymentCell(order)}</td>
 <td>
-  <select 
-  class="form-select order-status ${getAdminStatusClass(orderStatus)}" 
+  <select
+  class="form-select order-status ${getAdminStatusClass(orderStatus)}"
   data-id="${order.id}"
   data-current-status="${orderStatus}"
   ${disabledText}
@@ -577,8 +606,8 @@ function renderOrders(orders) {
         </td>
 
         <td>
-         <button 
-  class="btn btn-sm btn-primary btn-update-status" 
+         <button
+  class="btn btn-sm btn-primary btn-update-status"
   data-id="${order.id}"
   disabled
 >
@@ -586,8 +615,8 @@ function renderOrders(orders) {
 </button>
         </td>
         <td>
-  <button 
-    class="btn btn-sm btn-outline-dark btn-view-order" 
+  <button
+    class="btn btn-sm btn-outline-dark btn-view-order"
     data-id="${order.id}"
   >
     Xem
@@ -746,7 +775,10 @@ function renderOrderDetail(order) {
   <p><strong>Đã nhận:</strong> ${formatAdminMoney(order.paid_amount || 0)}</p>
   <p><strong>Thời gian thanh toán:</strong> ${formatAdminDate(order.paid_at)}</p>
   <p><strong>Nội dung chuyển khoản:</strong> ${escapeHtml(order.payment_content || "Không có")}</p>
-  <p><strong>Tổng tiền:</strong> ${formatAdminMoney(order.total_amount)}</p>
+  <p><strong>Tạm tính:</strong> ${formatAdminMoney(order.subtotal_amount || order.total_amount)}</p>
+  <p><strong>Mã giảm giá:</strong> ${escapeHtml(order.coupon_code || "Không có")}</p>
+  <p><strong>Tiền giảm:</strong> -${formatAdminMoney(order.discount_amount || 0)}</p>
+  <p><strong>Tổng thanh toán:</strong> ${formatAdminMoney(order.total_amount)}</p>
 `);
 
   let html = "";
@@ -974,9 +1006,9 @@ function renderProductStock(products) {
 
         <td>
           <div class="stock-product-info">
-          <img 
-  src="${escapeHtml(product.image)}" 
-  alt="${escapeHtml(product.name_vi)}" 
+          <img
+  src="${escapeHtml(product.image)}"
+  alt="${escapeHtml(product.name_vi)}"
   class="stock-product-image"
 />
 
@@ -1029,7 +1061,7 @@ function renderProductStock(products) {
         </td>
 
         <td>
-          <button 
+          <button
   type="button"
   class="btn btn-sm btn-primary btn-update-stock"
   data-id="${product.id}"

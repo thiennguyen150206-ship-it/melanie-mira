@@ -10,6 +10,7 @@ const orderRoutes = require("./routes/order.routes");
 const authRoutes = require("./routes/auth.routes");
 const myRoutes = require("./routes/my.routes");
 const webhookRoutes = require("./routes/webhook.routes");
+const couponRoutes = require("./routes/coupon.routes");
 
 const { apiLimiter } = require("./middlewares/rateLimiter");
 
@@ -79,6 +80,7 @@ app.use("/api", apiLimiter);
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/coupons", couponRoutes);
 app.use("/api/my", myRoutes);
 
 app.use("/api/auth", function (req, res) {
@@ -96,6 +98,13 @@ app.use("/api/products", function (req, res) {
 });
 
 app.use("/api/orders", function (req, res) {
+  return res.status(405).json({
+    success: false,
+    message: "Method not allowed",
+  });
+});
+
+app.use("/api/coupons", function (req, res) {
   return res.status(405).json({
     success: false,
     message: "Method not allowed",

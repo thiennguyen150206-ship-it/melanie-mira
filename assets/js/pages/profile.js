@@ -81,6 +81,10 @@ const profileTranslations = {
     payment: "Payment",
     total: "Total",
     viewDetail: "View details",
+    subtotal: "Subtotal",
+    discount: "Discount",
+    couponCode: "Discount code",
+    paymentTotal: "Payment total",
     hideDetail: "Hide details",
     cancelOrder: "Cancel order",
     productsInOrder: "Products in order",
@@ -180,6 +184,10 @@ const profileTranslations = {
     payment: "Thanh toán",
     total: "Tổng tiền",
     viewDetail: "Xem chi tiết",
+    subtotal: "Tạm tính",
+    discount: "Giảm giá",
+    couponCode: "Mã giảm giá",
+    paymentTotal: "Tổng thanh toán",
     hideDetail: "Ẩn chi tiết",
     cancelOrder: "Hủy đơn",
     paidOrderCannotCancel:
@@ -867,6 +875,34 @@ function createShippingInfoHtml(order) {
   `;
 }
 
+function createOrderDiscountSummaryHtml(order) {
+  const discountAmount = Number(order.discount_amount || 0);
+  const couponCode = order.coupon_code || "";
+
+  if (discountAmount <= 0 || !couponCode) {
+    return "";
+  }
+
+  return `
+    <div class="profile-order-discount-summary">
+      <p>
+        ${pText("subtotal")}:
+        <strong>${formatProfileMoney(order.subtotal_amount || order.total_amount)}</strong>
+      </p>
+
+      <p>
+        ${pText("couponCode")}:
+        <strong>${escapeHtml(couponCode)}</strong>
+      </p>
+
+      <p>
+        ${pText("discount")}:
+        <strong>-${formatProfileMoney(discountAmount)}</strong>
+      </p>
+    </div>
+  `;
+}
+
 function createShippingSummaryHtml(order) {
   const trackingCode = order.shipping_tracking_code
     ? String(order.shipping_tracking_code).trim()
@@ -955,8 +991,10 @@ function createOrderItem(order) {
       <p>${pText("address")}: ${escapeHtml(order.customer_address)}</p>
       <p>${pText("payment")}: ${escapeHtml(getPaymentMethodText(order.payment_method))}</p>
 
+     ${createOrderDiscountSummaryHtml(order)}
+
       <p class="profile-order-total">
-        ${pText("total")}: ${formatProfileMoney(order.total_amount)}
+        ${pText("paymentTotal")}: ${formatProfileMoney(order.total_amount)}
       </p>
 
       ${createShippingSummaryHtml(order)}
@@ -1101,6 +1139,28 @@ function createOrderDetailHtml(orderDetail) {
   <div class="order-detail-content">
     <h3>${pText("productsInOrder")}</h3>
     ${itemsHtml}
+
+    <div class="profile-order-discount-summary">
+      <p>
+        ${pText("subtotal")}:
+        <strong>${formatProfileMoney(orderDetail.subtotal_amount || orderDetail.total_amount)}</strong>
+      </p>
+
+      <p>
+        ${pText("couponCode")}:
+        <strong>${escapeHtml(orderDetail.coupon_code || pText("unknown"))}</strong>
+      </p>
+
+      <p>
+        ${pText("discount")}:
+        <strong>-${formatProfileMoney(orderDetail.discount_amount || 0)}</strong>
+      </p>
+
+      <p>
+        ${pText("paymentTotal")}:
+        <strong>${formatProfileMoney(orderDetail.total_amount)}</strong>
+      </p>
+    </div>
 
     ${createShippingInfoHtml(orderDetail)}
   </div>

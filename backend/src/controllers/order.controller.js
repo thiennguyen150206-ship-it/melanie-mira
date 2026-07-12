@@ -2,6 +2,11 @@ const crypto = require("crypto");
 const pool = require("../config/db");
 const sendServerError = require("../utils/errorResponse");
 const parsePositiveInt = require("../utils/parseId");
+const {
+  normalizeCouponCode,
+  validateCouponForSubtotal,
+  roundMoney,
+} = require("../utils/couponCalculator");
 const MAX_QUANTITY_PER_ITEM = 10;
 const MAX_TOTAL_QUANTITY_PER_ORDER = 20;
 const MAX_ORDER_ITEM_LINES = 10;
@@ -152,6 +157,7 @@ async function createOrder(req, res) {
       customer_address,
       note,
       payment_method,
+      coupon_code,
       items,
     } = req.body;
 
@@ -161,7 +167,7 @@ async function createOrder(req, res) {
     const customerAddress = customer_address ? customer_address.trim() : "";
     const orderNote = note ? note.trim() : null;
     const paymentMethod = payment_method || "cod";
-
+    const couponCode = normalizeCouponCode(coupon_code);
     const validPaymentMethods = ["cod", "bank_transfer"];
 
     // Kiểm tra dữ liệu khách hàng
@@ -184,7 +190,8 @@ async function createOrder(req, res) {
       isTooLong(customerEmail, MAX_CUSTOMER_EMAIL_LENGTH) ||
       isTooLong(customerPhone, MAX_CUSTOMER_PHONE_LENGTH) ||
       isTooLong(customerAddress, MAX_CUSTOMER_ADDRESS_LENGTH) ||
-      isTooLong(orderNote, MAX_ORDER_NOTE_LENGTH)
+      isTooLong(orderNote, MAX_ORDER_NOTE_LENGTH) ||
+      isTooLong(couponCode, 50)
     ) {
       return res.status(400).json({
         success: false,
@@ -314,6 +321,37 @@ async function createOrder(req, res) {
       });
     }
 
+    const subtotalAmount = roundMoney(totalAmount);
+    let discountAmount = 0;
+    let finalTotalAmount = subtotalAmount;
+    let appliedCouponId = null;
+    let appliedCouponCode = null;
+
+    if (couponCode) {
+      const couponValidation = await validateCouponForSubtotal(
+        connection,
+        couponCode,
+        subtotalAmount,
+        {
+          forUpdate: true,
+        },
+      );
+
+      if (!couponValidation.is_valid) {
+        await connection.rollback();
+
+        return res.status(400).json({
+          success: false,
+          message: couponValidation.message,
+        });
+      }
+
+      discountAmount = couponValidation.discount_amount;
+      finalTotalAmount = couponValidation.total_amount;
+      appliedCouponId = couponValidation.coupon.id;
+      appliedCouponCode = couponValidation.coupon.code;
+    }
+
     // Tạo đơn hàng
 
     const orderCode = await createUniqueOrderCode(connection);
@@ -322,22 +360,26 @@ async function createOrder(req, res) {
     const paymentContent = buildPaymentContent(orderCode);
     const [orderResult] = await connection.query(
       `
-      INSERT INTO orders (
-        order_code,
-        user_id,
-        customer_name,
-        customer_email,
-        customer_phone,
-        customer_address,
-        note,
-        total_amount,
-        payment_method,
-        payment_status,
-        paid_amount,
-        payment_content,
-        status
-      )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO orders (
+  order_code,
+  user_id,
+  customer_name,
+  customer_email,
+  customer_phone,
+  customer_address,
+  note,
+  subtotal_amount,
+  discount_amount,
+  coupon_id,
+  coupon_code,
+  total_amount,
+  payment_method,
+  payment_status,
+  paid_amount,
+  payment_content,
+  status
+)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       [
         orderCode,
@@ -347,7 +389,11 @@ async function createOrder(req, res) {
         customerPhone,
         customerAddress,
         orderNote,
-        totalAmount,
+        subtotalAmount,
+        discountAmount,
+        appliedCouponId,
+        appliedCouponCode,
+        finalTotalAmount,
         paymentMethod,
         paymentStatus,
         paidAmount,
@@ -406,6 +452,17 @@ async function createOrder(req, res) {
       }
     }
 
+    if (appliedCouponId) {
+      await connection.query(
+        `
+    UPDATE coupons
+    SET used_count = used_count + 1
+    WHERE id = ?
+    `,
+        [appliedCouponId],
+      );
+    }
+
     await connection.commit();
 
     res.status(201).json({
@@ -414,7 +471,11 @@ async function createOrder(req, res) {
       data: {
         order_id: orderId,
         order_code: orderCode,
-        total_amount: totalAmount,
+        subtotal_amount: subtotalAmount,
+        discount_amount: discountAmount,
+        coupon_id: appliedCouponId,
+        coupon_code: appliedCouponCode,
+        total_amount: finalTotalAmount,
         payment_method: paymentMethod,
         payment_status: paymentStatus,
         paid_amount: paidAmount,
@@ -447,11 +508,14 @@ async function getPaymentStatus(req, res) {
 
     const [orders] = await pool.query(
       `
-      SELECT
-        id,
-        order_code,
-        total_amount,
-        payment_method,
+     SELECT
+  id,
+  order_code,
+  subtotal_amount,
+  discount_amount,
+  coupon_code,
+  total_amount,
+  payment_method,
         payment_status,
         paid_amount,
         paid_at,
@@ -490,6 +554,11 @@ async function getPaymentStatus(req, res) {
       data: {
         order_id: order.id,
         order_code: order.order_code,
+        subtotal_amount: Number(
+          order.subtotal_amount || order.total_amount || 0,
+        ),
+        discount_amount: Number(order.discount_amount || 0),
+        coupon_code: order.coupon_code,
         total_amount: Number(order.total_amount),
         payment_method: order.payment_method,
         payment_status: paymentStatus,
@@ -667,6 +736,9 @@ async function getAllOrders(req, res) {
         customer_phone,
         customer_address,
         note,
+        subtotal_amount,
+        discount_amount,
+        coupon_code,
         total_amount,
         payment_method,
         payment_status,
@@ -674,12 +746,12 @@ async function getAllOrders(req, res) {
         paid_at,
         payment_content,
         payment_note,
-       shipping_provider,
-shipping_tracking_code,
-shipping_note,
-shipped_at,
-status,
-created_at
+        shipping_provider,
+        shipping_tracking_code,
+        shipping_note,
+        shipped_at,
+        status,
+        created_at
       FROM orders
       ${whereSql}
       ORDER BY created_at DESC
