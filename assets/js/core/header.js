@@ -1764,11 +1764,10 @@ function applyProductLanguageData() {
 
 const translations = {
   vi: {
-    "topbar.register": "Đăng ký tài khoản để theo dõi đơn hàng dễ dàng",
-    "topbar.freeship": "Freeship cho mọi đơn hàng",
-    "topbar.newItems": "Sản phẩm mới đã có mặt tại Melanie Mira",
-    "topbar.qrPayment": "Thanh toán QR nhanh chóng và an toàn",
+    "topbar.designVibes": "Design your own vibes",
     "topbar.offers": "Nhập mã MELANIE10 để nhận ưu đãi hôm nay",
+    "topbar.freeship": "Freeship cho mọi đơn hàng",
+    "topbar.loginTrack": "Đăng nhập để theo dõi đơn hàng dễ dàng",
     "nav.home": "Trang chủ",
     "nav.products": "Sản phẩm",
     "nav.about": "Giới thiệu",
@@ -1911,11 +1910,10 @@ const translations = {
   },
 
   en: {
-    "topbar.register": "Create an account to track your orders easily",
+    "topbar.designVibes": "Design your own vibes",
+    "topbar.offers": "Use code MELANIE10 to get today's offer",
     "topbar.freeship": "Free shipping on every order",
-    "topbar.newItems": "New arrivals are now available at Melanie Mira",
-    "topbar.qrPayment": "Fast and secure QR payment",
-    "topbar.offers": "Use code MELANIE10 for today's special offer",
+    "topbar.loginTrack": "Log in to track your orders easily",
     "nav.home": "Home",
     "nav.products": "Shop",
     "nav.about": "About",

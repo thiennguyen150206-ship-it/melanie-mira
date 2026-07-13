@@ -3922,6 +3922,24 @@
   color: #2563eb;
   white-space: nowrap;
 }
+
+.auth-google {
+  width: 100%;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 700;
+}
+
+.auth-google .google-icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.auth-google span {
+  line-height: 1;
+}
+
 /* =========================
    Verify email page
    ========================= */

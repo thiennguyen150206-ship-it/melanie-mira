@@ -248,10 +248,13 @@ async function loginCustomer(req, res) {
 function loginWithGoogle(req, res) {
   const googleClient = createGoogleClient();
 
+  const marketingOptIn = Number(req.query.marketing_opt_in) === 1 ? 1 : 0;
+
   const authUrl = googleClient.generateAuthUrl({
     access_type: "offline",
     scope: ["profile", "email"],
     prompt: "select_account",
+    state: marketingOptIn === 1 ? "marketing_opt_in_1" : "marketing_opt_in_0",
   });
 
   res.redirect(authUrl);
@@ -260,7 +263,9 @@ function loginWithGoogle(req, res) {
 // GET /api/auth/google/callback
 async function googleCallback(req, res) {
   try {
-    const { code } = req.query;
+    const { code, state } = req.query;
+
+    const marketingOptIn = state === "marketing_opt_in_1" ? 1 : 0;
 
     if (!code) {
       return res.redirect(
@@ -307,10 +312,10 @@ async function googleCallback(req, res) {
 
     const [users] = await pool.query(
       `
-      SELECT id, full_name, email, phone, role
-      FROM users
-      WHERE email = ?
-      LIMIT 1
+     SELECT id, full_name, email, phone, role, marketing_opt_in
+    FROM users
+    WHERE email = ?
+    LIMIT 1
       `,
       [googleEmail],
     );
@@ -319,6 +324,17 @@ async function googleCallback(req, res) {
 
     if (users.length > 0) {
       user = users[0];
+
+      await pool.query(
+        `
+    UPDATE users
+    SET marketing_opt_in = ?
+    WHERE id = ?
+    `,
+        [marketingOptIn, user.id],
+      );
+
+      user.marketing_opt_in = marketingOptIn;
     } else {
       /*
         Tạo mật khẩu giả dạng hash.
@@ -331,16 +347,24 @@ async function googleCallback(req, res) {
 
       const [result] = await pool.query(
         `
-        INSERT INTO users (
-          full_name,
-          email,
-          phone,
-          password_hash,
-          role
-        )
-        VALUES (?, ?, ?, ?, ?)
+       INSERT INTO users (
+  full_name,
+  email,
+  phone,
+  password_hash,
+  role,
+  marketing_opt_in
+)
+VALUES (?, ?, ?, ?, ?, ?)
         `,
-        [safeGoogleName, googleEmail, null, randomPasswordHash, "customer"],
+        [
+          safeGoogleName,
+          googleEmail,
+          null,
+          randomPasswordHash,
+          "customer",
+          marketingOptIn,
+        ],
       );
 
       user = {
@@ -349,6 +373,7 @@ async function googleCallback(req, res) {
         email: googleEmail,
         phone: null,
         role: "customer",
+        marketing_opt_in: marketingOptIn,
       };
     }
 
@@ -366,7 +391,9 @@ async function googleCallback(req, res) {
       "&name=" +
       encodeURIComponent(user.full_name) +
       "&email=" +
-      encodeURIComponent(user.email);
+      encodeURIComponent(user.email) +
+      "&marketing_opt_in=" +
+      encodeURIComponent(user.marketing_opt_in || 0);
 
     res.redirect(redirectUrl);
   } catch (error) {

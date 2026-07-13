@@ -1,39 +1,23 @@
 const authTranslations = {
   en: {
-    pageTitle: "Log in or create an account - Melanie Mira",
+    pageTitle: "Log in - Melanie Mira",
     title: "Log in",
-    subtitle: "Log in or create an account",
+    subtitle: "Use your Google account to continue",
     googleLabel: "Log in with Google",
-    orText: "or",
-    emailPlaceholder: "Email",
     receiveNews:
-      "I agree to receive information and promotions from Melanie Mira via Email/Zalo.",
-    noteText: "By continuing, you agree to the",
-    termsText: "Terms of Service",
+      "I agree to receive information and promotions from Melanie Mira via Email.",
     privacyText: "Privacy Policy",
-    emptyEmail: "Please enter your email.",
-    invalidEmail: "Invalid email address.",
-    cannotSendCode: "Cannot send verification code.",
-    cannotConnectServer: "Cannot connect to server.",
     googleFailed: "Google login failed: ",
   },
 
   vi: {
-    pageTitle: "Đăng nhập hoặc tạo tài khoản - Melanie Mira",
+    pageTitle: "Đăng nhập - Melanie Mira",
     title: "Đăng nhập",
-    subtitle: "Đăng nhập hoặc tạo tài khoản",
+    subtitle: "Sử dụng tài khoản Google để tiếp tục",
     googleLabel: "Đăng nhập bằng Google",
-    orText: "hoặc",
-    emailPlaceholder: "Email",
     receiveNews:
-      "Tôi đồng ý nhận thông tin và khuyến mãi từ Melanie Mira qua Email/Zalo.",
-    noteText: "Bằng cách tiếp tục, bạn đồng ý với",
-    termsText: "Điều khoản dịch vụ",
+      "Tôi đồng ý nhận thông tin và khuyến mãi từ Melanie Mira qua Email.",
     privacyText: "Chính sách bảo mật",
-    emptyEmail: "Vui lòng nhập email.",
-    invalidEmail: "Email không hợp lệ.",
-    cannotSendCode: "Không thể gửi mã xác minh.",
-    cannotConnectServer: "Không thể kết nối server.",
     googleFailed: "Đăng nhập Google thất bại: ",
   },
 };
@@ -62,11 +46,7 @@ function applyAuthLanguage() {
   $("#authTitle").text(text.title);
   $("#authSubtitle").text(text.subtitle);
   $("#btnGoogleLogin").attr("aria-label", text.googleLabel);
-  $("#authOrText").text(text.orText);
-  $("#authEmail").attr("placeholder", text.emailPlaceholder);
   $("#authReceiveNewsText").text(text.receiveNews);
-  $("#authNoteText").text(text.noteText);
-  $("#authTermsText").text(text.termsText);
   $("#authPrivacyText").text(text.privacyText);
 }
 function saveGoogleLoginResult() {
@@ -77,6 +57,7 @@ function saveGoogleLoginResult() {
   const name = params.get("name");
   const email = params.get("email");
   const error = params.get("error");
+  const marketingOptIn = Number(params.get("marketing_opt_in") || 0);
 
   if (error) {
     const currentLanguage = getCurrentAuthLanguage();
@@ -94,6 +75,7 @@ function saveGoogleLoginResult() {
     full_name: name,
     email: email,
     role: "customer",
+    marketing_opt_in: marketingOptIn,
   };
 
   localStorage.setItem("customerToken", token);
@@ -104,7 +86,7 @@ function saveGoogleLoginResult() {
   */
   window.history.replaceState({}, document.title, "login.html");
 
-  window.location.href = "profile.html";
+  window.location.href = "index.html";
 }
 
 $(document).ready(function () {
@@ -112,64 +94,9 @@ $(document).ready(function () {
   saveGoogleLoginResult();
 
   $("#btnGoogleLogin").click(function () {
-    window.location.href = API_BASE_URL + "/auth/google";
-  });
+    const marketingOptIn = $("#authReceiveNews").is(":checked") ? 1 : 0;
 
-  initEmailOtpLogin();
+    window.location.href =
+      API_BASE_URL + "/auth/google?marketing_opt_in=" + marketingOptIn;
+  });
 });
-async function startEmailLogin(email) {
-  const response = await fetch(API_BASE_URL + "/auth/email/start", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email: email,
-    }),
-  });
-
-  return response.json();
-}
-
-function initEmailOtpLogin() {
-  $("#authForm").submit(async function (e) {
-    e.preventDefault();
-
-    const currentLanguage = getCurrentAuthLanguage();
-    const text = authTranslations[currentLanguage];
-
-    const email = $("#authEmail").val().trim();
-
-    $("#errAuthEmail").text("");
-
-    if (email === "") {
-      $("#errAuthEmail").text(text.emptyEmail);
-      return;
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      $("#errAuthEmail").text(text.invalidEmail);
-      return;
-    }
-
-    try {
-      const result = await startEmailLogin(email);
-
-      if (!result.success) {
-        $("#errAuthEmail").text(result.message || text.cannotSendCode);
-        return;
-      }
-
-      /*
-        dev_code chỉ dùng local test.
-        Sau này gửi email thật thì xóa dòng console này.
-      */
-      console.log("Mã OTP:", result.data.dev_code);
-
-      window.location.href =
-        "verify-email.html?email=" + encodeURIComponent(email);
-    } catch (error) {
-      $("#errAuthEmail").text(text.cannotConnectServer);
-    }
-  });
-}
