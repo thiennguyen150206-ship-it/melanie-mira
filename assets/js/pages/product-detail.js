@@ -7,6 +7,30 @@ function formatMoney(price) {
   return price.toLocaleString("vi-VN") + "đ";
 }
 
+function hasDiscountPrice(product) {
+  let price = Number(product.price);
+  let oldPrice = Number(product.oldPrice);
+
+  return oldPrice > 0 && oldPrice > price;
+}
+
+function createDetailPriceHtml(product) {
+  if (hasDiscountPrice(product)) {
+    return `
+      <div class="detail-price-box has-old-price">
+        <span class="detail-price-old">${formatMoney(product.oldPrice)}</span>
+        <span class="detail-price-current">${formatMoney(product.price)}</span>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="detail-price-box">
+      <span class="detail-price-current">${formatMoney(product.price)}</span>
+    </div>
+  `;
+}
+
 function isLocalDevHost() {
   return (
     window.location.hostname === "localhost" ||
@@ -445,7 +469,7 @@ function renderProductInfo(product) {
   let category = getProductCategory(product);
 
   $("#detailName").text(name);
-  $("#detailPrice").text(formatMoney(product.price));
+  $("#detailPrice").html(createDetailPriceHtml(product));
 
   $("#detailInfoList").html(`
     <li>${description}</li>

@@ -39,6 +39,7 @@ let checkoutAppliedCoupon = null;
 let checkoutSubtotalAmount = 0;
 let checkoutDiscountAmount = 0;
 let checkoutFinalTotalAmount = 0;
+let checkoutPublicCoupons = [];
 
 const CHECKOUT_PAYMENT_POLL_INTERVAL_MS = 5000;
 const CHECKOUT_PAYMENT_POLL_LIMIT = 120;
@@ -73,19 +74,42 @@ function createCheckoutModal() {
   <div class="checkout-discount checkout-modal-discount">
     <h3>${t("checkout.discount")}</h3>
 
-  <div class="checkout-discount-row">
-  <input
-    type="text"
-    id="modalDiscountCode"
-    placeholder="${t("checkout.discountCode")}"
-  />
+    <button
+      type="button"
+      class="checkout-voucher-toggle"
+      id="btnToggleCheckoutVoucher"
+    >
+      <span>Voucher của shop</span>
+      <strong id="checkoutVoucherSelectedText">Chọn hoặc nhập mã ›</strong>
+    </button>
 
-  <button type="button" id="btnModalApplyDiscount">
-    ${t("checkout.applyDiscount")}
-  </button>
-</div>
+    <div class="checkout-voucher-box" id="checkoutVoucherBox">
+      <div
+        class="checkout-public-coupon-list"
+        id="checkoutPublicCouponList"
+      >
+        <div class="checkout-voucher-empty">
+          Đang tải voucher...
+        </div>
+      </div>
 
-<div class="checkout-discount-message" id="checkoutDiscountMessage"></div>
+      <div class="checkout-discount-row">
+        <input
+          type="text"
+          id="modalDiscountCode"
+          placeholder="${t("checkout.discountCode")}"
+        />
+
+        <button type="button" id="btnModalApplyDiscount">
+          ${t("checkout.applyDiscount")}
+        </button>
+      </div>
+
+      <div
+        class="checkout-discount-message"
+        id="checkoutDiscountMessage"
+      ></div>
+    </div>
   </div>
 
   <div class="checkout-money">
@@ -402,6 +426,7 @@ function resetCheckoutCouponState() {
   $("#checkoutDiscountRow").hide();
   $("#checkoutModalDiscount").text("-0đ");
   $("#checkoutDiscountCodeText").text("");
+  updateCheckoutVoucherSelectedText();
 }
 
 function renderCheckoutModalSummary() {
@@ -590,6 +615,121 @@ function getCustomerTokenForCheckout() {
   return localStorage.getItem("customerToken");
 }
 
+function isCheckoutCustomerLoggedIn() {
+  return !!getCustomerTokenForCheckout();
+}
+
+function updateCheckoutVoucherSelectedText() {
+  if (checkoutAppliedCoupon) {
+    $("#checkoutVoucherSelectedText").text(
+      checkoutAppliedCoupon.coupon_code + " ›",
+    );
+    return;
+  }
+
+  $("#checkoutVoucherSelectedText").text("Chọn hoặc nhập mã ›");
+}
+
+function getCouponPublicText(coupon) {
+  let discountText = "";
+
+  if (coupon.discount_type === "fixed") {
+    discountText = "Giảm " + formatCartMoney(Number(coupon.discount_value));
+  } else {
+    discountText = "Giảm " + Number(coupon.discount_value) + "%";
+
+    if (coupon.max_discount_amount !== null) {
+      discountText +=
+        " tối đa " + formatCartMoney(Number(coupon.max_discount_amount));
+    }
+  }
+
+  return (
+    discountText +
+    " cho đơn từ " +
+    formatCartMoney(Number(coupon.min_order_amount || 0))
+  );
+}
+
+async function fetchCheckoutPublicCoupons() {
+  const headers = {};
+  const token = getCustomerTokenForCheckout();
+
+  if (token) {
+    headers.Authorization = "Bearer " + token;
+  }
+
+  const response = await fetch(API_BASE_URL + "/coupons/public", {
+    method: "GET",
+    headers: headers,
+  });
+
+  const result = await response.json();
+
+  if (!response.ok || !result.success) {
+    throw new Error(result.message || "Không thể tải voucher của shop.");
+  }
+
+  return result.data || [];
+}
+
+function renderCheckoutPublicCoupons() {
+  if (checkoutPublicCoupons.length === 0) {
+    $("#checkoutPublicCouponList").html(`
+      <div class="checkout-voucher-empty">
+        Hiện chưa có voucher công khai.
+      </div>
+    `);
+
+    return;
+  }
+
+  let html = "";
+
+  for (let i = 0; i < checkoutPublicCoupons.length; i++) {
+    const coupon = checkoutPublicCoupons[i];
+    const isUsed = Number(coupon.used_by_me || 0) === 1;
+    const isDisabled = isUsed ? "disabled" : "";
+
+    html += `
+      <button
+        type="button"
+        class="checkout-public-coupon-item btn-select-public-coupon"
+        data-code="${coupon.code}"
+        ${isDisabled}
+      >
+        <span>
+          <strong>${coupon.code}</strong>
+          <small>${coupon.name || getCouponPublicText(coupon)}</small>
+        </span>
+
+        <em>${isUsed ? "Đã dùng" : "Chọn"}</em>
+      </button>
+    `;
+  }
+
+  $("#checkoutPublicCouponList").html(html);
+}
+
+async function loadCheckoutPublicCoupons() {
+  $("#checkoutPublicCouponList").html(`
+    <div class="checkout-voucher-empty">
+      Đang tải voucher...
+    </div>
+  `);
+
+  try {
+    checkoutPublicCoupons = await fetchCheckoutPublicCoupons();
+    renderCheckoutPublicCoupons();
+  } catch (error) {
+    $("#checkoutPublicCouponList").html(`
+      <div class="checkout-voucher-empty">
+        ${error.message}
+      </div>
+    `);
+  }
+}
+
 function isDefaultAddress(address) {
   return (
     address.is_default === 1 ||
@@ -737,6 +877,7 @@ function openCheckoutModal(mode, items) {
   resetCheckoutModalForm();
   renderCheckoutModalSummary();
   prefillCheckoutModalFromAccount();
+  loadCheckoutPublicCoupons();
 
   /*
     Nếu đang mở cart modal thì đóng lại trước,
@@ -785,6 +926,16 @@ async function applyCheckoutCoupon() {
   const couponCode = normalizeCheckoutCouponCode($("#modalDiscountCode").val());
   const subtotalAmount = getCheckoutSubtotalAmount();
 
+  if (!isCheckoutCustomerLoggedIn()) {
+    resetCheckoutCouponState();
+    renderCheckoutModalSummary();
+    showCheckoutDiscountMessage(
+      "Vui lòng đăng nhập để áp dụng mã giảm giá.",
+      "error",
+    );
+    return;
+  }
+
   if (!couponCode) {
     resetCheckoutCouponState();
     renderCheckoutModalSummary();
@@ -809,6 +960,7 @@ async function applyCheckoutCoupon() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: "Bearer " + getCustomerTokenForCheckout(),
       },
       body: JSON.stringify({
         code: couponCode,
@@ -827,6 +979,7 @@ async function applyCheckoutCoupon() {
     checkoutFinalTotalAmount = Number(result.data.total_amount || 0);
 
     $("#modalDiscountCode").val(result.data.coupon_code);
+    updateCheckoutVoucherSelectedText();
 
     renderCheckoutModalSummary();
 
@@ -1099,6 +1252,14 @@ async function submitCheckoutModal() {
     $("#modalDiscountCode").val(),
   );
 
+  if (typedCouponCode && !isCheckoutCustomerLoggedIn()) {
+    showCheckoutDiscountMessage(
+      "Vui lòng đăng nhập để áp dụng mã giảm giá.",
+      "error",
+    );
+    return;
+  }
+
   if (
     typedCouponCode &&
     (!checkoutAppliedCoupon ||
@@ -1156,6 +1317,25 @@ function initCheckoutModalEvents() {
   });
 
   $(document).on("click", "#btnModalApplyDiscount", function () {
+    applyCheckoutCoupon();
+  });
+
+  $(document).on("click", "#btnToggleCheckoutVoucher", function () {
+    $("#checkoutVoucherBox").toggleClass("active");
+  });
+
+  $(document).on("click", ".btn-select-public-coupon", function () {
+    const couponCode = $(this).data("code");
+
+    if (!isCheckoutCustomerLoggedIn()) {
+      showCheckoutDiscountMessage(
+        "Vui lòng đăng nhập để áp dụng mã giảm giá.",
+        "error",
+      );
+      return;
+    }
+
+    $("#modalDiscountCode").val(couponCode);
     applyCheckoutCoupon();
   });
 

@@ -224,19 +224,33 @@ function getCouponDiscountText(coupon) {
   return formatAdminCouponMoney(discountValue);
 }
 
-function getCouponUsageText(coupon) {
-  const usedCount = Number(coupon.used_count || 0);
+function getCouponVisibilityText(coupon) {
+  return Number(coupon.is_public) === 1 ? "Mã hiện" : "Mã ẩn";
+}
 
+function getCouponVisibilityClass(coupon) {
+  return Number(coupon.is_public) === 1
+    ? "coupon-visibility-public"
+    : "coupon-visibility-hidden";
+}
+
+function getCouponUsedCountText(coupon) {
+  return Number(coupon.used_count || 0);
+}
+
+function getCouponLimitText(coupon) {
   if (coupon.usage_limit === null || coupon.usage_limit === undefined) {
-    return usedCount + " / Không giới hạn";
+    return "Không giới hạn";
   }
 
-  return usedCount + " / " + Number(coupon.usage_limit);
+  return Number(coupon.usage_limit);
 }
 
 function getFilteredAdminCoupons() {
   const keyword = $("#couponSearchInput").val().trim().toLowerCase();
   const statusFilter = $("#couponStatusFilter").val();
+
+  const visibilityFilter = $("#couponVisibilityFilter").val();
 
   return allAdminCoupons.filter(function (coupon) {
     const searchText = [
@@ -260,7 +274,17 @@ function getFilteredAdminCoupons() {
       matchStatus = Number(coupon.is_active) === 0;
     }
 
-    return matchKeyword && matchStatus;
+    let matchVisibility = true;
+
+    if (visibilityFilter === "public") {
+      matchVisibility = Number(coupon.is_public) === 1;
+    }
+
+    if (visibilityFilter === "hidden") {
+      matchVisibility = Number(coupon.is_public) === 0;
+    }
+
+    return matchKeyword && matchStatus && matchVisibility;
   });
 }
 
@@ -270,7 +294,7 @@ function renderAdminCoupons() {
   if (coupons.length === 0) {
     $("#adminCouponsTableBody").html(`
       <tr>
-        <td colspan="8" class="text-center">Không có mã giảm giá phù hợp</td>
+        <td colspan="10" class="text-center">Không có mã giảm giá phù hợp</td>
       </tr>
     `);
 
@@ -306,11 +330,19 @@ function renderAdminCoupons() {
           </div>
         </td>
 
+                <td>
+          <span class="coupon-visibility-badge ${getCouponVisibilityClass(coupon)}">
+            ${getCouponVisibilityText(coupon)}
+          </span>
+        </td>
+
         <td>${getCouponDiscountText(coupon)}</td>
 
         <td>${formatAdminCouponMoney(coupon.min_order_amount || 0)}</td>
 
-        <td>${escapeAdminCouponHtml(getCouponUsageText(coupon))}</td>
+        <td>${getCouponUsedCountText(coupon)}</td>
+
+        <td>${escapeAdminCouponHtml(getCouponLimitText(coupon))}</td>
 
         <td>
           <div class="coupon-small-text">
@@ -392,6 +424,7 @@ function resetCouponForm() {
   $("#editingCouponId").val("");
   $("#couponDiscountType").val("percent");
   $("#couponIsActive").val("1");
+  $("#couponIsPublic").val("1");
   $("#couponMinOrderAmount").val(0);
 
   $("#couponFormTitle").text("Thêm mã giảm giá");
@@ -458,6 +491,7 @@ function openEditCouponModal(couponId) {
   );
 
   $("#couponIsActive").val(Number(coupon.is_active));
+  $("#couponIsPublic").val(Number(coupon.is_public || 0));
   $("#couponStartsAt").val(formatCouponInputDate(coupon.starts_at));
   $("#couponExpiresAt").val(formatCouponInputDate(coupon.expires_at));
 
@@ -473,6 +507,7 @@ function getCouponFormData() {
     max_discount_amount: $("#couponMaxDiscountAmount").val().trim(),
     min_order_amount: $("#couponMinOrderAmount").val().trim(),
     usage_limit: $("#couponUsageLimit").val().trim(),
+    is_public: Number($("#couponIsPublic").val()),
     starts_at: $("#couponStartsAt").val(),
     expires_at: $("#couponExpiresAt").val(),
     is_active: Number($("#couponIsActive").val()),
@@ -600,10 +635,11 @@ function resetAdminCouponSection() {
 
   $("#couponSearchInput").val("");
   $("#couponStatusFilter").val("all");
+  $("#couponVisibilityFilter").val("all");
 
   $("#adminCouponsTableBody").html(`
     <tr>
-      <td colspan="8" class="text-center">Chưa tải mã giảm giá</td>
+      <td colspan="10" class="text-center">Chưa tải mã giảm giá</td>
     </tr>
   `);
 
@@ -654,9 +690,14 @@ function initAdminCouponEvents() {
     renderAdminCoupons();
   });
 
+  $("#couponVisibilityFilter").change(function () {
+    renderAdminCoupons();
+  });
+
   $("#btnClearCouponFilter").click(function () {
     $("#couponSearchInput").val("");
     $("#couponStatusFilter").val("all");
+    $("#couponVisibilityFilter").val("all");
 
     renderAdminCoupons();
   });

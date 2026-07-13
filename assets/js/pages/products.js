@@ -2,6 +2,30 @@ function formatMoney(price) {
   return price.toLocaleString("vi-VN") + "đ";
 }
 
+function hasDiscountPrice(product) {
+  let price = Number(product.price);
+  let oldPrice = Number(product.oldPrice);
+
+  return oldPrice > 0 && oldPrice > price;
+}
+
+function createProductPriceHtml(product) {
+  if (hasDiscountPrice(product)) {
+    return `
+      <div class="product-card-price has-old-price">
+        <span class="product-price-old">${formatMoney(product.oldPrice)}</span>
+        <span class="product-price-current">${formatMoney(product.price)}</span>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="product-card-price">
+      <span class="product-price-current">${formatMoney(product.price)}</span>
+    </div>
+  `;
+}
+
 function getUrlParam(name) {
   let params = new URLSearchParams(window.location.search);
   return params.get(name);
@@ -142,7 +166,7 @@ function createProductItem(product) {
 
         <div class="shop-product-info">
           <h3>${getProductName(product)}</h3>
-          <p>${formatMoney(product.price)}</p>
+       ${createProductPriceHtml(product)}
         </div>
       </a>
     </div>

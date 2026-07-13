@@ -1,312 +1,17 @@
+/* =========================
+   Layout - Top bar
+   ========================= */
+
 .top-bar {
   background-color: var(--color-primary);
   color: var(--color-white);
   font-size: 12px;
-  padding: 4px 0;
   line-height: 1.2;
-}
-
-.top-bar .container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.main-header {
-  background-color: var(--color-white);
-  border-bottom: 1px solid var(--color-border);
-  padding: 18px 0;
-  position: sticky;
-  top: 0;
-  z-index: 999;
-}
-
-.header-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 25px;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-}
-
-.brand img {
-  width: 65px;
-  height: 65px;
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-.brand span {
-  font-size: 25px;
-  font-weight: 700;
-  color: var(--color-primary);
-  letter-spacing: 0.5px;
-}
-
-.search-box {
-  flex: 1;
-  max-width: 520px;
-  display: flex;
-  border: 1px solid var(--color-border);
-  border-radius: 999px;
-  overflow: hidden;
-  background-color: var(--color-white);
-}
-
-.search-box input {
-  flex: 1;
-  border: none;
-  outline: none;
-  padding: 12px 18px;
-  font-size: 15px;
-}
-
-.search-box button {
-  border: none;
-  background-color: var(--color-primary);
-  color: var(--color-white);
-  padding: 0 22px;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  font-weight: 600;
-}
-
-.header-actions a {
-  color: var(--color-primary);
-  transition: var(--transition-fast);
-}
-
-.header-actions a:hover {
-  color: var(--color-secondary);
-}
-
-.cart-link {
-  position: relative;
-}
-
-.cart-link span {
-  position: absolute;
-  top: -10px;
-  right: -16px;
-  background-color: var(--color-accent);
-  color: var(--color-white);
-  font-size: 12px;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 5px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.main-nav {
-  background-color: var(--color-white);
-  border-bottom: 1px solid var(--color-border);
-  position: relative;
-  z-index: 500;
-}
-
-.nav-list {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.nav-list > li {
-  position: relative;
-}
-
-.nav-list > li > a {
-  display: block;
-  padding: 16px 22px;
-  color: var(--color-primary);
-  font-size: 15px;
-  font-weight: 700;
-  text-transform: uppercase;
-  transition: var(--transition-fast);
-}
-
-.nav-list > li > a:hover {
-  color: var(--color-secondary);
-}
-
-.dropdown-menu-custom {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  min-width: 680px;
-  background-color: var(--color-white);
-  box-shadow: var(--shadow-soft);
-  border: 1px solid var(--color-border);
-  border-radius: 0 0 var(--radius-md) var(--radius-md);
-  padding: 25px;
-  display: flex;
-  gap: 35px;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(12px);
-  transition: var(--transition-fast);
-}
-
-.has-dropdown:hover .dropdown-menu-custom {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-.dropdown-column {
-  min-width: 170px;
-}
-
-.dropdown-column h6 {
-  font-size: 15px;
-  color: var(--color-secondary);
-  font-weight: 700;
-  margin-bottom: 12px;
-  text-transform: uppercase;
-}
-
-.dropdown-column a {
-  display: block;
-  color: var(--color-text);
-  padding: 7px 0;
-  font-size: 15px;
-  transition: var(--transition-fast);
-}
-
-.dropdown-column a:hover {
-  color: var(--color-secondary);
-  padding-left: 5px;
-}
-
-.small-dropdown {
-  position: relative;
-}
-
-.small-menu {
-  min-width: 220px;
-  display: block;
-  padding: 15px 0;
-}
-
-.small-menu a {
-  display: block;
-  padding: 10px 20px;
-  color: var(--color-text);
-}
-
-.small-menu a:hover {
-  color: var(--color-secondary);
-  background-color: var(--color-light);
-}
-
-.main-footer {
-  background-color: var(--color-primary);
-  color: var(--color-white);
-  padding: 55px 0 25px;
-}
-
-.main-footer h3 {
-  font-size: 26px;
-  margin-bottom: 15px;
-}
-
-.main-footer h4 {
-  font-size: 18px;
-  margin-bottom: 16px;
-}
-
-.main-footer p {
-  color: #d5d5d5;
-  margin-bottom: 9px;
-}
-
-.main-footer a {
-  display: block;
-  color: #d5d5d5;
-  margin-bottom: 9px;
-  transition: var(--transition-fast);
-}
-
-.main-footer a:hover {
-  color: var(--color-secondary);
-}
-
-.footer-bottom {
-  border-top: 1px solid rgba(255, 255, 255, 0.16);
-  margin-top: 35px;
-  padding-top: 20px;
-  text-align: center;
-}
-
-.footer-bottom p {
-  margin-bottom: 0;
-  color: #bcbcbc;
-}
-
-@media screen and (max-width: 992px) {
-  .header-inner {
-    flex-direction: column;
-  }
-
-  .brand {
-    justify-content: center;
-  }
-
-  .search-box {
-    width: 100%;
-  }
-
-  .nav-list {
-    flex-wrap: wrap;
-  }
-
-  .dropdown-menu-custom {
-    min-width: 520px;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .top-bar .container {
-    gap: 12px;
-    font-size: 13px;
-  }
-
-  .header-actions {
-    gap: 15px;
-  }
-
-  .nav-list {
-    justify-content: flex-start;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-
-  .nav-list > li > a {
-    padding: 14px 15px;
-    font-size: 14px;
-  }
-
-  .dropdown-menu-custom {
-    display: none;
-  }
+  padding: 4px 0;
 }
 
 .top-bar-marquee {
-  background-color: #111111;
+  background-color: var(--color-primary);
   color: #fffaf7;
   overflow: hidden;
   white-space: nowrap;
@@ -336,6 +41,53 @@
     transform: translateX(-100%);
   }
 }
+
+/* =========================
+   Layout - Header
+   Header chính dùng chung các trang
+   Icon/search/menu chi tiết nằm ở components.css
+   ========================= */
+
+.main-header {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+
+  background-color: var(--color-white);
+  border-bottom: 1px solid var(--color-border);
+  padding: 18px 0;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+}
+
+.brand img {
+  width: 65px;
+  height: 65px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.brand span {
+  color: var(--color-primary);
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* =========================
+   Layout - Side menu product row
+   Dùng cho menu mobile / dropdown danh mục trong side menu
+   ========================= */
 
 .side-menu-product-row {
   display: flex;
@@ -386,8 +138,59 @@
 .side-submenu.active {
   display: block;
 }
+
 /* =========================
-   Home overlay header
+   Layout - Footer
+   Footer base, icon/category chi tiết nằm ở components.css
+   ========================= */
+
+.main-footer {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  padding: 55px 0 25px;
+}
+
+.main-footer h3 {
+  font-size: 26px;
+  margin-bottom: 15px;
+}
+
+.main-footer h4 {
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+
+.main-footer p {
+  color: #d5d5d5;
+  margin-bottom: 9px;
+}
+
+.main-footer a {
+  display: block;
+  color: #d5d5d5;
+  margin-bottom: 9px;
+  transition: var(--transition-fast);
+}
+
+.main-footer a:hover {
+  color: var(--color-secondary);
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  margin-top: 35px;
+  padding-top: 20px;
+  text-align: center;
+}
+
+.footer-bottom p {
+  color: #bcbcbc;
+  margin-bottom: 0;
+}
+
+/* =========================
+   Layout - Home overlay header
+   Header trong trang chủ nằm đè lên hero
    ========================= */
 
 .home-header-overlay {
@@ -396,13 +199,16 @@
   left: 0;
   right: 0;
   z-index: 1200;
+
   background-color: transparent;
   border-bottom: none;
   padding: 0;
 }
+
 .home-header-overlay .header-inner {
   min-height: 76px;
   align-items: center;
+  background-color: transparent;
 }
 
 .home-header-overlay .brand img {
@@ -412,10 +218,6 @@
   border-radius: 0;
   background-color: var(--color-white);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
-}
-
-.home-header-overlay .header-inner {
-  background-color: transparent;
 }
 
 .home-header-overlay .header-icon-btn,
@@ -433,7 +235,7 @@
   color: var(--color-primary);
 }
 
-/* Keep dropdown readable when home header is overlay */
+/* Giữ dropdown dễ đọc khi header ở dạng overlay */
 .home-header-overlay .search-box-dropdown,
 .home-header-overlay .account-dropdown,
 .home-header-overlay .side-menu {
@@ -446,7 +248,11 @@
 .home-header-overlay .side-menu-header h4 {
   color: var(--color-primary);
 }
-/* Custom language dropdown */
+
+/* =========================
+   Layout - Language dropdown
+   ========================= */
+
 .language-box {
   position: relative;
   display: inline-flex;
@@ -459,13 +265,15 @@
   border: none;
   background-color: transparent;
   color: var(--color-primary);
+
   display: inline-flex;
   align-items: center;
   gap: 6px;
+
+  padding: 0 4px;
   font-size: 13px;
   font-weight: 800;
   cursor: pointer;
-  padding: 0 4px;
 }
 
 .language-badge {
@@ -473,11 +281,14 @@
   height: 26px;
   padding: 0 6px;
   border-radius: 999px;
+
   background-color: var(--color-primary);
   color: var(--color-white);
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   font-size: 12px;
   font-weight: 800;
   line-height: 1;
@@ -492,14 +303,16 @@
   position: absolute;
   top: calc(100% + 10px);
   right: 0;
+  z-index: 3500;
+
   width: 150px;
+  display: none;
+  padding: 8px;
+
   background-color: var(--color-white);
   border: 1px solid var(--color-border);
   border-radius: 14px;
   box-shadow: var(--shadow-soft);
-  padding: 8px;
-  z-index: 3500;
-  display: none;
 }
 
 .language-dropdown.active {
@@ -509,16 +322,18 @@
 .language-option {
   width: 100%;
   border: none;
+  border-radius: 10px;
   background-color: transparent;
   color: var(--color-primary);
+
   display: flex;
   align-items: center;
   gap: 10px;
+
   padding: 9px 8px;
-  border-radius: 10px;
   font-size: 14px;
-  cursor: pointer;
   text-align: left;
+  cursor: pointer;
 }
 
 .language-option:hover,
@@ -526,7 +341,7 @@
   background-color: var(--color-light);
 }
 
-/* Home overlay header language */
+/* Language khi header nằm trên hero */
 .home-header-overlay .language-current {
   color: var(--color-white);
 }

@@ -641,6 +641,25 @@
         color: #6b7280;
         font-size: 13px;
       }
+      .coupon-visibility-badge {
+        display: inline-block;
+        min-width: 78px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 700;
+        text-align: center;
+      }
+
+      .coupon-visibility-public {
+        background-color: #eef4ff;
+        color: #2563eb;
+      }
+
+      .coupon-visibility-hidden {
+        background-color: #f3f4f6;
+        color: #4b5563;
+      }
     </style>
   </head>
 
@@ -1225,7 +1244,7 @@
           <div id="couponAdminMessage" class="mb-3"></div>
 
           <div class="row mb-3">
-            <div class="col-md-7">
+            <div class="col-md-5">
               <input
                 type="text"
                 id="couponSearchInput"
@@ -1239,6 +1258,14 @@
                 <option value="all">Tất cả trạng thái</option>
                 <option value="active">Đang bật</option>
                 <option value="inactive">Đang tắt</option>
+              </select>
+            </div>
+
+            <div class="col-md-2">
+              <select id="couponVisibilityFilter" class="form-select">
+                <option value="all">Tất cả loại mã</option>
+                <option value="public">Mã hiện</option>
+                <option value="hidden">Mã ẩn</option>
               </select>
             </div>
 
@@ -1258,9 +1285,11 @@
                 <tr>
                   <th>ID</th>
                   <th>Mã</th>
+                  <th>Loại mã</th>
                   <th>Loại giảm</th>
                   <th>Đơn tối thiểu</th>
-                  <th>Lượt dùng</th>
+                  <th>Đã dùng</th>
+                  <th>Giới hạn mã</th>
                   <th>Thời gian</th>
                   <th>Trạng thái</th>
                   <th>Thao tác</th>
@@ -1269,7 +1298,7 @@
 
               <tbody id="adminCouponsTableBody">
                 <tr>
-                  <td colspan="8" class="text-center">Chưa tải mã giảm giá</td>
+                  <td colspan="10" class="text-center">Chưa tải mã giảm giá</td>
                 </tr>
               </tbody>
             </table>
@@ -1651,14 +1680,22 @@
             </div>
 
             <div class="product-form-field">
-              <label>Giới hạn lượt dùng</label>
+              <label>Số lượng mã</label>
               <input
                 type="number"
                 id="couponUsageLimit"
                 class="form-control"
                 min="1"
-                placeholder="Để trống nếu không giới hạn"
+                placeholder="Tối đa bao nhiêu khách được dùng"
               />
+            </div>
+
+            <div class="product-form-field">
+              <label>Loại mã</label>
+              <select id="couponIsPublic" class="form-select">
+                <option value="1">Mã hiện</option>
+                <option value="0">Mã ẩn</option>
+              </select>
             </div>
 
             <div class="product-form-field">

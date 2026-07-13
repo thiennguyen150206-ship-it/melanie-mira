@@ -1361,11 +1361,36 @@
   overflow: hidden;
 }
 
-.shop-product-info p {
-  color: var(--color-primary);
+/* Product card price
+   Chỉ hiện giá cũ khi oldPrice > price.
+   Giá xếp dọc để không chen vào tên sản phẩm. */
+.product-card-price {
+  min-height: 40px;
+  margin-top: 6px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.product-price-old {
+  color: #999999;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.2;
+  text-decoration: line-through;
+}
+
+.product-price-current {
+  color: #c0392b;
   font-size: 16px;
   font-weight: 800;
-  margin-bottom: 0;
+  line-height: 1.25;
+}
+
+.product-card-price:not(.has-old-price) .product-price-current {
+  color: var(--color-primary);
 }
 
 .products-empty {
@@ -1449,19 +1474,50 @@
 }
 
 .product-detail-top h1 {
+  flex: 1;
+  min-width: 0;
+  max-width: none;
+
   font-size: 21px;
   line-height: 1.35;
   font-weight: 500;
   color: var(--color-primary);
   margin-bottom: 0;
-  max-width: 72%;
 }
 
-.product-detail-top span {
-  color: var(--color-primary);
-  font-size: 19px;
+/* Product detail price
+   Không dùng .product-detail-top span vì sẽ đè style giá cũ/giá bán. */
+#detailPrice {
+  flex: 0 0 auto;
+  text-align: right;
+}
+
+.detail-price-box {
+  min-width: 120px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.detail-price-old {
+  color: #999999;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.2;
+  text-decoration: line-through;
+}
+
+.detail-price-current {
+  color: #c0392b;
+  font-size: 24px;
   font-weight: 800;
-  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.detail-price-box:not(.has-old-price) .detail-price-current {
+  color: var(--color-primary);
 }
 
 .product-detail-line {
@@ -1708,6 +1764,30 @@
 
 .product-buy-btn:hover {
   background-color: var(--color-secondary);
+}
+
+/* Product detail price mobile
+   Mobile cho giá xuống dưới tên để không ép tên sản phẩm quá hẹp. */
+@media screen and (max-width: 768px) {
+  .product-detail-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  #detailPrice {
+    width: 100%;
+    text-align: left;
+  }
+
+  .detail-price-box {
+    min-width: 0;
+    align-items: flex-start;
+  }
+
+  .detail-price-current {
+    font-size: 22px;
+  }
 }
 
 /* =========================
@@ -3132,6 +3212,112 @@
 .checkout-modal .payment-option-desc {
   padding: 12px 14px;
   font-size: 13px;
+}
+
+/* =========================
+   Checkout shop voucher
+   Mã hiện được chọn nhanh, mã ẩn nhập thủ công
+   ========================= */
+
+.checkout-voucher-toggle {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-white);
+  color: var(--color-primary);
+  padding: 0 14px;
+  margin-bottom: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.checkout-voucher-toggle span {
+  font-weight: 800;
+}
+
+.checkout-voucher-toggle strong {
+  color: var(--color-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.checkout-voucher-box {
+  display: none;
+}
+
+.checkout-voucher-box.active {
+  display: block;
+}
+
+.checkout-public-coupon-list {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.checkout-public-coupon-item {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  background-color: #fffaf7;
+  color: var(--color-primary);
+  padding: 10px 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  text-align: left;
+  cursor: pointer;
+}
+
+.checkout-public-coupon-item strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.checkout-public-coupon-item small {
+  display: block;
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
+.checkout-public-coupon-item em {
+  color: var(--color-accent);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.checkout-public-coupon-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.checkout-voucher-empty {
+  padding: 10px 12px;
+  border: 1px dashed var(--color-border);
+  color: var(--color-muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+.checkout-discount-message {
+  min-height: 20px;
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 /* QR box gọn */

@@ -73,6 +73,7 @@ async function validateCouponForSubtotal(
   const code = normalizeCouponCode(couponCode);
   const subtotal = roundMoney(subtotalAmount);
   const forUpdate = options.forUpdate === true;
+  const customerId = options.customerId ? Number(options.customerId) : null;
 
   if (!code) {
     return {
@@ -107,6 +108,7 @@ async function validateCouponForSubtotal(
       min_order_amount,
       usage_limit,
       used_count,
+      is_public,
       starts_at,
       expires_at,
       is_active
@@ -126,6 +128,13 @@ async function validateCouponForSubtotal(
   }
 
   const coupon = coupons[0];
+
+  if (!customerId) {
+    return {
+      is_valid: false,
+      message: "Vui lòng đăng nhập để áp dụng mã giảm giá.",
+    };
+  }
 
   if (Number(coupon.is_active) !== 1) {
     return {
@@ -160,6 +169,23 @@ async function validateCouponForSubtotal(
     return {
       is_valid: false,
       message: "Mã giảm giá đã hết lượt sử dụng.",
+    };
+  }
+
+  const [usageRows] = await db.query(
+    `
+    SELECT id
+    FROM coupon_usages
+    WHERE coupon_id = ? AND customer_id = ?
+    LIMIT 1
+    `,
+    [coupon.id, customerId],
+  );
+
+  if (usageRows.length > 0) {
+    return {
+      is_valid: false,
+      message: "Bạn đã sử dụng mã giảm giá này rồi.",
     };
   }
 

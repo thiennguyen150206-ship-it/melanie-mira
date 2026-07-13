@@ -59,6 +59,7 @@ function buildCouponResponse(coupon) {
     usage_limit:
       coupon.usage_limit === null ? null : Number(coupon.usage_limit),
     used_count: Number(coupon.used_count || 0),
+    is_public: Number(coupon.is_public || 0),
     starts_at: coupon.starts_at,
     expires_at: coupon.expires_at,
     is_active: Number(coupon.is_active),
@@ -93,6 +94,7 @@ function getCouponPayload(body) {
       ? null
       : Number(body.usage_limit);
 
+  const isPublic = Number(body.is_public) === 1 ? 1 : 0;
   const startsAt = normalizeDateTime(body.starts_at);
   const expiresAt = normalizeDateTime(body.expires_at);
   const isActive = Number(body.is_active) === 0 ? 0 : 1;
@@ -105,6 +107,7 @@ function getCouponPayload(body) {
     maxDiscountAmount,
     minOrderAmount,
     usageLimit,
+    isPublic,
     startsAt,
     expiresAt,
     isActive,
@@ -184,6 +187,15 @@ function validateCouponPayload(data) {
 // POST /api/coupons/validate
 async function validateCoupon(req, res) {
   try {
+    const customerId = req.user && req.user.id ? Number(req.user.id) : null;
+
+    if (!customerId) {
+      return res.status(401).json({
+        success: false,
+        message: "Vui lòng đăng nhập để áp dụng mã giảm giá.",
+      });
+    }
+
     const couponCode = req.body.code;
     const subtotalAmount = Number(req.body.subtotal_amount);
 
@@ -198,6 +210,9 @@ async function validateCoupon(req, res) {
       pool,
       couponCode,
       subtotalAmount,
+      {
+        customerId: customerId,
+      },
     );
 
     if (!validation.is_valid) {
@@ -233,6 +248,85 @@ async function validateCoupon(req, res) {
   }
 }
 
+// GET /api/coupons/public
+async function getPublicCoupons(req, res) {
+  try {
+    const customerId = req.user ? Number(req.user.id) : null;
+
+    let usedJoinSql = "";
+    let usedSelectSql = "0 AS used_by_me";
+    let queryParams = [];
+
+    if (customerId) {
+      usedJoinSql = `
+        LEFT JOIN coupon_usages
+          ON coupon_usages.coupon_id = coupons.id
+          AND coupon_usages.customer_id = ?
+      `;
+
+      usedSelectSql = `
+        CASE
+          WHEN coupon_usages.id IS NULL THEN 0
+          ELSE 1
+        END AS used_by_me
+      `;
+
+      queryParams.push(customerId);
+    }
+
+    const [coupons] = await pool.query(
+      `
+      SELECT
+        coupons.id,
+        coupons.code,
+        coupons.name,
+        coupons.discount_type,
+        coupons.discount_value,
+        coupons.max_discount_amount,
+        coupons.min_order_amount,
+        coupons.usage_limit,
+        coupons.used_count,
+        coupons.is_public,
+        coupons.starts_at,
+        coupons.expires_at,
+        coupons.is_active,
+        ${usedSelectSql}
+      FROM coupons
+      ${usedJoinSql}
+      WHERE coupons.is_public = 1
+        AND coupons.is_active = 1
+        AND (
+          coupons.starts_at IS NULL
+          OR coupons.starts_at <= NOW()
+        )
+        AND (
+          coupons.expires_at IS NULL
+          OR coupons.expires_at >= NOW()
+        )
+        AND (
+          coupons.usage_limit IS NULL
+          OR coupons.used_count < coupons.usage_limit
+        )
+      ORDER BY coupons.min_order_amount ASC, coupons.discount_value ASC
+      `,
+      queryParams,
+    );
+
+    res.json({
+      success: true,
+      count: coupons.length,
+      data: coupons.map(function (coupon) {
+        return {
+          ...buildCouponResponse(coupon),
+          used_by_me: Number(coupon.used_by_me || 0),
+        };
+      }),
+    });
+  } catch (error) {
+    return sendServerError(res, "Cannot get public coupons", error);
+  }
+}
+
 // GET /api/coupons/admin
 async function getAdminCoupons(req, res) {
   try {
@@ -248,6 +342,7 @@ async function getAdminCoupons(req, res) {
         min_order_amount,
         usage_limit,
         used_count,
+        is_public,
         starts_at,
         expires_at,
         is_active,
@@ -291,11 +386,12 @@ async function createAdminCoupon(req, res) {
         max_discount_amount,
         min_order_amount,
         usage_limit,
+        is_public,
         starts_at,
         expires_at,
         is_active
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       [
         data.code,
@@ -305,6 +401,7 @@ async function createAdminCoupon(req, res) {
         data.maxDiscountAmount,
         data.minOrderAmount,
         data.usageLimit,
+        data.isPublic,
         data.startsAt,
         data.expiresAt,
         data.isActive,
@@ -388,6 +485,7 @@ async function updateAdminCoupon(req, res) {
         max_discount_amount = ?,
         min_order_amount = ?,
         usage_limit = ?,
+        is_public = ?,
         starts_at = ?,
         expires_at = ?,
         is_active = ?
@@ -401,6 +499,7 @@ async function updateAdminCoupon(req, res) {
         data.maxDiscountAmount,
         data.minOrderAmount,
         data.usageLimit,
+        data.isPublic,
         data.startsAt,
         data.expiresAt,
         data.isActive,
@@ -490,6 +589,7 @@ async function updateAdminCouponStatus(req, res) {
 
 module.exports = {
   validateCoupon,
+  getPublicCoupons,
   getAdminCoupons,
   createAdminCoupon,
   updateAdminCoupon,

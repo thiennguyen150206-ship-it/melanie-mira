@@ -323,6 +323,14 @@ async function createOrder(req, res) {
 
     const subtotalAmount = roundMoney(totalAmount);
     let discountAmount = 0;
+    if (couponCode && !userId) {
+      await connection.rollback();
+
+      return res.status(401).json({
+        success: false,
+        message: "Vui lòng đăng nhập để áp dụng mã giảm giá.",
+      });
+    }
     let finalTotalAmount = subtotalAmount;
     let appliedCouponId = null;
     let appliedCouponCode = null;
@@ -334,6 +342,7 @@ async function createOrder(req, res) {
         subtotalAmount,
         {
           forUpdate: true,
+          customerId: userId,
         },
       );
 
@@ -453,12 +462,37 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     }
 
     if (appliedCouponId) {
+      try {
+        await connection.query(
+          `
+          INSERT INTO coupon_usages (
+            coupon_id,
+            customer_id,
+            order_id
+          )
+          VALUES (?, ?, ?)
+          `,
+          [appliedCouponId, userId, orderId],
+        );
+      } catch (error) {
+        if (error.code === "ER_DUP_ENTRY") {
+          await connection.rollback();
+
+          return res.status(400).json({
+            success: false,
+            message: "Bạn đã sử dụng mã giảm giá này rồi.",
+          });
+        }
+
+        throw error;
+      }
+
       await connection.query(
         `
-    UPDATE coupons
-    SET used_count = used_count + 1
-    WHERE id = ?
-    `,
+        UPDATE coupons
+        SET used_count = used_count + 1
+        WHERE id = ?
+        `,
         [appliedCouponId],
       );
     }
