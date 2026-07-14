@@ -1886,3 +1886,37 @@
     background-color: rgba(255, 255, 255, 0.92);
   }
 }
+/* =========================
+   About fixed header mobile
+   ========================= */
+
+@media screen and (max-width: 768px) {
+  .about-page-body .about-fixed-header {
+    top: 22px;
+  }
+}
+/* =========================
+   About light header mobile
+   ========================= */
+
+@media screen and (max-width: 768px) {
+  .about-page-body .about-fixed-header {
+    top: 22px;
+    padding: 8px 0;
+  }
+
+  .about-page-body .about-light-header .header-inner {
+    min-height: 58px;
+    padding: 0 12px;
+    border-radius: 0 0 14px 14px;
+  }
+}
+/* =========================
+   Index fixed header mobile
+   ========================= */
+
+@media screen and (max-width: 768px) {
+  .index-page-body .index-fixed-header {
+    top: 22px;
+  }
+}

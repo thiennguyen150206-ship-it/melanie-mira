@@ -5009,3 +5009,235 @@
 .admin-upload-note.is-error {
   color: #dc2626;
 }
+/* =========================
+   About page visual banners
+   3 banner lớn liền nhau như lookbook thương hiệu
+   ========================= */
+
+.about-page {
+  background-color: var(--color-white);
+}
+
+.about-banner-stack {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+}
+
+.about-banner-item {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: var(--color-white);
+  line-height: 0;
+}
+
+.about-banner-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  object-position: center top;
+}
+/* =========================
+   About page fixed visual header
+   Topbar + header cố định trên banner about
+   ========================= */
+
+.about-page-body {
+  padding-top: 0;
+}
+
+/* Topbar đứng yên trên cùng */
+.about-page-body .about-fixed-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 4100;
+}
+
+/* Header đè lên banner và đứng yên dưới topbar */
+.about-page-body .about-fixed-header {
+  position: fixed;
+  top: 24px;
+  left: 0;
+  right: 0;
+  z-index: 4000;
+}
+
+/* Đẩy ảnh đầu xuống đúng sau topbar nếu cần */
+.about-page-body .about-page {
+  margin-top: 0;
+}
+
+/* 3 banner about liền nhau */
+.about-page {
+  background-color: var(--color-white);
+}
+
+.about-banner-stack {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+}
+
+.about-banner-item {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: var(--color-white);
+  line-height: 0;
+}
+
+.about-banner-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  object-position: center top;
+}
+/* =========================
+   About page fixed light header
+   Header đè lên banner nhưng icon luôn rõ trên nền sáng/tối
+   ========================= */
+
+.about-page-body {
+  background-color: var(--color-white);
+}
+
+/* Topbar cố định */
+.about-page-body .about-fixed-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 4200;
+}
+
+/* Header cố định dưới topbar */
+.about-page-body .about-fixed-header {
+  position: fixed;
+  top: 24px;
+  left: 0;
+  right: 0;
+  z-index: 4100;
+}
+
+/* Tạo lớp kính mờ nhẹ để icon không bị chìm dù banner sáng hay tối */
+.about-page-body .about-light-header .header-inner {
+  min-height: 70px;
+  padding: 0 18px;
+  border-radius: 0 0 18px 18px;
+  background-color: rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Đổi toàn bộ icon header sang màu đen/nâu đậm */
+.about-page-body .about-light-header .menu-icon-btn,
+.about-page-body .about-light-header .header-icon-btn,
+.about-page-body .about-light-header .language-current {
+  color: var(--color-primary) !important;
+}
+
+/* Icon SVG ăn theo currentColor */
+.about-page-body .about-light-header .menu-icon-btn svg,
+.about-page-body .about-light-header .header-icon-btn svg {
+  fill: currentColor;
+}
+
+/* Language badge rõ hơn trên banner sáng */
+.about-page-body .about-light-header .language-badge {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.about-page-body .about-light-header .language-arrow {
+  color: var(--color-primary);
+}
+
+/* Số lượng giỏ hàng vẫn nổi bật */
+.about-page-body .about-light-header .cart-link span {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+/* Hover nhẹ */
+.about-page-body .about-light-header .menu-icon-btn:hover,
+.about-page-body .about-light-header .header-icon-btn:hover,
+.about-page-body .about-light-header .language-current:hover {
+  color: var(--color-secondary) !important;
+}
+
+/* 3 banner about liền nhau */
+.about-page {
+  background-color: var(--color-white);
+}
+
+.about-banner-stack {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+}
+
+.about-banner-item {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: var(--color-white);
+  line-height: 0;
+}
+
+.about-banner-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  object-position: center top;
+}
+/* =========================
+   Index fixed header before Best Seller
+   Topbar + header chỉ đứng yên ở vùng hero/video/banner đầu trang
+   ========================= */
+
+.index-page-body .index-fixed-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 4200;
+  transition:
+    transform 0.28s ease,
+    opacity 0.28s ease;
+}
+
+.index-page-body .index-fixed-header {
+  position: fixed;
+  top: 24px;
+  left: 0;
+  right: 0;
+  z-index: 4100;
+  transition:
+    transform 0.28s ease,
+    opacity 0.28s ease;
+}
+
+/* Khi tới Best Seller thì topbar/header không giữ nữa */
+.index-page-body.index-header-hidden .index-fixed-topbar {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.index-page-body.index-header-hidden .index-fixed-header {
+  transform: translateY(-110%);
+  opacity: 0;
+  pointer-events: none;
+}

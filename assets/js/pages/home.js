@@ -845,10 +845,48 @@ function initHomeVideoAutoplay() {
 
   playHomeVideo();
 }
+
+/* =========================
+   Index header visibility
+   Ẩn topbar/header khi cuộn tới Best Seller
+   ========================= */
+
+function updateIndexHeaderVisibility() {
+  const bestSellerSection = document.querySelector(".best-seller-section");
+
+  if (!bestSellerSection) {
+    return;
+  }
+
+  const bestSellerTop = bestSellerSection.getBoundingClientRect().top;
+
+  /*
+    Khi Best Seller chạm gần đầu màn hình,
+    topbar + header sẽ ẩn đi để không che nội dung.
+  */
+  if (bestSellerTop <= 80) {
+    document.body.classList.add("index-header-hidden");
+    return;
+  }
+
+  document.body.classList.remove("index-header-hidden");
+}
+
+function initIndexHeaderVisibility() {
+  updateIndexHeaderVisibility();
+
+  window.addEventListener("scroll", updateIndexHeaderVisibility, {
+    passive: true,
+  });
+
+  window.addEventListener("resize", updateIndexHeaderVisibility);
+}
+
 /* =========================
    Document ready
    ========================= */
 $(document).ready(function () {
+  initIndexHeaderVisibility();
   initHeroSlider();
   initHomeVideoAutoplay();
   /* Search input */
