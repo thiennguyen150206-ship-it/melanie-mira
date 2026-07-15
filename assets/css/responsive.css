@@ -1896,19 +1896,53 @@
   }
 }
 /* =========================
-   About light header mobile
+   About mobile overlay header
+   Giống index mobile: header đè lên banner, không có nền mờ
    ========================= */
 
 @media screen and (max-width: 768px) {
   .about-page-body .about-fixed-header {
     top: 22px;
     padding: 8px 0;
+    background-color: transparent !important;
   }
 
   .about-page-body .about-light-header .header-inner {
     min-height: 58px;
     padding: 0 12px;
-    border-radius: 0 0 14px 14px;
+    border-radius: 0;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Banner about nền sáng nên dùng icon đen, không dùng icon trắng */
+  .about-page-body .about-light-header .menu-icon-btn,
+  .about-page-body .about-light-header .header-icon-btn,
+  .about-page-body .about-light-header .language-current {
+    color: var(--color-primary) !important;
+    filter: drop-shadow(0 1px 2px rgba(255, 255, 255, 0.75));
+  }
+
+  .about-page-body .about-light-header .menu-icon-btn svg,
+  .about-page-body .about-light-header .header-icon-btn svg {
+    fill: currentColor;
+  }
+
+  .about-page-body .about-light-header .language-badge {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    box-shadow: 0 1px 3px rgba(255, 255, 255, 0.65);
+  }
+
+  .about-page-body .about-light-header .language-arrow {
+    color: var(--color-primary);
+  }
+
+  .about-page-body .about-light-header .cart-link span {
+    background-color: var(--color-primary);
+    color: var(--color-white);
   }
 }
 /* =========================
