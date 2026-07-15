@@ -462,37 +462,24 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     }
 
     if (appliedCouponId) {
-      try {
-        await connection.query(
-          `
-          INSERT INTO coupon_usages (
-            coupon_id,
-            customer_id,
-            order_id
-          )
-          VALUES (?, ?, ?)
-          `,
-          [appliedCouponId, userId, orderId],
-        );
-      } catch (error) {
-        if (error.code === "ER_DUP_ENTRY") {
-          await connection.rollback();
-
-          return res.status(400).json({
-            success: false,
-            message: "Bạn đã sử dụng mã giảm giá này rồi.",
-          });
-        }
-
-        throw error;
-      }
+      await connection.query(
+        `
+    INSERT INTO coupon_usages (
+      coupon_id,
+      customer_id,
+      order_id
+    )
+    VALUES (?, ?, ?)
+    `,
+        [appliedCouponId, userId, orderId],
+      );
 
       await connection.query(
         `
-        UPDATE coupons
-        SET used_count = used_count + 1
-        WHERE id = ?
-        `,
+    UPDATE coupons
+    SET used_count = used_count + 1
+    WHERE id = ?
+    `,
         [appliedCouponId],
       );
     }

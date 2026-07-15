@@ -238,12 +238,23 @@ function getCouponUsedCountText(coupon) {
   return Number(coupon.used_count || 0);
 }
 
-function getCouponLimitText(coupon) {
+function getCouponTotalLimitText(coupon) {
   if (coupon.usage_limit === null || coupon.usage_limit === undefined) {
     return "Không giới hạn";
   }
 
   return Number(coupon.usage_limit);
+}
+
+function getCouponPerCustomerLimitText(coupon) {
+  if (
+    coupon.per_customer_limit === null ||
+    coupon.per_customer_limit === undefined
+  ) {
+    return "Không giới hạn";
+  }
+
+  return Number(coupon.per_customer_limit);
 }
 
 function getFilteredAdminCoupons() {
@@ -294,7 +305,7 @@ function renderAdminCoupons() {
   if (coupons.length === 0) {
     $("#adminCouponsTableBody").html(`
       <tr>
-        <td colspan="10" class="text-center">Không có mã giảm giá phù hợp</td>
+      <td colspan="11" class="text-center">Không có mã giảm giá phù hợp</td>
       </tr>
     `);
 
@@ -342,7 +353,9 @@ function renderAdminCoupons() {
 
         <td>${getCouponUsedCountText(coupon)}</td>
 
-        <td>${escapeAdminCouponHtml(getCouponLimitText(coupon))}</td>
+    <td>${escapeAdminCouponHtml(getCouponTotalLimitText(coupon))}</td>
+
+<td>${escapeAdminCouponHtml(getCouponPerCustomerLimitText(coupon))}</td>
 
         <td>
           <div class="coupon-small-text">
@@ -413,6 +426,8 @@ async function loadAdminCoupons() {
 function clearCouponFormErrors() {
   $("#errCouponCode").text("");
   $("#errCouponDiscountValue").text("");
+  $("#errCouponUsageLimit").text("");
+  $("#errCouponPerCustomerLimit").text("");
 }
 
 function resetCouponForm() {
@@ -426,6 +441,8 @@ function resetCouponForm() {
   $("#couponIsActive").val("1");
   $("#couponIsPublic").val("1");
   $("#couponMinOrderAmount").val(0);
+  $("#couponUsageLimit").val("");
+  $("#couponPerCustomerLimit").val("1");
 
   $("#couponFormTitle").text("Thêm mã giảm giá");
   $("#btnSaveCoupon").text("Lưu mã giảm giá");
@@ -490,6 +507,13 @@ function openEditCouponModal(couponId) {
       : Number(coupon.usage_limit),
   );
 
+  $("#couponPerCustomerLimit").val(
+    coupon.per_customer_limit === null ||
+      coupon.per_customer_limit === undefined
+      ? ""
+      : Number(coupon.per_customer_limit),
+  );
+
   $("#couponIsActive").val(Number(coupon.is_active));
   $("#couponIsPublic").val(Number(coupon.is_public || 0));
   $("#couponStartsAt").val(formatCouponInputDate(coupon.starts_at));
@@ -507,6 +531,7 @@ function getCouponFormData() {
     max_discount_amount: $("#couponMaxDiscountAmount").val().trim(),
     min_order_amount: $("#couponMinOrderAmount").val().trim(),
     usage_limit: $("#couponUsageLimit").val().trim(),
+    per_customer_limit: $("#couponPerCustomerLimit").val().trim(),
     is_public: Number($("#couponIsPublic").val()),
     starts_at: $("#couponStartsAt").val(),
     expires_at: $("#couponExpiresAt").val(),
@@ -538,6 +563,38 @@ function validateCouponForm(data) {
   if (data.discount_type === "percent" && data.discount_value > 100) {
     $("#errCouponDiscountValue").text("Giảm theo % không được vượt quá 100%.");
     isValid = false;
+  }
+
+  if (data.usage_limit !== "") {
+    const usageLimit = Number(data.usage_limit);
+
+    if (
+      Number.isNaN(usageLimit) ||
+      !Number.isInteger(usageLimit) ||
+      usageLimit <= 0
+    ) {
+      $("#errCouponUsageLimit").text(
+        "Tổng lượt sử dụng tối đa phải là số nguyên lớn hơn 0.",
+      );
+
+      isValid = false;
+    }
+  }
+
+  if (data.per_customer_limit !== "") {
+    const perCustomerLimit = Number(data.per_customer_limit);
+
+    if (
+      Number.isNaN(perCustomerLimit) ||
+      !Number.isInteger(perCustomerLimit) ||
+      perCustomerLimit <= 0
+    ) {
+      $("#errCouponPerCustomerLimit").text(
+        "Lượt sử dụng tối đa / người phải là số nguyên lớn hơn 0.",
+      );
+
+      isValid = false;
+    }
   }
 
   return isValid;
@@ -639,7 +696,7 @@ function resetAdminCouponSection() {
 
   $("#adminCouponsTableBody").html(`
     <tr>
-      <td colspan="10" class="text-center">Chưa tải mã giảm giá</td>
+      <td colspan="11" class="text-center">Chưa tải mã giảm giá</td>
     </tr>
   `);
 

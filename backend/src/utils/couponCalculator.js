@@ -107,6 +107,7 @@ async function validateCouponForSubtotal(
       max_discount_amount,
       min_order_amount,
       usage_limit,
+      per_customer_limit,
       used_count,
       is_public,
       starts_at,
@@ -172,23 +173,32 @@ async function validateCouponForSubtotal(
     };
   }
 
-  const [usageRows] = await db.query(
-    `
-    SELECT id
+  const perCustomerLimit =
+    coupon.per_customer_limit === null ||
+    coupon.per_customer_limit === undefined
+      ? null
+      : Number(coupon.per_customer_limit);
+
+  if (perCustomerLimit !== null) {
+    const [usageRows] = await db.query(
+      `
+    SELECT COUNT(*) AS customer_used_count
     FROM coupon_usages
     WHERE coupon_id = ? AND customer_id = ?
-    LIMIT 1
     `,
-    [coupon.id, customerId],
-  );
+      [coupon.id, customerId],
+    );
 
-  if (usageRows.length > 0) {
-    return {
-      is_valid: false,
-      message: "Bạn đã sử dụng mã giảm giá này rồi.",
-    };
+    const customerUsedCount = Number(usageRows[0].customer_used_count || 0);
+
+    if (customerUsedCount >= perCustomerLimit) {
+      return {
+        is_valid: false,
+        message:
+          "Bạn đã dùng mã giảm giá này tối đa " + perCustomerLimit + " lần.",
+      };
+    }
   }
-
   const minOrderAmount = roundMoney(coupon.min_order_amount);
 
   if (subtotal < minOrderAmount) {

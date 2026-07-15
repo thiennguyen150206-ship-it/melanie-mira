@@ -58,6 +58,10 @@ function buildCouponResponse(coupon) {
     min_order_amount: Number(coupon.min_order_amount || 0),
     usage_limit:
       coupon.usage_limit === null ? null : Number(coupon.usage_limit),
+    per_customer_limit:
+      coupon.per_customer_limit === null
+        ? null
+        : Number(coupon.per_customer_limit),
     used_count: Number(coupon.used_count || 0),
     is_public: Number(coupon.is_public || 0),
     starts_at: coupon.starts_at,
@@ -94,6 +98,13 @@ function getCouponPayload(body) {
       ? null
       : Number(body.usage_limit);
 
+  const perCustomerLimit =
+    body.per_customer_limit === "" ||
+    body.per_customer_limit === null ||
+    body.per_customer_limit === undefined
+      ? null
+      : Number(body.per_customer_limit);
+
   const isPublic = Number(body.is_public) === 1 ? 1 : 0;
   const startsAt = normalizeDateTime(body.starts_at);
   const expiresAt = normalizeDateTime(body.expires_at);
@@ -107,6 +118,7 @@ function getCouponPayload(body) {
     maxDiscountAmount,
     minOrderAmount,
     usageLimit,
+    perCustomerLimit,
     isPublic,
     startsAt,
     expiresAt,
@@ -162,6 +174,13 @@ function validateCouponPayload(data) {
     (!Number.isInteger(data.usageLimit) || data.usageLimit <= 0)
   ) {
     return "Giới hạn lượt dùng phải là số nguyên lớn hơn 0.";
+  }
+
+  if (
+    data.perCustomerLimit !== null &&
+    (!Number.isInteger(data.perCustomerLimit) || data.perCustomerLimit <= 0)
+  ) {
+    return "Lượt sử dụng tối đa / người phải là số nguyên lớn hơn 0.";
   }
 
   if (data.startsAt === "INVALID_DATE" || data.expiresAt === "INVALID_DATE") {
@@ -254,22 +273,26 @@ async function getPublicCoupons(req, res) {
     const customerId = req.user ? Number(req.user.id) : null;
 
     let usedJoinSql = "";
-    let usedSelectSql = "0 AS used_by_me";
+    let usedSelectSql = "0 AS customer_used_count";
     let queryParams = [];
 
     if (customerId) {
       usedJoinSql = `
-        LEFT JOIN coupon_usages
-          ON coupon_usages.coupon_id = coupons.id
-          AND coupon_usages.customer_id = ?
-      `;
+    LEFT JOIN (
+      SELECT
+        coupon_id,
+        COUNT(*) AS customer_used_count
+      FROM coupon_usages
+      WHERE customer_id = ?
+      GROUP BY coupon_id
+    ) coupon_customer_usage
+      ON coupon_customer_usage.coupon_id = coupons.id
+  `;
 
       usedSelectSql = `
-        CASE
-          WHEN coupon_usages.id IS NULL THEN 0
-          ELSE 1
-        END AS used_by_me
-      `;
+    COALESCE(coupon_customer_usage.customer_used_count, 0)
+      AS customer_used_count
+  `;
 
       queryParams.push(customerId);
     }
@@ -285,6 +308,7 @@ async function getPublicCoupons(req, res) {
         coupons.max_discount_amount,
         coupons.min_order_amount,
         coupons.usage_limit,
+        coupons.per_customer_limit,
         coupons.used_count,
         coupons.is_public,
         coupons.starts_at,
@@ -318,7 +342,14 @@ async function getPublicCoupons(req, res) {
       data: coupons.map(function (coupon) {
         return {
           ...buildCouponResponse(coupon),
-          used_by_me: Number(coupon.used_by_me || 0),
+          customer_used_count: Number(coupon.customer_used_count || 0),
+          used_by_me:
+            coupon.per_customer_limit !== null &&
+            coupon.per_customer_limit !== undefined &&
+            Number(coupon.customer_used_count || 0) >=
+              Number(coupon.per_customer_limit)
+              ? 1
+              : 0,
         };
       }),
     });
@@ -341,6 +372,7 @@ async function getAdminCoupons(req, res) {
         max_discount_amount,
         min_order_amount,
         usage_limit,
+        per_customer_limit,
         used_count,
         is_public,
         starts_at,
@@ -378,20 +410,21 @@ async function createAdminCoupon(req, res) {
 
     const [result] = await pool.query(
       `
-      INSERT INTO coupons (
-        code,
-        name,
-        discount_type,
-        discount_value,
-        max_discount_amount,
-        min_order_amount,
-        usage_limit,
-        is_public,
-        starts_at,
-        expires_at,
-        is_active
-      )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+     INSERT INTO coupons (
+      code,
+      name,
+      discount_type,
+      discount_value,
+      max_discount_amount,
+      min_order_amount,
+      usage_limit,
+      per_customer_limit,
+      is_public,
+      starts_at,
+      expires_at,
+      is_active
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       [
         data.code,
@@ -401,6 +434,7 @@ async function createAdminCoupon(req, res) {
         data.maxDiscountAmount,
         data.minOrderAmount,
         data.usageLimit,
+        data.perCustomerLimit,
         data.isPublic,
         data.startsAt,
         data.expiresAt,
@@ -459,7 +493,7 @@ async function updateAdminCoupon(req, res) {
 
     const [oldCoupons] = await pool.query(
       `
-      SELECT id
+      SELECT id, used_count
       FROM coupons
       WHERE id = ?
       LIMIT 1
@@ -474,6 +508,18 @@ async function updateAdminCoupon(req, res) {
       });
     }
 
+    const oldCoupon = oldCoupons[0];
+
+    if (
+      data.usageLimit !== null &&
+      Number(data.usageLimit) < Number(oldCoupon.used_count || 0)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Tổng lượt sử dụng tối đa không được nhỏ hơn số lượt đã dùng.",
+      });
+    }
+
     await pool.query(
       `
       UPDATE coupons
@@ -485,6 +531,7 @@ async function updateAdminCoupon(req, res) {
         max_discount_amount = ?,
         min_order_amount = ?,
         usage_limit = ?,
+        per_customer_limit = ?,
         is_public = ?,
         starts_at = ?,
         expires_at = ?,
@@ -499,6 +546,7 @@ async function updateAdminCoupon(req, res) {
         data.maxDiscountAmount,
         data.minOrderAmount,
         data.usageLimit,
+        data.perCustomerLimit,
         data.isPublic,
         data.startsAt,
         data.expiresAt,
