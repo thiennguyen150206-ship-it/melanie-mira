@@ -1764,6 +1764,8 @@ function applyProductLanguageData() {
 
 const translations = {
   vi: {
+    "topbar.newCustomerOffer":
+      "NHẬP MÃ BANMOI ĐỂ NHẬN ƯU ĐÃI 10% CHO ĐƠN HÀNG ĐẦU TIÊN",
     "topbar.designVibes": "Design your own vibes",
     "topbar.offers": "Nhập mã MELANIE10 để nhận ưu đãi hôm nay",
     "topbar.freeship": "Freeship cho mọi đơn hàng",
@@ -1910,6 +1912,8 @@ const translations = {
   },
 
   en: {
+    "topbar.newCustomerOffer":
+      "USE CODE BANMOI TO GET 10% OFF YOUR FIRST ORDER",
     "topbar.designVibes": "Design your own vibes",
     "topbar.offers": "Use code MELANIE10 to get today's offer",
     "topbar.freeship": "Free shipping on every order",
