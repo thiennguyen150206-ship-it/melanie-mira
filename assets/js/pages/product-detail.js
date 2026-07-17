@@ -7,6 +7,19 @@ function formatMoney(price) {
   return price.toLocaleString("vi-VN") + "đ";
 }
 
+function escapeProductDetailHtml(value) {
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 function hasDiscountPrice(product) {
   let price = Number(product.price);
   let oldPrice = Number(product.oldPrice);
@@ -463,6 +476,131 @@ function renderProductSizes(product) {
   }
 }
 
+function isDescriptionDetailTitle(line) {
+  const text = String(line || "")
+    .trim()
+    .toLowerCase();
+
+  return (
+    text === "chi tiết sản phẩm" ||
+    text === "product detail" ||
+    text === "product details"
+  );
+}
+
+function isDescriptionMaterialTitle(line) {
+  const text = String(line || "")
+    .trim()
+    .toLowerCase();
+
+  return (
+    text === "chất liệu" ||
+    text === "material" ||
+    text === "materials" ||
+    text === "fabric"
+  );
+}
+
+function cleanDescriptionLine(line) {
+  return String(line || "")
+    .trim()
+    .replace(/^[-•*]\s*/, "");
+}
+
+function getMaterialTitleText() {
+  if ($("body").hasClass("lang-en")) {
+    return "Material";
+  }
+
+  return "Chất liệu";
+}
+
+function parseProductDescriptionSections(description) {
+  const lines = String(description || "")
+    .split("\n")
+    .map(function (line) {
+      return cleanDescriptionLine(line);
+    })
+    .filter(function (line) {
+      return line !== "";
+    });
+
+  const detailLines = [];
+  const materialLines = [];
+
+  let currentSection = "detail";
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    if (isDescriptionDetailTitle(line)) {
+      currentSection = "detail";
+      continue;
+    }
+
+    if (isDescriptionMaterialTitle(line)) {
+      currentSection = "material";
+      continue;
+    }
+
+    if (currentSection === "material") {
+      materialLines.push(line);
+    } else {
+      detailLines.push(line);
+    }
+  }
+
+  return {
+    detailText: detailLines.join(" "),
+    materialLines: materialLines,
+  };
+}
+
+function createProductDetailDescriptionHtml(product, description, category) {
+  const sections = parseProductDescriptionSections(description);
+
+  let html = `
+    <ul class="detail-main-list">
+  `;
+
+  if (sections.detailText) {
+    html += `
+      <li class="detail-description-text">
+       ${escapeProductDetailHtml(sections.detailText)}
+      </li>
+    `;
+  }
+
+  html += `
+      <li>
+     ${escapeProductDetailHtml(t("product.category"))}: ${escapeProductDetailHtml(category)}
+      </li>
+    </ul>
+  `;
+
+  if (sections.materialLines.length > 0) {
+    html += `
+      <h3 class="detail-material-title">
+     ${escapeProductDetailHtml(getMaterialTitleText())}
+      </h3>
+
+      <ul class="detail-material-list">
+    `;
+
+    for (let i = 0; i < sections.materialLines.length; i++) {
+      html += `
+        <li>${escapeProductDetailHtml(sections.materialLines[i])}</li>
+      `;
+    }
+
+    html += `
+      </ul>
+    `;
+  }
+
+  return html;
+}
+
 function renderProductInfo(product) {
   let name = getProductName(product);
   let description = getProductDescription(product);
@@ -471,16 +609,14 @@ function renderProductInfo(product) {
   $("#detailName").text(name);
   $("#detailPrice").html(createDetailPriceHtml(product));
 
-  $("#detailInfoList").html(`
-    <li>${description}</li>
-    <li>${t("product.category")}: ${category}</li>
-    <li>${t("product.defaultDetail1")}</li>
-    <li>${t("product.defaultDetail2")}</li>
-  `);
+  $("#detailInfoList").html(
+    createProductDetailDescriptionHtml(product, description, category),
+  );
 
   renderProductSizes(product);
   renderProductSizeGuide(product);
 }
+
 function getProductDetailLink(product) {
   if (product.slug) {
     return "product-detail.html?slug=" + encodeURIComponent(product.slug);

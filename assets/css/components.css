@@ -1573,6 +1573,38 @@
   margin-bottom: 3px;
 }
 
+.detail-info-list {
+  color: var(--color-primary);
+}
+
+.detail-info-list ul {
+  list-style: disc;
+  padding-left: 22px;
+  margin-bottom: 0;
+}
+
+.detail-info-list li {
+  color: var(--color-primary);
+  font-size: 13px;
+  line-height: 1.45;
+  margin-bottom: 5px;
+}
+
+.detail-description-text {
+  line-height: 1.55;
+}
+
+.detail-material-title {
+  margin: 12px 0 6px;
+  color: var(--color-primary);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.detail-material-list {
+  margin-top: 0;
+}
+
 /* Size selector */
 .product-size-box {
   order: 3;
