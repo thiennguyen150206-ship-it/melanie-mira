@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const authController = require("../controllers/auth.controller");
+const adminAuth = require("../middlewares/adminAuth");
 
 const {
   authLimiter,
@@ -17,6 +18,14 @@ router.post("/login", authLimiter, authController.loginCustomer);
 
 // Admin đăng nhập
 router.post("/admin/login", adminLoginLimiter, authController.adminLogin);
+
+// Admin đổi mật khẩu
+router.patch(
+  "/admin/change-password",
+  authLimiter,
+  adminAuth,
+  authController.changeAdminPassword,
+);
 
 // Đăng nhập bằng Google
 router.get("/google", authLimiter, authController.loginWithGoogle);

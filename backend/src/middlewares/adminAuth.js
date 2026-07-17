@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
+const pool = require("../config/db");
 require("dotenv").config();
 
-function adminAuth(req, res, next) {
+async function adminAuth(req, res, next) {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
@@ -36,7 +37,45 @@ function adminAuth(req, res, next) {
       });
     }
 
-    req.admin = decoded;
+    const [admins] = await pool.query(
+      `
+      SELECT id, email, role, is_active, token_version
+      FROM admin_users
+      WHERE id = ?
+      LIMIT 1
+      `,
+      [decoded.id],
+    );
+
+    if (admins.length === 0) {
+      return res.status(401).json({
+        success: false,
+        message: "Admin account not found",
+      });
+    }
+
+    const admin = admins[0];
+
+    if (Number(admin.is_active) !== 1) {
+      return res.status(403).json({
+        success: false,
+        message: "Admin account is disabled",
+      });
+    }
+
+    if (Number(decoded.token_version) !== Number(admin.token_version)) {
+      return res.status(401).json({
+        success: false,
+        message: "Admin token has been revoked",
+      });
+    }
+
+    req.admin = {
+      id: Number(admin.id),
+      email: admin.email,
+      role: admin.role || "admin",
+      token_version: Number(admin.token_version),
+    };
 
     next();
   } catch (error) {

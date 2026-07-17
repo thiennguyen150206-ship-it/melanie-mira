@@ -660,6 +660,28 @@
         background-color: #f3f4f6;
         color: #4b5563;
       }
+      .admin-password-modal {
+        max-width: 480px;
+      }
+
+      .admin-password-message {
+        min-height: 22px;
+        font-weight: 700;
+      }
+
+      .admin-password-message.success {
+        color: #059669;
+      }
+
+      .admin-password-message.error {
+        color: #dc2626;
+      }
+
+      .admin-password-note {
+        margin-top: 8px;
+        color: #6b7280;
+        font-size: 13px;
+      }
     </style>
   </head>
 
@@ -747,6 +769,20 @@
           <div class="col-md-2 mb-2" id="adminLoadBox">
             <button id="btnLoadOrders" class="btn btn-dark w-100">
               Tải đơn hàng
+            </button>
+          </div>
+
+          <div
+            class="col-md-2 mb-2"
+            id="adminChangePasswordBox"
+            style="display: none"
+          >
+            <button
+              type="button"
+              id="btnOpenAdminPasswordModal"
+              class="btn btn-outline-dark w-100"
+            >
+              Đổi mật khẩu
             </button>
           </div>
 
@@ -1819,6 +1855,82 @@
 
             <button type="submit" class="btn btn-dark" id="btnSaveCategory">
               Lưu danh mục
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="product-modal-overlay" id="adminPasswordModalOverlay">
+      <div class="product-modal admin-password-modal">
+        <div class="product-modal-header">
+          <h3>Đổi mật khẩu admin</h3>
+          <button
+            type="button"
+            class="product-modal-close"
+            id="btnCloseAdminPasswordModal"
+          >
+            ×
+          </button>
+        </div>
+
+        <form id="adminPasswordForm">
+          <div class="product-form-grid">
+            <div class="product-form-field full">
+              <label>Mật khẩu hiện tại</label>
+              <input
+                type="password"
+                id="adminCurrentPassword"
+                class="form-control"
+                autocomplete="current-password"
+                placeholder="Nhập mật khẩu hiện tại"
+              />
+            </div>
+
+            <div class="product-form-field full">
+              <label>Mật khẩu mới</label>
+              <input
+                type="password"
+                id="adminNewPassword"
+                class="form-control"
+                autocomplete="new-password"
+                placeholder="Ít nhất 8 ký tự"
+              />
+            </div>
+
+            <div class="product-form-field full">
+              <label>Nhập lại mật khẩu mới</label>
+              <input
+                type="password"
+                id="adminConfirmPassword"
+                class="form-control"
+                autocomplete="new-password"
+                placeholder="Nhập lại mật khẩu mới"
+              />
+            </div>
+          </div>
+
+          <p class="admin-password-note">
+            Sau khi đổi mật khẩu, toàn bộ phiên đăng nhập admin cũ sẽ bị vô hiệu
+            hóa.
+          </p>
+
+          <div class="admin-password-message" id="adminPasswordMessage"></div>
+
+          <div class="d-flex justify-content-end gap-2 mt-4">
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              id="btnCancelAdminPassword"
+            >
+              Hủy
+            </button>
+
+            <button
+              type="submit"
+              class="btn btn-dark"
+              id="btnSaveAdminPassword"
+            >
+              Lưu mật khẩu mới
             </button>
           </div>
         </form>

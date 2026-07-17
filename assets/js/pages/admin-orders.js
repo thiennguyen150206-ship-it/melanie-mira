@@ -16,6 +16,7 @@ let isUpdatingOrderStatus = false;
 let isLoadingOrderDetail = false;
 let isLoadingStock = false;
 let isUpdatingStock = false;
+let isChangingAdminPassword = false;
 
 function formatAdminMoney(price) {
   return Number(price).toLocaleString("vi-VN") + "đ";
@@ -258,8 +259,9 @@ function updateAdminLoginStatus() {
     $("#adminLoginEmailBox").hide();
     $("#adminLoginPasswordBox").hide();
 
-    $("#adminLoadBox").removeClass("col-md-2").addClass("col-md-8");
+    $("#adminLoadBox").removeClass("col-md-2").addClass("col-md-6");
 
+    $("#adminChangePasswordBox").show();
     $("#adminLogoutBox").show();
 
     return;
@@ -272,8 +274,9 @@ function updateAdminLoginStatus() {
   $("#adminLoginEmailBox").show();
   $("#adminLoginPasswordBox").show();
 
-  $("#adminLoadBox").removeClass("col-md-8").addClass("col-md-2");
+  $("#adminLoadBox").removeClass("col-md-6").addClass("col-md-2");
 
+  $("#adminChangePasswordBox").hide();
   $("#adminLogoutBox").hide();
 }
 
@@ -1233,6 +1236,130 @@ function updateStockSaveButtonState(productId) {
   );
 }
 
+function showAdminPasswordMessage(message, type) {
+  $("#adminPasswordMessage").removeClass("success error").text("");
+
+  if (!message) {
+    return;
+  }
+
+  $("#adminPasswordMessage").addClass(type === "success" ? "success" : "error");
+  $("#adminPasswordMessage").text(message);
+}
+
+function clearAdminPasswordForm() {
+  $("#adminCurrentPassword").val("");
+  $("#adminNewPassword").val("");
+  $("#adminConfirmPassword").val("");
+  showAdminPasswordMessage("", "");
+}
+
+function openAdminPasswordModal() {
+  if (!getAdminToken()) {
+    showAdminMessage("Vui lòng đăng nhập admin trước.", "error");
+    return;
+  }
+
+  clearAdminPasswordForm();
+  $("#adminPasswordModalOverlay").addClass("active");
+}
+
+function closeAdminPasswordModal() {
+  $("#adminPasswordModalOverlay").removeClass("active");
+  clearAdminPasswordForm();
+}
+
+async function changeAdminPassword(data) {
+  const adminToken = await getValidAdminToken();
+
+  const response = await fetch(API_BASE_URL + "/auth/admin/change-password", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + adminToken,
+    },
+    body: JSON.stringify(data),
+  });
+
+  const result = await response.json();
+
+  if (!response.ok || !result.success) {
+    if (response.status === 401 || response.status === 403) {
+      clearAdminToken();
+      updateAdminLoginStatus();
+      resetAdminDataView();
+    }
+
+    throw new Error(result.message || "Không thể đổi mật khẩu admin.");
+  }
+
+  return result;
+}
+
+async function submitAdminPasswordForm() {
+  if (isChangingAdminPassword) {
+    return;
+  }
+
+  const currentPassword = $("#adminCurrentPassword").val();
+  const newPassword = $("#adminNewPassword").val();
+  const confirmPassword = $("#adminConfirmPassword").val();
+
+  showAdminPasswordMessage("", "");
+
+  if (!currentPassword || !newPassword || !confirmPassword) {
+    showAdminPasswordMessage("Vui lòng nhập đầy đủ thông tin.", "error");
+    return;
+  }
+
+  if (newPassword.length < 8) {
+    showAdminPasswordMessage("Mật khẩu mới phải có ít nhất 8 ký tự.", "error");
+    return;
+  }
+
+  if (newPassword !== confirmPassword) {
+    showAdminPasswordMessage("Mật khẩu mới nhập lại không khớp.", "error");
+    return;
+  }
+
+  if (currentPassword === newPassword) {
+    showAdminPasswordMessage(
+      "Mật khẩu mới không được trùng mật khẩu hiện tại.",
+      "error",
+    );
+    return;
+  }
+
+  isChangingAdminPassword = true;
+  $("#btnSaveAdminPassword").prop("disabled", true).text("Đang lưu...");
+
+  try {
+    await changeAdminPassword({
+      current_password: currentPassword,
+      new_password: newPassword,
+      confirm_password: confirmPassword,
+    });
+
+    closeAdminPasswordModal();
+
+    /*
+      Trigger nút đăng xuất để các file admin khác cũng reset theo.
+      Ví dụ: admin-coupons.js đang nghe sự kiện #btnAdminLogout.
+    */
+    $("#btnAdminLogout").trigger("click");
+
+    showAdminMessage(
+      "Đã đổi mật khẩu admin thành công. Vui lòng đăng nhập lại.",
+      "success",
+    );
+  } catch (error) {
+    showAdminPasswordMessage(error.message, "error");
+  } finally {
+    isChangingAdminPassword = false;
+    $("#btnSaveAdminPassword").prop("disabled", false).text("Lưu mật khẩu mới");
+  }
+}
+
 $(document).ready(function () {
   updateAdminLoginStatus();
   $("#adminEmailInput, #adminPasswordInput").on(
@@ -1328,6 +1455,29 @@ $(document).ready(function () {
     loadOrders();
   });
 
+  $("#btnOpenAdminPasswordModal").click(function () {
+    openAdminPasswordModal();
+  });
+
+  $("#btnCloseAdminPasswordModal").click(function () {
+    closeAdminPasswordModal();
+  });
+
+  $("#btnCancelAdminPassword").click(function () {
+    closeAdminPasswordModal();
+  });
+
+  $("#adminPasswordModalOverlay").click(function (event) {
+    if (event.target === this) {
+      closeAdminPasswordModal();
+    }
+  });
+
+  $("#adminPasswordForm").submit(function (event) {
+    event.preventDefault();
+    submitAdminPasswordForm();
+  });
+
   $("#orderStatusFilter").change(function () {
     let status = $(this).val();
 
@@ -1372,6 +1522,7 @@ $(document).ready(function () {
     loadOrders();
   });
   $("#btnAdminLogout").click(function () {
+    closeAdminPasswordModal();
     clearTimeout(orderSearchTimer);
     clearTimeout(stockSearchTimer);
 

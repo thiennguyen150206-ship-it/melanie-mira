@@ -42,17 +42,23 @@ function isValidEmailCode(code) {
 }
 
 function createAuthToken(user) {
-  return jwt.sign(
-    {
-      id: user.id,
-      email: user.email,
-      role: user.role,
-    },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: process.env.JWT_EXPIRES_IN || "1d",
-    },
-  );
+  const payload = {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+  };
+
+  /*
+    token_version chỉ dùng cho admin.
+    Khi admin đổi mật khẩu, token_version tăng lên để vô hiệu hóa token cũ.
+  */
+  if (user.token_version !== undefined) {
+    payload.token_version = Number(user.token_version);
+  }
+
+  return jwt.sign(payload, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN || "1d",
+  });
 }
 
 // POST /api/auth/register
@@ -670,12 +676,13 @@ async function adminLogin(req, res) {
     const [admins] = await pool.query(
       `
       SELECT
-        id,
-        full_name,
-        email,
-        password_hash,
-        role,
-        is_active
+      id,
+      full_name,
+      email,
+      password_hash,
+      role,
+      is_active,
+      token_version
       FROM admin_users
       WHERE email = ?
       LIMIT 1
@@ -724,6 +731,7 @@ async function adminLogin(req, res) {
       id: admin.id,
       email: admin.email,
       role: admin.role || "admin",
+      token_version: admin.token_version,
     });
 
     res.json({
@@ -744,6 +752,129 @@ async function adminLogin(req, res) {
   }
 }
 
+// PATCH /api/auth/admin/change-password
+async function changeAdminPassword(req, res) {
+  try {
+    const adminId = req.admin && req.admin.id ? Number(req.admin.id) : null;
+
+    if (!adminId) {
+      return res.status(401).json({
+        success: false,
+        message: "Admin authentication is required",
+      });
+    }
+
+    const currentPassword = req.body.current_password
+      ? String(req.body.current_password)
+      : "";
+
+    const newPassword = req.body.new_password
+      ? String(req.body.new_password)
+      : "";
+
+    const confirmPassword = req.body.confirm_password
+      ? String(req.body.confirm_password)
+      : "";
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Vui lòng nhập đầy đủ mật khẩu hiện tại và mật khẩu mới.",
+      });
+    }
+
+    if (
+      isTooLong(currentPassword, MAX_PASSWORD_LENGTH) ||
+      isTooLong(newPassword, MAX_PASSWORD_LENGTH) ||
+      isTooLong(confirmPassword, MAX_PASSWORD_LENGTH)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Mật khẩu quá dài.",
+      });
+    }
+
+    if (newPassword.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: "Mật khẩu mới phải có ít nhất 8 ký tự.",
+      });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Mật khẩu mới nhập lại không khớp.",
+      });
+    }
+
+    if (currentPassword === newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Mật khẩu mới không được trùng mật khẩu hiện tại.",
+      });
+    }
+
+    const [admins] = await pool.query(
+      `
+      SELECT id, password_hash, is_active
+      FROM admin_users
+      WHERE id = ?
+      LIMIT 1
+      `,
+      [adminId],
+    );
+
+    if (admins.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Không tìm thấy tài khoản admin.",
+      });
+    }
+
+    const admin = admins[0];
+
+    if (Number(admin.is_active) !== 1) {
+      return res.status(403).json({
+        success: false,
+        message: "Tài khoản admin đã bị tắt.",
+      });
+    }
+
+    const isCurrentPasswordCorrect = await bcrypt.compare(
+      currentPassword,
+      admin.password_hash,
+    );
+
+    if (!isCurrentPasswordCorrect) {
+      return res.status(401).json({
+        success: false,
+        message: "Mật khẩu hiện tại không đúng.",
+      });
+    }
+
+    const newPasswordHash = await bcrypt.hash(newPassword, 10);
+
+    await pool.query(
+      `
+      UPDATE admin_users
+      SET
+        password_hash = ?,
+        token_version = token_version + 1
+      WHERE id = ?
+      `,
+      [newPasswordHash, adminId],
+    );
+
+    res.json({
+      success: true,
+      message: "Đổi mật khẩu admin thành công. Vui lòng đăng nhập lại.",
+    });
+  } catch (error) {
+    return sendServerError(res, "Cannot change admin password", error);
+  }
+}
+
 module.exports = {
   registerCustomer,
   loginCustomer,
@@ -752,4 +883,5 @@ module.exports = {
   startEmailLogin,
   verifyEmailCode,
   adminLogin,
+  changeAdminPassword,
 };
