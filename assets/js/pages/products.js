@@ -1,3 +1,9 @@
+/* =========================
+   SEO trang danh sách sản phẩm
+   ========================= */
+
+const PRODUCTS_PAGE_URL = "https://melaniemira.com.vn/products.html";
+
 function formatMoney(price) {
   return price.toLocaleString("vi-VN") + "đ";
 }
@@ -96,6 +102,14 @@ async function loadProducts() {
   }
 }
 
+function isValidSeoCategory(categorySlug) {
+  return (
+    categorySlug === "set-quan-ao" ||
+    categorySlug === "vay-ngan" ||
+    categorySlug === "ao"
+  );
+}
+
 function getCategoryTitle(categorySlug) {
   if (categorySlug === "set-quan-ao") {
     return {
@@ -134,6 +148,94 @@ function getCategoryTitle(categorySlug) {
         ? "Explore elegant and feminine fashion designs from Melanie Mira."
         : "Khám phá các thiết kế thời trang nữ thanh lịch, nữ tính và dễ ứng dụng.",
   };
+}
+
+function getProductsSeoTitle(categorySlug, searchKeyword) {
+  const isEnglish = getCurrentLanguage() === "en";
+
+  if (searchKeyword) {
+    return isEnglish
+      ? `Search results for "${searchKeyword}" | Melanie Mira`
+      : `Kết quả tìm kiếm "${searchKeyword}" | Melanie Mira`;
+  }
+
+  if (categorySlug === "set-quan-ao") {
+    return isEnglish
+      ? "Women's Fashion Sets | Melanie Mira"
+      : "Set đồ nữ thanh lịch | Melanie Mira";
+  }
+
+  if (categorySlug === "vay-ngan") {
+    return isEnglish
+      ? "Women's Dresses | Melanie Mira"
+      : "Váy nữ thanh lịch | Melanie Mira";
+  }
+
+  if (categorySlug === "ao") {
+    return isEnglish
+      ? "Women's Tops | Melanie Mira"
+      : "Áo nữ thanh lịch | Melanie Mira";
+  }
+
+  if (categorySlug && !isValidSeoCategory(categorySlug)) {
+    return isEnglish
+      ? "Products | Melanie Mira"
+      : "Sản phẩm thời trang nữ | Melanie Mira";
+  }
+
+  return isEnglish
+    ? "Elegant Women's Fashion | Melanie Mira"
+    : "Thời trang nữ thanh lịch | Melanie Mira";
+}
+
+function getProductsCanonicalUrl(categorySlug, searchKeyword) {
+  /*
+    Trang tìm kiếm và danh mục không hợp lệ
+    đều canonical về trang sản phẩm chính.
+  */
+  if (searchKeyword || (categorySlug && !isValidSeoCategory(categorySlug))) {
+    return PRODUCTS_PAGE_URL;
+  }
+
+  if (categorySlug) {
+    return PRODUCTS_PAGE_URL + "?category=" + encodeURIComponent(categorySlug);
+  }
+
+  return PRODUCTS_PAGE_URL;
+}
+
+function getProductsRobotsContent(categorySlug, searchKeyword) {
+  /*
+    Không cho Google index URL tìm kiếm
+    hoặc category không tồn tại.
+  */
+  if (searchKeyword || (categorySlug && !isValidSeoCategory(categorySlug))) {
+    return "noindex, follow";
+  }
+
+  return "index, follow";
+}
+
+function updateProductsSeo(categorySlug, searchKeyword, pageInfo) {
+  const title = getProductsSeoTitle(categorySlug, searchKeyword);
+
+  const description = pageInfo.desc;
+  const canonicalUrl = getProductsCanonicalUrl(categorySlug, searchKeyword);
+
+  const robotsContent = getProductsRobotsContent(categorySlug, searchKeyword);
+
+  document.title = title;
+
+  $("#seoDescription").attr("content", description);
+  $("#seoRobots").attr("content", robotsContent);
+  $("#seoCanonical").attr("href", canonicalUrl);
+
+  $("#seoOgTitle").attr("content", title);
+  $("#seoOgDescription").attr("content", description);
+  $("#seoOgUrl").attr("content", canonicalUrl);
+
+  $("#seoTwitterTitle").attr("content", title);
+  $("#seoTwitterDescription").attr("content", description);
 }
 
 function createProductItem(product) {
@@ -224,8 +326,20 @@ function renderProducts() {
     };
   }
 
+  if (searchKeyword) {
+    pageInfo = {
+      title:
+        getCurrentLanguage() === "en" ? "Search results" : "Kết quả tìm kiếm",
+      desc:
+        getCurrentLanguage() === "en"
+          ? 'Products matching "' + searchKeyword + '".'
+          : 'Sản phẩm phù hợp với từ khóa "' + searchKeyword + '".',
+    };
+  }
+
+  updateProductsSeo(categorySlug, searchKeyword, pageInfo);
+
   $("#productPageTitle").text(pageInfo.title);
-  $("#productPageDesc").text(pageInfo.desc);
 
   $(".filter-link").removeClass("active");
 

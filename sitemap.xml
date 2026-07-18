@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Trang chính -->
+  <url>
+    <loc>https://melaniemira.com.vn/</loc>
+  </url>
+
+  <url>
+    <loc>https://melaniemira.com.vn/products.html</loc>
+  </url>
+
+  <url>
+    <loc>https://melaniemira.com.vn/about.html</loc>
+  </url>
+
+  <!-- Danh mục sản phẩm -->
+  <url>
+    <loc>https://melaniemira.com.vn/products.html?category=set-quan-ao</loc>
+  </url>
+
+  <url>
+    <loc>https://melaniemira.com.vn/products.html?category=vay-ngan</loc>
+  </url>
+
+  <url>
+    <loc>https://melaniemira.com.vn/products.html?category=ao</loc>
+  </url>
+
+  <!-- Chi tiết sản phẩm -->
+  <url>
+    <loc>https://melaniemira.com.vn/product-detail.html?slug=croptop</loc>
+  </url>
+
+  <url>
+    <loc>https://melaniemira.com.vn/product-detail.html?slug=charvi-set</loc>
+  </url>
+
+  <url>
+    <loc>https://melaniemira.com.vn/product-detail.html?slug=lia</loc>
+  </url>
+
+  <url>
+    <loc>https://melaniemira.com.vn/product-detail.html?slug=ivy</loc>
+  </url>
+
+  <url>
+    <loc>https://melaniemira.com.vn/product-detail.html?slug=donna</loc>
+  </url>
+
+  <url>
+    <loc>https://melaniemira.com.vn/product-detail.html?slug=cami</loc>
+  </url>
+
+  <url>
+    <loc>https://melaniemira.com.vn/product-detail.html?slug=luna</loc>
+  </url>
+
+  <url>
+    <loc>https://melaniemira.com.vn/product-detail.html?slug=arul</loc>
+  </url>
+</urlset>

@@ -1944,7 +1944,7 @@ function initSharedCartModalEvents() {
    ========================= */
 
 function getCurrentLanguage() {
-  return localStorage.getItem("language") || "en";
+  return localStorage.getItem("language") || "vi";
 }
 
 function setCurrentLanguage(language) {
@@ -1952,6 +1952,7 @@ function setCurrentLanguage(language) {
 }
 function applyLanguageFont() {
   let language = getCurrentLanguage();
+  document.documentElement.lang = language;
 
   /*
     Xóa class font test cũ và class ngôn ngữ cũ.

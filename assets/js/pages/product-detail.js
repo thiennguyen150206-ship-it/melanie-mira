@@ -1,3 +1,12 @@
+/* =========================
+   SEO trang chi tiết sản phẩm
+   ========================= */
+
+const PRODUCT_DETAIL_BASE_URL =
+  "https://melaniemira.com.vn/product-detail.html";
+
+const PRODUCTS_PAGE_URL = "https://melaniemira.com.vn/products.html";
+
 let currentProduct = null;
 let selectedSize = "";
 let buyNowItem = null;
@@ -131,6 +140,211 @@ function convertApiProduct(product) {
     sizes: product.sizes || [],
     sizeGuideImage: product.size_guide_image,
   };
+}
+
+function getAbsoluteProductImageUrl(imageUrl) {
+  const fallbackImage =
+    "https://melaniemira.com.vn/assets/img/banners/banners-desktop.jpg";
+
+  const value = String(imageUrl || "").trim();
+
+  if (value === "") {
+    return fallbackImage;
+  }
+
+  try {
+    return new URL(value, "https://melaniemira.com.vn/").href;
+  } catch (error) {
+    return fallbackImage;
+  }
+}
+
+function cleanProductSeoText(description) {
+  return String(description || "")
+    .replace(/\r?\n/g, " ")
+    .replace(/\s+/g, " ")
+    .replace(/^(Chi tiết sản phẩm|Product Details?)\s*/i, "")
+    .trim();
+}
+
+function createProductSeoDescription(product) {
+  let description = cleanProductSeoText(
+    product.descriptionVi || product.description,
+  );
+
+  if (description === "") {
+    description =
+      (product.nameVi || "Sản phẩm thời trang nữ") +
+      " với thiết kế thanh lịch, nữ tính từ Melanie Mira.";
+  }
+
+  /*
+    Giữ mô tả SEO khoảng 150 - 160 ký tự.
+    Không cắt ngang giữa một từ.
+  */
+  if (description.length > 160) {
+    description = description.slice(0, 157);
+
+    const lastSpaceIndex = description.lastIndexOf(" ");
+
+    if (lastSpaceIndex > 100) {
+      description = description.slice(0, lastSpaceIndex);
+    }
+
+    description += "...";
+  }
+
+  return description;
+}
+
+function getProductCanonicalUrl(product) {
+  if (product.slug) {
+    return (
+      PRODUCT_DETAIL_BASE_URL + "?slug=" + encodeURIComponent(product.slug)
+    );
+  }
+
+  if (product.id) {
+    return PRODUCT_DETAIL_BASE_URL + "?id=" + encodeURIComponent(product.id);
+  }
+
+  return PRODUCTS_PAGE_URL;
+}
+
+function productHasAvailableStock(product) {
+  const sizes = product.sizes || [];
+
+  /*
+    API cũ không trả sizes thì không tự đánh dấu hết hàng.
+  */
+  if (sizes.length === 0) {
+    return true;
+  }
+
+  return sizes.some(function (sizeItem) {
+    return Number(sizeItem.stock) > 0;
+  });
+}
+
+function normalizeProductDetailBrowserUrl(product) {
+  if (!product || !product.slug) {
+    return;
+  }
+
+  const normalizedUrl =
+    "product-detail.html?slug=" + encodeURIComponent(product.slug);
+
+  const currentFileName =
+    window.location.pathname.split("/").pop() || "product-detail.html";
+
+  const currentUrl = currentFileName + window.location.search;
+
+  if (currentUrl !== normalizedUrl) {
+    window.history.replaceState(null, "", normalizedUrl);
+  }
+}
+
+function updateProductStructuredData(product, canonicalUrl, description) {
+  const imageList = createProductImages(product)
+    .filter(function (imageUrl) {
+      return Boolean(imageUrl);
+    })
+    .map(function (imageUrl) {
+      return getAbsoluteProductImageUrl(imageUrl);
+    });
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.nameVi || product.nameEn || "Sản phẩm Melanie Mira",
+    description: description,
+    image: imageList,
+    sku: String(product.id),
+    url: canonicalUrl,
+    category: product.categoryVi || "",
+    brand: {
+      "@type": "Brand",
+      name: "Melanie Mira",
+    },
+    offers: {
+      "@type": "Offer",
+      url: canonicalUrl,
+      priceCurrency: "VND",
+      price: String(Math.round(Number(product.price || 0))),
+      availability: productHasAvailableStock(product)
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      itemCondition: "https://schema.org/NewCondition",
+    },
+  };
+
+  const scriptElement = document.getElementById("productStructuredData");
+
+  if (scriptElement) {
+    scriptElement.textContent = JSON.stringify(structuredData);
+  }
+}
+
+function updateProductDetailSeo(product) {
+  /*
+    SEO chính của website là tiếng Việt.
+    Metadata không phụ thuộc vào localStorage ngôn ngữ.
+  */
+  const productName =
+    product.nameVi || product.nameEn || "Sản phẩm Melanie Mira";
+
+  const title = productName + " | Melanie Mira";
+  const description = createProductSeoDescription(product);
+  const canonicalUrl = getProductCanonicalUrl(product);
+  const imageUrl = getAbsoluteProductImageUrl(product.image);
+
+  document.title = title;
+
+  $("#seoDescription").attr("content", description);
+  $("#seoRobots").attr("content", "index, follow");
+  $("#seoCanonical").attr("href", canonicalUrl);
+
+  $("#seoOgTitle").attr("content", title);
+  $("#seoOgDescription").attr("content", description);
+  $("#seoOgUrl").attr("content", canonicalUrl);
+  $("#seoOgImage").attr("content", imageUrl);
+
+  $("#seoTwitterTitle").attr("content", title);
+  $("#seoTwitterDescription").attr("content", description);
+  $("#seoTwitterImage").attr("content", imageUrl);
+
+  updateProductStructuredData(product, canonicalUrl, description);
+}
+
+function updateProductNotFoundSeo() {
+  const title = "Không tìm thấy sản phẩm | Melanie Mira";
+
+  const description =
+    "Sản phẩm này có thể đã bị xóa, bị ẩn hoặc chưa được cập nhật trên Melanie Mira.";
+
+  const fallbackImage =
+    "https://melaniemira.com.vn/assets/img/banners/banners-desktop.jpg";
+
+  document.title = title;
+
+  $("#seoDescription").attr("content", description);
+  $("#seoRobots").attr("content", "noindex, follow");
+  $("#seoCanonical").attr("href", PRODUCTS_PAGE_URL);
+
+  $("#seoOgTitle").attr("content", title);
+  $("#seoOgDescription").attr("content", description);
+  $("#seoOgUrl").attr("content", PRODUCTS_PAGE_URL);
+  $("#seoOgImage").attr("content", fallbackImage);
+
+  $("#seoTwitterTitle").attr("content", title);
+  $("#seoTwitterDescription").attr("content", description);
+  $("#seoTwitterImage").attr("content", fallbackImage);
+
+  const scriptElement = document.getElementById("productStructuredData");
+
+  if (scriptElement) {
+    scriptElement.textContent = "{}";
+  }
 }
 
 async function loadProductDetail() {
@@ -680,6 +894,8 @@ function renderRecommendProducts(product) {
 
 function renderProductDetail() {
   if (!currentProduct) {
+    updateProductNotFoundSeo();
+
     $(".product-detail-page").html(`
       <div class="container py-5 text-center">
         <h2>${t("product.notFound")}</h2>
@@ -687,8 +903,17 @@ function renderProductDetail() {
         <a href="products.html" class="btn-main">${t("product.backToProducts")}</a>
       </div>
     `);
+
     return;
   }
+
+  /*
+    Chuẩn hóa URL ?id=... thành ?slug=...
+    mà không tải lại trang.
+  */
+  normalizeProductDetailBrowserUrl(currentProduct);
+
+  updateProductDetailSeo(currentProduct);
 
   renderProductImages(currentProduct);
   renderProductInfo(currentProduct);
