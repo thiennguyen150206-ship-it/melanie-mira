@@ -2,6 +2,8 @@ const crypto = require("crypto");
 const pool = require("../config/db");
 const sendServerError = require("../utils/errorResponse");
 const parsePositiveInt = require("../utils/parseId");
+const { sendOrderCreatedEmails } = require("../utils/mail.service");
+
 const {
   normalizeCouponCode,
   validateCouponForSubtotal,
@@ -486,23 +488,40 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 
     await connection.commit();
 
+    const createdOrderData = {
+      order_id: orderId,
+      order_code: orderCode,
+      customer_name: customerName,
+      customer_email: customerEmail,
+      customer_phone: customerPhone,
+      customer_address: customerAddress,
+      note: orderNote,
+      subtotal_amount: subtotalAmount,
+      discount_amount: discountAmount,
+      coupon_id: appliedCouponId,
+      coupon_code: appliedCouponCode,
+      total_amount: finalTotalAmount,
+      payment_method: paymentMethod,
+      payment_status: paymentStatus,
+      paid_amount: paidAmount,
+      payment_content: paymentContent,
+      status: "pending",
+    };
+
+    /*
+  Gửi email sau khi đơn hàng đã lưu thành công.
+  Không await để tránh email lỗi làm khách không đặt được hàng.
+*/
+    sendOrderCreatedEmails(createdOrderData, orderItems).catch(
+      function (error) {
+        console.log("Cannot send order created emails:", error);
+      },
+    );
+
     res.status(201).json({
       success: true,
       message: "Order created successfully",
-      data: {
-        order_id: orderId,
-        order_code: orderCode,
-        subtotal_amount: subtotalAmount,
-        discount_amount: discountAmount,
-        coupon_id: appliedCouponId,
-        coupon_code: appliedCouponCode,
-        total_amount: finalTotalAmount,
-        payment_method: paymentMethod,
-        payment_status: paymentStatus,
-        paid_amount: paidAmount,
-        payment_content: paymentContent,
-        status: "pending",
-      },
+      data: createdOrderData,
     });
   } catch (error) {
     await connection.rollback();
