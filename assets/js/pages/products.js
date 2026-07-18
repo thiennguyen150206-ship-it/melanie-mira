@@ -174,12 +174,21 @@ function createProductItem(product) {
 }
 
 function productMatchesSearch(product, keyword) {
-  return (
-    (product.nameVi || "").toLowerCase().includes(keyword) ||
-    (product.nameEn || "").toLowerCase().includes(keyword) ||
-    (product.categoryVi || "").toLowerCase().includes(keyword) ||
-    (product.categoryEn || "").toLowerCase().includes(keyword)
-  );
+  const searchText = [
+    product.nameVi,
+    product.nameEn,
+    product.categoryVi,
+    product.categoryEn,
+    product.categorySlug,
+    product.slug,
+    product.productSlug,
+    product.descriptionVi,
+    product.descriptionEn,
+  ]
+    .join(" ")
+    .toLowerCase();
+
+  return searchText.includes(keyword);
 }
 
 function renderProducts() {

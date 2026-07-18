@@ -407,6 +407,23 @@
   border-radius: var(--radius-sm);
 }
 
+.suggest-item {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.suggest-item:hover {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.suggest-info small {
+  display: block;
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 1.3;
+}
+
 .suggest-info h5 {
   font-size: 15px;
   font-weight: 700;

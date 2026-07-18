@@ -23,6 +23,263 @@ function saveCart(cart) {
 function formatCartMoney(price) {
   return price.toLocaleString("vi-VN") + "đ";
 }
+
+/* =========================
+   Header search
+   Dùng chung cho ô tìm kiếm trên header
+   ========================= */
+
+let headerSearchProducts = [];
+let headerSearchTimer = null;
+let isLoadingHeaderSearchProducts = false;
+
+const HEADER_SEARCH_LIMIT = 6;
+
+function escapeHeaderSearchHtml(value) {
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function formatHeaderSearchMoney(price) {
+  return Number(price || 0).toLocaleString("vi-VN") + "đ";
+}
+
+function isHeaderLocalDevHost() {
+  return (
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1" ||
+    window.location.protocol === "file:"
+  );
+}
+
+function convertHeaderApiProduct(product) {
+  return {
+    id: product.id,
+    slug: product.slug,
+    productSlug: product.slug,
+    nameVi: product.name_vi,
+    nameEn: product.name_en,
+    categoryVi: product.category_vi,
+    categoryEn: product.category_en,
+    categorySlug: product.category_slug,
+    price: Number(product.price || 0),
+    oldPrice: product.old_price ? Number(product.old_price) : null,
+    image: product.image,
+    hoverImage: product.hover_image,
+    badge: product.badge,
+    descriptionVi: product.description_vi,
+    descriptionEn: product.description_en,
+  };
+}
+
+async function loadHeaderSearchProducts() {
+  if (headerSearchProducts.length > 0) {
+    return headerSearchProducts;
+  }
+
+  if (isLoadingHeaderSearchProducts) {
+    return headerSearchProducts;
+  }
+
+  isLoadingHeaderSearchProducts = true;
+
+  try {
+    const response = await fetch(API_BASE_URL + "/products");
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      throw new Error(result.message || "Cannot load products");
+    }
+
+    headerSearchProducts = result.data.map(function (product) {
+      return convertHeaderApiProduct(product);
+    });
+  } catch (error) {
+    console.log("Cannot load header search products:", error);
+
+    /*
+      Chỉ fallback products-data.js khi test local.
+      Trên domain thật không fallback để tránh hiện dữ liệu/ảnh cũ.
+    */
+    if (isHeaderLocalDevHost() && typeof products !== "undefined") {
+      headerSearchProducts = products;
+    } else {
+      headerSearchProducts = [];
+    }
+  } finally {
+    isLoadingHeaderSearchProducts = false;
+  }
+
+  return headerSearchProducts;
+}
+
+function getHeaderSearchKeyword() {
+  return String($("#searchInput").val() || "").trim();
+}
+
+function normalizeHeaderSearchText(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase();
+}
+
+function productMatchesHeaderSearch(product, keyword) {
+  const searchText = [
+    product.nameVi,
+    product.nameEn,
+    product.categoryVi,
+    product.categoryEn,
+    product.categorySlug,
+    product.slug,
+    product.productSlug,
+    product.descriptionVi,
+    product.descriptionEn,
+  ]
+    .join(" ")
+    .toLowerCase();
+
+  return searchText.includes(keyword);
+}
+
+function getHeaderProductDetailUrl(product) {
+  const productSlug = product.slug || product.productSlug || "";
+
+  if (productSlug) {
+    return "product-detail.html?slug=" + encodeURIComponent(productSlug);
+  }
+
+  if (product.id) {
+    return "product-detail.html?id=" + encodeURIComponent(product.id);
+  }
+
+  return "products.html";
+}
+
+function submitHeaderSearch() {
+  const keyword = getHeaderSearchKeyword();
+
+  if (keyword === "") {
+    $("#searchSuggest").hide();
+    return;
+  }
+
+  window.location.href = "products.html?search=" + encodeURIComponent(keyword);
+}
+
+async function renderHeaderSearchSuggest() {
+  const rawKeyword = getHeaderSearchKeyword();
+  const keyword = normalizeHeaderSearchText(rawKeyword);
+
+  if (keyword === "") {
+    $("#searchSuggest").hide();
+    return;
+  }
+
+  $("#searchSuggest")
+    .html(
+      `
+      <div class="suggest-empty">
+        Đang tìm sản phẩm...
+      </div>
+    `,
+    )
+    .show();
+
+  const productList = await loadHeaderSearchProducts();
+
+  /*
+    Nếu trong lúc chờ API mà người dùng đã đổi từ khóa,
+    không render kết quả cũ nữa.
+  */
+  if (normalizeHeaderSearchText(getHeaderSearchKeyword()) !== keyword) {
+    return;
+  }
+
+  const result = productList
+    .filter(function (product) {
+      return productMatchesHeaderSearch(product, keyword);
+    })
+    .slice(0, HEADER_SEARCH_LIMIT);
+
+  if (result.length === 0) {
+    $("#searchSuggest")
+      .html(
+        `
+        <div class="suggest-empty">
+          ${t("search.empty")}
+        </div>
+      `,
+      )
+      .show();
+
+    return;
+  }
+
+  let html = "";
+
+  for (let i = 0; i < result.length; i++) {
+    const product = result[i];
+    const detailUrl = getHeaderProductDetailUrl(product);
+
+    html += `
+      <a href="${detailUrl}" class="suggest-item">
+        <img
+          src="${escapeHeaderSearchHtml(product.image)}"
+          alt="${escapeHeaderSearchHtml(getProductName(product))}"
+        />
+
+        <div class="suggest-info">
+          <h5>${escapeHeaderSearchHtml(getProductName(product))}</h5>
+          <p>${formatHeaderSearchMoney(product.price)}</p>
+          <small>${escapeHeaderSearchHtml(getProductCategory(product))}</small>
+        </div>
+      </a>
+    `;
+  }
+
+  $("#searchSuggest").html(html).show();
+}
+
+function initHeaderSearchEvents() {
+  $(document).on("input", "#searchInput", function () {
+    clearTimeout(headerSearchTimer);
+
+    headerSearchTimer = setTimeout(function () {
+      renderHeaderSearchSuggest();
+    }, 250);
+  });
+
+  $(document).on("keydown", "#searchInput", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      submitHeaderSearch();
+    }
+  });
+
+  $(document).on("click", "#btnSearch", function (event) {
+    event.preventDefault();
+    submitHeaderSearch();
+  });
+
+  $(document).on("submit", ".search-box-dropdown", function (event) {
+    event.preventDefault();
+    submitHeaderSearch();
+  });
+
+  $(document).on("click", ".suggest-item", function () {
+    $(".search-box-dropdown").removeClass("active");
+    $("#searchSuggest").hide();
+  });
+}
+
 /* =========================
    Checkout modal
    Thanh toán ngay trên modal, không chuyển trang checkout.html
@@ -2118,6 +2375,7 @@ $(document).ready(function () {
   updateAccountIconLink();
   initSharedCartModalEvents();
   initCheckoutModalEvents();
+  initHeaderSearchEvents();
 
   function updateLanguageButton() {
     let language = getCurrentLanguage();
