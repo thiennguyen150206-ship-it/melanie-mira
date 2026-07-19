@@ -285,6 +285,20 @@ function updateProductStructuredData(product, canonicalUrl, description) {
   }
 }
 
+function setProductCanonicalUrl(canonicalUrl) {
+  let canonicalElement = document.getElementById("seoCanonical");
+
+  if (!canonicalElement) {
+    canonicalElement = document.createElement("link");
+    canonicalElement.id = "seoCanonical";
+    canonicalElement.rel = "canonical";
+
+    document.head.appendChild(canonicalElement);
+  }
+
+  canonicalElement.href = canonicalUrl;
+}
+
 function updateProductDetailSeo(product) {
   /*
     SEO chính của website là tiếng Việt.
@@ -302,7 +316,7 @@ function updateProductDetailSeo(product) {
 
   $("#seoDescription").attr("content", description);
   $("#seoRobots").attr("content", "index, follow");
-  $("#seoCanonical").attr("href", canonicalUrl);
+  setProductCanonicalUrl(canonicalUrl);
 
   $("#seoOgTitle").attr("content", title);
   $("#seoOgDescription").attr("content", description);
@@ -329,7 +343,7 @@ function updateProductNotFoundSeo() {
 
   $("#seoDescription").attr("content", description);
   $("#seoRobots").attr("content", "noindex, follow");
-  $("#seoCanonical").attr("href", PRODUCTS_PAGE_URL);
+  setProductCanonicalUrl(PRODUCTS_PAGE_URL);
 
   $("#seoOgTitle").attr("content", title);
   $("#seoOgDescription").attr("content", description);
