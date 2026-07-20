@@ -66,7 +66,7 @@ function prepareBestSellerSlider() {
 
   bestSellerRealTotal = slides.length;
 
-  /* 
+  /*
     Clone slide đầu để khi auto chạy tới cuối,
     slider nhảy về đầu nhìn mượt hơn.
   */
@@ -680,25 +680,23 @@ function initHeroSlider() {
   });
 }
 /* =========================
-   Home video autoplay
-   Hỗ trợ video tự chạy trên mobile
+   Home video lazy autoplay
+   Chỉ tải và phát khi video thực sự đi vào màn hình
    ========================= */
 
 function initHomeVideoAutoplay() {
-  let homeVideo = document.querySelector(".home-video");
+  const homeVideo = document.querySelector(".home-video");
 
   if (!homeVideo) {
     return;
   }
 
-  /*
-    Cấu hình video như banner thời trang:
-    - Tự chạy
-    - Tắt tiếng
-    - Lặp lại
-    - Không controls
-    - Không picture-in-picture
-  */
+  const videoSrc = String(homeVideo.dataset.src || "").trim();
+  const posterSrc = String(homeVideo.dataset.poster || "").trim();
+
+  let sourceLoaded = false;
+  let interactionFallbackBound = false;
+
   homeVideo.muted = true;
   homeVideo.defaultMuted = true;
   homeVideo.loop = true;
@@ -708,7 +706,6 @@ function initHomeVideoAutoplay() {
 
   homeVideo.setAttribute("muted", "");
   homeVideo.setAttribute("loop", "");
-  homeVideo.setAttribute("autoplay", "");
   homeVideo.setAttribute("playsinline", "");
   homeVideo.setAttribute("webkit-playsinline", "");
   homeVideo.removeAttribute("controls");
@@ -721,68 +718,135 @@ function initHomeVideoAutoplay() {
     homeVideo.disableRemotePlayback = true;
   }
 
+  function bindVideoInteractionFallback() {
+    if (interactionFallbackBound) {
+      return;
+    }
+
+    interactionFallbackBound = true;
+
+    function retryPlayHomeVideo() {
+      const playPromise = homeVideo.play();
+
+      if (playPromise !== undefined) {
+        playPromise.catch(function () {
+          // Trình duyệt vẫn chặn autoplay thì giữ nguyên poster.
+        });
+      }
+    }
+
+    document.addEventListener("click", retryPlayHomeVideo, {
+      once: true,
+    });
+
+    document.addEventListener("touchstart", retryPlayHomeVideo, {
+      once: true,
+      passive: true,
+    });
+  }
+
   function playHomeVideo() {
-    let playPromise = homeVideo.play();
+    if (!sourceLoaded) {
+      return;
+    }
+
+    const playPromise = homeVideo.play();
 
     if (playPromise !== undefined) {
       playPromise.catch(function () {
-        /*
-          Một số trình duyệt mobile có thể chặn autoplay lần đầu.
-          Khi người dùng chạm/click trang, video sẽ được gọi chạy lại bên dưới.
-        */
+        bindVideoInteractionFallback();
       });
     }
   }
 
-  /*
-    Khi video sẵn sàng thì tự chạy.
-  */
-  homeVideo.addEventListener("loadedmetadata", function () {
-    playHomeVideo();
-  });
+  function loadHomeVideo() {
+    if (sourceLoaded || videoSrc === "") {
+      return;
+    }
 
-  homeVideo.addEventListener("canplay", function () {
-    playHomeVideo();
-  });
+    sourceLoaded = true;
 
-  /*
-    Backup cho loop:
-    Bình thường thuộc tính loop đã đủ,
-    đoạn này chỉ để chắc chắn nếu trình duyệt xử lý loop lỗi.
-  */
-  homeVideo.addEventListener("ended", function () {
-    homeVideo.currentTime = 0;
-    playHomeVideo();
-  });
+    if (posterSrc !== "") {
+      homeVideo.poster = posterSrc;
+    }
 
-  /*
-    Khi quay lại tab/trang, video tiếp tục chạy.
-  */
+    homeVideo.addEventListener(
+      "canplay",
+      function () {
+        playHomeVideo();
+      },
+      {
+        once: true,
+      },
+    );
+
+    homeVideo.src = videoSrc;
+    homeVideo.load();
+  }
+
+  if ("IntersectionObserver" in window) {
+    const videoObserver = new IntersectionObserver(
+      function (entries) {
+        const entry = entries[0];
+
+        if (!entry) {
+          return;
+        }
+
+        /*
+          Chỉ tải khi ít nhất khoảng 15% video
+          đã đi vào màn hình.
+        */
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.15) {
+          loadHomeVideo();
+
+          if (homeVideo.readyState >= 2) {
+            playHomeVideo();
+          }
+
+          return;
+        }
+
+        /*
+          Khi video ra khỏi màn hình thì tạm dừng
+          để giảm CPU và pin trên điện thoại.
+        */
+        if (sourceLoaded && !homeVideo.paused) {
+          homeVideo.pause();
+        }
+      },
+      {
+        threshold: [0, 0.15],
+      },
+    );
+
+    videoObserver.observe(homeVideo);
+  } else {
+    /*
+      Trình duyệt cũ không hỗ trợ IntersectionObserver:
+      chỉ tải video sau khi toàn bộ trang đã load.
+    */
+    window.addEventListener(
+      "load",
+      function () {
+        loadHomeVideo();
+      },
+      {
+        once: true,
+      },
+    );
+  }
+
   document.addEventListener("visibilitychange", function () {
-    if (!document.hidden) {
+    if (!document.hidden && sourceLoaded) {
       playHomeVideo();
+      return;
+    }
+
+    if (document.hidden && sourceLoaded) {
+      homeVideo.pause();
     }
   });
-
-  window.addEventListener("pageshow", function () {
-    playHomeVideo();
-  });
-
-  /*
-    Fallback mobile:
-    Nếu autoplay bị chặn, sau lần chạm/click đầu tiên trên trang thì chạy lại.
-    Video vẫn không có chức năng khi bấm trực tiếp vì CSS đã pointer-events: none.
-  */
-  document.addEventListener("touchstart", playHomeVideo, {
-    once: true,
-    passive: true,
-  });
-
-  document.addEventListener("click", playHomeVideo, {
-    once: true,
-  });
-
-  playHomeVideo();
 }
 
 /* =========================
