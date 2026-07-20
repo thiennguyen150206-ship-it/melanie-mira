@@ -301,6 +301,154 @@ let checkoutPublicCoupons = [];
 const CHECKOUT_PAYMENT_POLL_INTERVAL_MS = 5000;
 const CHECKOUT_PAYMENT_POLL_LIMIT = 120;
 
+/* =========================
+   Meta Pixel - Checkout events
+   Không gửi thông tin cá nhân của khách hàng
+   ========================= */
+
+function createCheckoutMetaParameters(items, valueOverride) {
+  const safeItems = Array.isArray(items) ? items : [];
+
+  const contents = [];
+  const contentIds = [];
+
+  let calculatedValue = 0;
+  let totalQuantity = 0;
+
+  for (let i = 0; i < safeItems.length; i++) {
+    const item = safeItems[i];
+
+    const productId = String(item.id || "").trim();
+
+    const quantity = Math.max(1, Number(item.quantity) || 1);
+
+    const itemPrice = Math.max(0, Number(item.price) || 0);
+
+    if (productId === "") {
+      continue;
+    }
+
+    contents.push({
+      id: productId,
+      quantity: quantity,
+      item_price: Math.round(itemPrice),
+    });
+
+    if (!contentIds.includes(productId)) {
+      contentIds.push(productId);
+    }
+
+    calculatedValue += itemPrice * quantity;
+    totalQuantity += quantity;
+  }
+
+  if (contents.length === 0) {
+    return null;
+  }
+
+  const overrideNumber = Number(valueOverride);
+
+  const finalValue =
+    Number.isFinite(overrideNumber) && overrideNumber > 0
+      ? overrideNumber
+      : calculatedValue;
+
+  return {
+    content_ids: contentIds,
+    content_type: "product",
+    contents: contents,
+    num_items: totalQuantity,
+    value: Math.round(finalValue),
+    currency: "VND",
+  };
+}
+
+function createCheckoutMetaDedupeKey() {
+  const itemKey = checkoutModalItems
+    .map(function (item) {
+      return [item.id, item.size, item.quantity, item.price].join("-");
+    })
+    .join("|");
+
+  return [window.location.pathname, checkoutModalMode, itemKey].join(":");
+}
+
+function trackCheckoutInitiated() {
+  if (
+    !window.MelanieMetaPixel ||
+    typeof window.MelanieMetaPixel.trackStandardOnce !== "function"
+  ) {
+    return false;
+  }
+
+  const parameters = createCheckoutMetaParameters(checkoutModalItems);
+
+  if (!parameters) {
+    return false;
+  }
+
+  /*
+    Không gửi trùng nếu cùng một giỏ hàng
+    mở lại checkout trong lần mở trang hiện tại.
+  */
+  return window.MelanieMetaPixel.trackStandardOnce(
+    "InitiateCheckout",
+    createCheckoutMetaDedupeKey(),
+    parameters,
+    "memory",
+  );
+}
+
+function trackCheckoutPurchase(paymentData) {
+  if (
+    !window.MelanieMetaPixel ||
+    typeof window.MelanieMetaPixel.trackStandardOnce !== "function"
+  ) {
+    return false;
+  }
+
+  const payment = paymentData || {};
+
+  const orderCode = String(
+    payment.order_code || checkoutCreatedOrder?.order_code || "",
+  ).trim();
+
+  /*
+    Không có mã đơn thì không gửi Purchase,
+    vì không thể chống trùng an toàn.
+  */
+  if (orderCode === "") {
+    return false;
+  }
+
+  const paidAmount = Number(
+    payment.paid_amount ||
+      payment.total_amount ||
+      checkoutCreatedOrder?.total_amount ||
+      0,
+  );
+
+  const parameters = createCheckoutMetaParameters(
+    checkoutModalItems,
+    paidAmount,
+  );
+
+  if (!parameters) {
+    return false;
+  }
+
+  /*
+    orderCode chỉ dùng làm khóa chống trùng trong localStorage.
+    Không gửi mã đơn hàng sang Meta.
+  */
+  return window.MelanieMetaPixel.trackStandardOnce(
+    "Purchase",
+    orderCode,
+    parameters,
+    "local",
+  );
+}
+
 function createCheckoutModal() {
   if ($("#checkoutModalOverlay").length === 0) {
     $("body").append(`
@@ -1143,9 +1291,13 @@ function openCheckoutModal(mode, items) {
   if (typeof closeHeaderCartModal === "function") {
     closeHeaderCartModal();
   }
-
   $("#checkoutModalOverlay").addClass("active");
   $("#checkoutModal").addClass("active");
+
+  /*
+  Checkout đã được mở với ít nhất một sản phẩm hợp lệ.
+*/
+  trackCheckoutInitiated();
 }
 
 function stopCheckoutPaymentPolling() {
@@ -1283,6 +1435,12 @@ function showCheckoutPaymentSuccess(paymentData) {
   const paidAmount = Number(
     paymentData.paid_amount || paymentData.total_amount || 0,
   );
+
+  /*
+  Chỉ gửi Purchase khi backend đã xác nhận
+  thanh toán paid hoặc overpaid.
+*/
+  trackCheckoutPurchase(paymentData);
 
   $("#checkoutPaymentBox").hide();
   $("#checkoutModalForm").hide();
