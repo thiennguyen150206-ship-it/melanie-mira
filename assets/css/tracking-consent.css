@@ -1,0 +1,171 @@
+/* =========================
+   Tracking consent banner
+   ========================= */
+
+.tracking-consent-banner {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10000;
+
+  display: none;
+  padding: 16px;
+
+  pointer-events: none;
+}
+
+.tracking-consent-banner.is-visible {
+  display: block;
+}
+
+.tracking-consent-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+
+  width: min(100%, 1100px);
+  margin: 0 auto;
+  padding: 20px 22px;
+
+  color: #222;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  border-radius: 14px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+
+  pointer-events: auto;
+}
+
+.tracking-consent-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.tracking-consent-title {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.tracking-consent-description {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.tracking-consent-description a {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.tracking-consent-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 10px;
+}
+
+.tracking-consent-btn {
+  min-width: 112px;
+  padding: 11px 18px;
+
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.tracking-consent-btn:hover {
+  transform: translateY(-1px);
+}
+
+.tracking-consent-btn-reject {
+  color: #222;
+  background: #fff;
+  border: 1px solid #222;
+}
+
+.tracking-consent-btn-reject:hover {
+  color: #fff;
+  background: #222;
+}
+
+.tracking-consent-btn-accept {
+  color: #fff;
+  background: #222;
+  border: 1px solid #222;
+}
+
+.tracking-consent-btn-accept:hover {
+  background: #444;
+  border-color: #444;
+}
+
+/* Nút mở lại lựa chọn theo dõi trong footer */
+.tracking-settings-link {
+  display: block;
+  margin: 0;
+  padding: 0;
+
+  color: inherit;
+  background: transparent;
+  border: 0;
+
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tracking-settings-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 768px) {
+  .tracking-consent-banner {
+    padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
+  }
+
+  .tracking-consent-card {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 16px;
+
+    padding: 18px;
+    border-radius: 12px;
+  }
+
+  .tracking-consent-title {
+    font-size: 17px;
+  }
+
+  .tracking-consent-actions {
+    width: 100%;
+  }
+
+  .tracking-consent-btn {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 420px) {
+  .tracking-consent-actions {
+    flex-direction: column-reverse;
+  }
+
+  .tracking-consent-btn {
+    width: 100%;
+  }
+}

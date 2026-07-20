@@ -424,13 +424,6 @@ async function loadProductDetail() {
     currentProduct = findProductBySlugOrId(products, slug, productId);
   }
 }
-function getCart() {
-  return JSON.parse(localStorage.getItem("cart")) || [];
-}
-
-function saveCart(cart) {
-  localStorage.setItem("cart", JSON.stringify(cart));
-}
 
 function createProductImages(product) {
   if (product.images && product.images.length > 0) {

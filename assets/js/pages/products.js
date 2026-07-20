@@ -326,17 +326,6 @@ function renderProducts() {
     };
   }
 
-  if (searchKeyword) {
-    pageInfo = {
-      title:
-        getCurrentLanguage() === "en" ? "Search results" : "Kết quả tìm kiếm",
-      desc:
-        getCurrentLanguage() === "en"
-          ? 'Products matching "' + searchKeyword + '".'
-          : 'Sản phẩm phù hợp với từ khóa "' + searchKeyword + '".',
-    };
-  }
-
   updateProductsSeo(categorySlug, searchKeyword, pageInfo);
 
   $("#productPageTitle").text(pageInfo.title);
