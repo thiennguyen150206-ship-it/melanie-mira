@@ -14,6 +14,12 @@
   let metaPageViewSent = false;
   let metaTrackingAllowed = false;
 
+  /*
+  Ghi nhớ những sự kiện chỉ được gửi một lần
+  trong lần mở trang hiện tại.
+*/
+  const metaTrackedOnceMemory = new Set();
+
   function isMetaPixelEnabled() {
     return config.META_PIXEL_ENABLED !== false;
   }
@@ -203,6 +209,102 @@
     }
   }
 
+  function createMetaTrackedOnceKey(eventName, dedupeKey) {
+    return (
+      "melanieMetaEvent:" +
+      String(eventName || "").trim() +
+      ":" +
+      String(dedupeKey || "").trim()
+    );
+  }
+
+  function getMetaTrackedOnceStorage(storageType) {
+    try {
+      if (storageType === "local") {
+        return window.localStorage;
+      }
+
+      if (storageType === "session") {
+        return window.sessionStorage;
+      }
+    } catch (error) {
+      console.log("Cannot access Meta event storage:", error);
+    }
+
+    return null;
+  }
+
+  function hasMetaEventBeenTrackedOnce(eventName, dedupeKey, storageType) {
+    const storageKey = createMetaTrackedOnceKey(eventName, dedupeKey);
+
+    if (metaTrackedOnceMemory.has(storageKey)) {
+      return true;
+    }
+
+    const storage = getMetaTrackedOnceStorage(storageType);
+
+    if (!storage) {
+      return false;
+    }
+
+    try {
+      return storage.getItem(storageKey) === "sent";
+    } catch (error) {
+      console.log("Cannot read Meta event state:", error);
+      return false;
+    }
+  }
+
+  function markMetaEventAsTrackedOnce(eventName, dedupeKey, storageType) {
+    const storageKey = createMetaTrackedOnceKey(eventName, dedupeKey);
+
+    metaTrackedOnceMemory.add(storageKey);
+
+    const storage = getMetaTrackedOnceStorage(storageType);
+
+    if (!storage) {
+      return;
+    }
+
+    try {
+      storage.setItem(storageKey, "sent");
+    } catch (error) {
+      console.log("Cannot save Meta event state:", error);
+    }
+  }
+
+  function trackMetaStandardEventOnce(
+    eventName,
+    dedupeKey,
+    parameters,
+    storageType,
+  ) {
+    const safeEventName = String(eventName || "").trim();
+    const safeDedupeKey = String(dedupeKey || "").trim();
+
+    if (safeEventName === "" || safeDedupeKey === "") {
+      return false;
+    }
+
+    if (
+      hasMetaEventBeenTrackedOnce(safeEventName, safeDedupeKey, storageType)
+    ) {
+      return false;
+    }
+
+    const eventSent = trackMetaStandardEvent(safeEventName, parameters);
+
+    /*
+    Chỉ đánh dấu sau khi sự kiện thực sự được gửi.
+    Khi khách chưa đồng ý, sự kiện vẫn có thể thử lại sau.
+  */
+    if (eventSent) {
+      markMetaEventAsTrackedOnce(safeEventName, safeDedupeKey, storageType);
+    }
+
+    return eventSent;
+  }
+
   function getMetaPixelStatus() {
     return {
       pixelId: META_PIXEL_ID,
@@ -238,6 +340,7 @@
   window.MelanieMetaPixel = {
     init: initializeMetaPixel,
     trackStandard: trackMetaStandardEvent,
+    trackStandardOnce: trackMetaStandardEventOnce,
     getStatus: getMetaPixelStatus,
 
     isInitialized: function () {

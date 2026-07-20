@@ -460,6 +460,96 @@ function getCartQuantityByProductAndSize(productId, size) {
 }
 
 /* =========================
+   Meta Pixel - Product events
+   ========================= */
+
+function createMetaProductEventParameters(product, quantity) {
+  if (!product) {
+    return null;
+  }
+
+  const productId = String(product.id || "").trim();
+  const itemQuantity = Math.max(1, Number(quantity) || 1);
+
+  const itemPrice = Math.max(0, Number(product.price) || 0);
+
+  if (productId === "") {
+    return null;
+  }
+
+  return {
+    content_ids: [productId],
+    content_name: getProductName(product),
+    content_category: getProductCategory(product),
+    content_type: "product",
+
+    contents: [
+      {
+        id: productId,
+        quantity: itemQuantity,
+        item_price: itemPrice,
+      },
+    ],
+
+    value: itemPrice * itemQuantity,
+    currency: "VND",
+  };
+}
+
+function trackCurrentProductView() {
+  if (
+    !currentProduct ||
+    !window.MelanieMetaPixel ||
+    typeof window.MelanieMetaPixel.trackStandardOnce !== "function"
+  ) {
+    return;
+  }
+
+  const parameters = createMetaProductEventParameters(currentProduct, 1);
+
+  if (!parameters) {
+    return;
+  }
+
+  /*
+    Chống gửi lại khi renderProductDetail()
+    được gọi sau khi tạo đơn.
+    Tải lại trang vẫn được tính là lượt xem mới.
+  */
+  const dedupeKey = "product:" + String(currentProduct.id);
+
+  window.MelanieMetaPixel.trackStandardOnce(
+    "ViewContent",
+    dedupeKey,
+    parameters,
+    "memory",
+  );
+}
+
+function trackCurrentProductAddToCart() {
+  if (
+    !currentProduct ||
+    !window.MelanieMetaPixel ||
+    typeof window.MelanieMetaPixel.trackStandard !== "function"
+  ) {
+    return;
+  }
+
+  const parameters = createMetaProductEventParameters(currentProduct, 1);
+
+  if (!parameters) {
+    return;
+  }
+
+  /*
+    Size là thông tin sản phẩm, không phải dữ liệu cá nhân.
+  */
+  parameters.size = String(selectedSize || "");
+
+  window.MelanieMetaPixel.trackStandard("AddToCart", parameters);
+}
+
+/* =========================
    Product cart helpers
    ========================= */
 
@@ -922,6 +1012,8 @@ function renderProductDetail() {
 
   updateProductDetailSeo(currentProduct);
 
+  trackCurrentProductView();
+
   renderProductImages(currentProduct);
   renderProductInfo(currentProduct);
   renderRecommendProducts(currentProduct);
@@ -968,6 +1060,12 @@ function addProductToCart() {
   }
 
   saveCart(cart);
+
+  /*
+  Chỉ gửi AddToCart sau khi sản phẩm
+  thực sự được lưu thành công vào giỏ.
+*/
+  trackCurrentProductAddToCart();
 
   if (typeof updateCartCount === "function") {
     updateCartCount();
@@ -1114,6 +1212,21 @@ function initProductImageZoom() {
   });
 }
 $(document).ready(async function () {
+  /*
+    Trường hợp khách mở thẳng trang sản phẩm
+    rồi mới bấm Đồng ý trên banner.
+  */
+  document.addEventListener(
+    "melanie:tracking-consent-changed",
+    function (event) {
+      const detail = event.detail || {};
+
+      if (detail.allowed === true) {
+        trackCurrentProductView();
+      }
+    },
+  );
+
   await loadProductDetail();
   renderProductDetail();
 

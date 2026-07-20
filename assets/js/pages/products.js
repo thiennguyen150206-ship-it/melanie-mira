@@ -37,6 +37,38 @@ function getUrlParam(name) {
   return params.get(name);
 }
 
+/* =========================
+   Meta Pixel - Search
+   ========================= */
+
+function trackProductsSearchEvent(searchKeyword) {
+  const keyword = String(searchKeyword || "").trim();
+
+  if (
+    keyword === "" ||
+    !window.MelanieMetaPixel ||
+    typeof window.MelanieMetaPixel.trackStandardOnce !== "function"
+  ) {
+    return;
+  }
+
+  /*
+    Mỗi lần mở trang chỉ gửi một Search.
+    Nếu renderProducts() chạy lại vì đổi ngôn ngữ,
+    sự kiện sẽ không bị gửi trùng.
+  */
+  const dedupeKey = window.location.pathname + window.location.search;
+
+  window.MelanieMetaPixel.trackStandardOnce(
+    "Search",
+    dedupeKey,
+    {
+      search_string: keyword.slice(0, 100),
+    },
+    "memory",
+  );
+}
+
 let productSource = [];
 
 let productLoadError = "";
@@ -328,6 +360,8 @@ function renderProducts() {
 
   updateProductsSeo(categorySlug, searchKeyword, pageInfo);
 
+  trackProductsSearchEvent(searchKeyword);
+
   $("#productPageTitle").text(pageInfo.title);
 
   $(".filter-link").removeClass("active");
@@ -360,6 +394,21 @@ function renderProducts() {
 }
 
 $(document).ready(async function () {
+  /*
+    Trường hợp khách đang ở trang kết quả rồi mới bấm Đồng ý,
+    gửi Search sau khi quyền theo dõi được cấp.
+  */
+  document.addEventListener(
+    "melanie:tracking-consent-changed",
+    function (event) {
+      const detail = event.detail || {};
+
+      if (detail.allowed === true) {
+        trackProductsSearchEvent(getUrlParam("search"));
+      }
+    },
+  );
+
   await loadProducts();
   renderProducts();
 });
