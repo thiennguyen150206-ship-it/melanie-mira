@@ -1,13 +1,13 @@
 /*
   Local API:
-  http://localhost:5000/api
+  API_BASE_URL: "http://localhost:5000/api",
 
   Online API:
-  https://melanie-mira-backend.onrender.com/api
+   API_BASE_URL: "https://melanie-mira-backend.onrender.com/api",
 */
 
 window.MELANIE_MIRA_CONFIG = {
-  API_BASE_URL: " https://melanie-mira-backend.onrender.com/api",
+  API_BASE_URL: "https://melanie-mira-backend.onrender.com/api",
 
   /* Meta Pixel */
   META_PIXEL_ID: "1066701445752931",
@@ -18,6 +18,16 @@ window.MELANIE_MIRA_CONFIG = {
     Pixel chỉ hoạt động trên domain Melanie Mira.
   */
   META_PIXEL_ALLOW_LOCAL: false,
+
+  /* Google Analytics 4 */
+  GA4_MEASUREMENT_ID: "G-RKVHEMYNJT",
+  GA4_ENABLED: true,
+
+  /*
+  Không gửi dữ liệu localhost vào GA4 thật.
+  GA4 chỉ hoạt động trên domain Melanie Mira.
+*/
+  GA4_ALLOW_LOCAL: false,
 
   PAYMENT_QR_BASE_URL: "https://vietqr.app/img",
   PAYMENT_BANK_ACCOUNT: "068617012003",
