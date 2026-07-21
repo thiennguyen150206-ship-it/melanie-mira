@@ -1018,17 +1018,7 @@
     font-size: 14px;
   }
 }
-@media screen and (max-width: 768px) {
-  .shop-product-item:active .shop-product-img-main {
-    opacity: 0;
-    transform: scale(1.04);
-  }
 
-  .shop-product-item:active .shop-product-img-hover {
-    opacity: 1;
-    transform: scale(1.04);
-  }
-}
 @media screen and (max-width: 768px) {
   .shipping-method-box {
     padding: 16px;
@@ -1952,5 +1942,65 @@
 @media screen and (max-width: 768px) {
   .index-page-body .index-fixed-header {
     top: 22px;
+  }
+}
+/* =========================
+   Product skeleton responsive
+   ========================= */
+
+@media screen and (max-width: 992px) {
+  .skeleton-detail-image {
+    width: 100%;
+    height: 620px;
+  }
+
+  .recommend-skeleton-image {
+    height: 230px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .product-skeleton-info {
+    padding-top: 10px;
+  }
+
+  .product-skeleton-name {
+    height: 13px;
+  }
+
+  .product-skeleton-price {
+    height: 15px;
+  }
+
+  .skeleton-detail-image {
+    height: 620px;
+  }
+
+  .skeleton-detail-title {
+    width: 88%;
+    height: 18px;
+  }
+
+  .skeleton-detail-title.short {
+    width: 58%;
+  }
+
+  .skeleton-detail-price {
+    width: 95px;
+    height: 22px;
+  }
+
+  .recommend-skeleton-image {
+    height: 220px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .skeleton-detail-image {
+    height: 540px;
+  }
+
+  .recommend-skeleton-image {
+    height: 210px;
   }
 }

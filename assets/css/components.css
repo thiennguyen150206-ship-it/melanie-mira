@@ -1350,12 +1350,18 @@
   z-index: 2;
 }
 
-.shop-product-item:hover .shop-product-img-main {
+/*
+  Chỉ chuyển sang ảnh hover sau khi
+  JavaScript xác nhận ảnh đã tải xong.
+*/
+.shop-product-item.is-hover-image-ready:hover .shop-product-img-main,
+.shop-product-item.is-hover-image-ready:focus .shop-product-img-main {
   opacity: 0;
   transform: scale(1.04);
 }
 
-.shop-product-item:hover .shop-product-img-hover {
+.shop-product-item.is-hover-image-ready:hover .shop-product-img-hover,
+.shop-product-item.is-hover-image-ready:focus .shop-product-img-hover {
   opacity: 1;
   transform: scale(1.04);
 }
@@ -5289,4 +5295,153 @@
   transform: translateY(-110%);
   opacity: 0;
   pointer-events: none;
+}
+/* =========================
+   Product loading skeleton
+   Hiển thị trong lúc chờ API Render
+   ========================= */
+
+.skeleton-block {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  background-color: #efeeec;
+}
+
+.skeleton-block::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.75),
+    transparent
+  );
+  animation: melanieSkeletonShimmer 1.35s infinite;
+}
+
+@keyframes melanieSkeletonShimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Products page skeleton */
+
+.product-skeleton-card {
+  width: 100%;
+}
+
+.product-skeleton-image {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+}
+
+.product-skeleton-info {
+  padding: 14px 4px 0;
+}
+
+.product-skeleton-name {
+  width: 92%;
+  height: 15px;
+  margin-bottom: 7px;
+  border-radius: 4px;
+}
+
+.product-skeleton-name.short {
+  width: 62%;
+}
+
+.product-skeleton-price {
+  width: 82px;
+  height: 17px;
+  margin-top: 12px;
+  border-radius: 4px;
+}
+
+/* Product detail skeleton */
+
+.product-detail-skeleton-image {
+  padding: 0;
+}
+
+.skeleton-detail-image {
+  width: 100%;
+  height: calc(100vh - 104px);
+}
+
+.skeleton-detail-title {
+  width: 310px;
+  max-width: 100%;
+  height: 21px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+
+.skeleton-detail-title.short {
+  width: 210px;
+}
+
+.skeleton-detail-price {
+  width: 105px;
+  height: 26px;
+  border-radius: 4px;
+}
+
+.skeleton-detail-text {
+  width: 100%;
+  height: 13px;
+  margin-bottom: 9px;
+  border-radius: 4px;
+}
+
+.skeleton-detail-text.short {
+  width: 68%;
+}
+
+.skeleton-detail-size {
+  width: 24px;
+  height: 18px;
+  border-radius: 4px;
+}
+
+.skeleton-detail-message {
+  width: 230px;
+  max-width: 100%;
+  height: 13px;
+  margin-top: 9px;
+  border-radius: 4px;
+}
+
+/* Recommended product skeleton */
+
+.recommend-skeleton-item {
+  pointer-events: none;
+}
+
+.recommend-skeleton-image {
+  width: 100%;
+  height: 165px;
+}
+
+.recommend-skeleton-name {
+  width: 90%;
+  height: 12px;
+  margin-top: 8px;
+  border-radius: 4px;
+}
+
+.recommend-skeleton-price {
+  width: 65px;
+  height: 13px;
+  margin-top: 7px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-block::after {
+    animation: none;
+  }
 }

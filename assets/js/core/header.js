@@ -31,7 +31,6 @@ function formatCartMoney(price) {
 
 let headerSearchProducts = [];
 let headerSearchTimer = null;
-let isLoadingHeaderSearchProducts = false;
 
 const HEADER_SEARCH_LIMIT = 6;
 
@@ -60,62 +59,25 @@ function isHeaderLocalDevHost() {
   );
 }
 
-function convertHeaderApiProduct(product) {
-  return {
-    id: product.id,
-    slug: product.slug,
-    productSlug: product.slug,
-    nameVi: product.name_vi,
-    nameEn: product.name_en,
-    categoryVi: product.category_vi,
-    categoryEn: product.category_en,
-    categorySlug: product.category_slug,
-    price: Number(product.price || 0),
-    oldPrice: product.old_price ? Number(product.old_price) : null,
-    image: product.image,
-    hoverImage: product.hover_image,
-    badge: product.badge,
-    descriptionVi: product.description_vi,
-    descriptionEn: product.description_en,
-  };
-}
-
 async function loadHeaderSearchProducts() {
   if (headerSearchProducts.length > 0) {
     return headerSearchProducts;
   }
 
-  if (isLoadingHeaderSearchProducts) {
-    return headerSearchProducts;
-  }
-
-  isLoadingHeaderSearchProducts = true;
-
   try {
-    const response = await fetch(API_BASE_URL + "/products");
-    const result = await response.json();
-
-    if (!response.ok || !result.success) {
-      throw new Error(result.message || "Cannot load products");
-    }
-
-    headerSearchProducts = result.data.map(function (product) {
-      return convertHeaderApiProduct(product);
-    });
+    /*
+      Dùng chung Promise và cache với products.js.
+      Không tự gọi GET /products riêng nữa.
+    */
+    headerSearchProducts = await window.MelanieProductApi.getProducts();
   } catch (error) {
     console.log("Cannot load header search products:", error);
 
-    /*
-      Chỉ fallback products-data.js khi test local.
-      Trên domain thật không fallback để tránh hiện dữ liệu/ảnh cũ.
-    */
     if (isHeaderLocalDevHost() && typeof products !== "undefined") {
       headerSearchProducts = products;
     } else {
       headerSearchProducts = [];
     }
-  } finally {
-    isLoadingHeaderSearchProducts = false;
   }
 
   return headerSearchProducts;

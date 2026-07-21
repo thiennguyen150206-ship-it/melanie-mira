@@ -81,47 +81,17 @@ function isLocalDevHost() {
   );
 }
 
-function convertApiProduct(product) {
-  return {
-    id: product.id,
-    slug: product.slug,
-    productSlug: product.slug,
-    nameVi: product.name_vi,
-    nameEn: product.name_en,
-    categoryVi: product.category_vi,
-    categoryEn: product.category_en,
-    categorySlug: product.category_slug,
-    price: Number(product.price),
-    oldPrice: product.old_price ? Number(product.old_price) : null,
-    image: product.image,
-    hoverImage: product.hover_image,
-    images: product.images || [],
-    badge: product.badge,
-    descriptionVi: product.description_vi,
-    descriptionEn: product.description_en,
-  };
-}
-
 async function loadProducts() {
   productLoadError = "";
 
   try {
-    let response = await fetch(API_BASE_URL + "/products");
-    let result = await response.json();
-
-    if (!response.ok || !result.success) {
-      throw new Error(result.message || "Cannot load products from API");
-    }
-
-    productSource = result.data.map(function (product) {
-      return convertApiProduct(product);
-    });
+    productSource = await window.MelanieProductApi.getProducts();
   } catch (error) {
     console.log("Cannot load products from API:", error);
 
     /*
       Chỉ fallback products-data.js khi test local.
-      Trên domain thật, không fallback để tránh hiện ảnh cũ trong project.
+      Trên domain thật không dùng dữ liệu cũ.
     */
     if (isLocalDevHost() && typeof products !== "undefined") {
       productSource = products;
@@ -129,7 +99,9 @@ async function loadProducts() {
     }
 
     productSource = [];
+
     productLoadError =
+      error.message ||
       "Không thể tải sản phẩm từ hệ thống. Vui lòng thử lại sau.";
   }
 }
@@ -270,16 +242,26 @@ function updateProductsSeo(categorySlug, searchKeyword, pageInfo) {
   $("#seoTwitterDescription").attr("content", description);
 }
 
-function createProductItem(product) {
-  let hoverImage = product.hoverImage || product.images?.[1] || product.image;
+function createProductItem(product, productIndex) {
+  const hoverImage = product.hoverImage || product.images?.[1] || product.image;
 
-  let productSlug = product.slug || product.productSlug || "";
+  const productSlug = product.slug || product.productSlug || "";
 
-  let detailUrl = productSlug
+  const detailUrl = productSlug
     ? "product-detail.html?slug=" + encodeURIComponent(productSlug)
     : product.id
       ? "product-detail.html?id=" + encodeURIComponent(product.id)
       : "products.html";
+
+  /*
+    Bốn sản phẩm đầu thường nằm trong màn hình đầu tiên.
+    Các sản phẩm còn lại được lazy load.
+  */
+  const isPriorityProduct = productIndex < 4;
+
+  const loadingMode = isPriorityProduct ? "eager" : "lazy";
+
+  const fetchPriority = isPriorityProduct ? "high" : "low";
 
   return `
     <div class="col-lg-3 col-md-4 col-6">
@@ -289,22 +271,94 @@ function createProductItem(product) {
             class="shop-product-img-main"
             src="${product.image}"
             alt="${getProductName(product)}"
+            loading="${loadingMode}"
+            fetchpriority="${fetchPriority}"
+            decoding="async"
           />
 
           <img
             class="shop-product-img-hover"
-            src="${hoverImage}"
-            alt="${getProductName(product)}"
+            data-hover-src="${hoverImage}"
+            alt=""
+            aria-hidden="true"
+            decoding="async"
           />
         </div>
 
         <div class="shop-product-info">
           <h3>${getProductName(product)}</h3>
-       ${createProductPriceHtml(product)}
+          ${createProductPriceHtml(product)}
         </div>
       </a>
     </div>
   `;
+}
+
+function loadProductHoverImage(productItem) {
+  const item = $(productItem);
+
+  const hoverImage = item.find(".shop-product-img-hover").get(0);
+
+  if (!hoverImage) {
+    return;
+  }
+
+  /*
+    Không tải lại nếu ảnh đang tải,
+    đã tải xong hoặc từng bị lỗi.
+  */
+  if (hoverImage.dataset.hoverState) {
+    return;
+  }
+
+  const hoverSrc = String(hoverImage.dataset.hoverSrc || "").trim();
+
+  if (hoverSrc === "") {
+    return;
+  }
+
+  hoverImage.dataset.hoverState = "loading";
+
+  hoverImage.addEventListener(
+    "load",
+    function () {
+      hoverImage.dataset.hoverState = "loaded";
+
+      /*
+        Chỉ cho phép chuyển ảnh sau khi
+        ảnh hover đã tải hoàn chỉnh.
+      */
+      item.addClass("is-hover-image-ready");
+    },
+    {
+      once: true,
+    },
+  );
+
+  hoverImage.addEventListener(
+    "error",
+    function () {
+      hoverImage.dataset.hoverState = "error";
+    },
+    {
+      once: true,
+    },
+  );
+
+  hoverImage.src = hoverSrc;
+}
+
+function initProductHoverImageLoading() {
+  /*
+    Desktop: tải ảnh khi rê chuột vào card.
+    Bàn phím: tải khi tab tới card.
+
+    Không dùng touchstart để mobile
+    không tải ảnh hover không cần thiết.
+  */
+  $(document).on("mouseenter focusin", ".shop-product-item", function () {
+    loadProductHoverImage(this);
+  });
 }
 
 function productMatchesSearch(product, keyword) {
@@ -323,6 +377,37 @@ function productMatchesSearch(product, keyword) {
     .toLowerCase();
 
   return searchText.includes(keyword);
+}
+
+function renderProductsSkeleton() {
+  let html = "";
+
+  /*
+    Hiển thị 8 card giả trong lúc chờ API.
+    Desktop tương ứng 2 hàng, mobile tương ứng 4 hàng.
+  */
+  for (let i = 0; i < 8; i++) {
+    html += `
+      <div
+        class="col-lg-3 col-md-4 col-6"
+        aria-hidden="true"
+      >
+        <div class="product-skeleton-card">
+          <div class="skeleton-block product-skeleton-image"></div>
+
+          <div class="product-skeleton-info">
+            <div class="skeleton-block product-skeleton-name"></div>
+            <div class="skeleton-block product-skeleton-name short"></div>
+            <div class="skeleton-block product-skeleton-price"></div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  $("#productsEmpty").hide();
+
+  $("#productsList").attr("aria-busy", "true").html(html);
 }
 
 function renderProducts() {
@@ -375,10 +460,10 @@ function renderProducts() {
   let html = "";
 
   for (let i = 0; i < result.length; i++) {
-    html += createProductItem(result[i]);
+    html += createProductItem(result[i], i);
   }
 
-  $("#productsList").html(html);
+  $("#productsList").attr("aria-busy", "false").html(html);
 
   if (result.length === 0) {
     if (productLoadError) {
@@ -394,6 +479,8 @@ function renderProducts() {
 }
 
 $(document).ready(async function () {
+  initProductHoverImageLoading();
+  renderProductsSkeleton();
   /*
     Trường hợp khách đang ở trang kết quả rồi mới bấm Đồng ý,
     gửi Search sau khi quyền theo dõi được cấp.

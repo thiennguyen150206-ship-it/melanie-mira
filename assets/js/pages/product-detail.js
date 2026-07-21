@@ -91,57 +91,6 @@ function findProductBySlugOrId(productList, slug, productId) {
   return null;
 }
 
-async function loadPublicProductsFromApi() {
-  let response = await fetch(API_BASE_URL + "/products");
-  let result = await response.json();
-
-  if (!response.ok || !result.success) {
-    throw new Error(result.message || "Cannot load products from API");
-  }
-
-  return result.data.map(function (product) {
-    return convertApiProduct(product);
-  });
-}
-
-function convertApiProduct(product) {
-  let images = [];
-
-  if (product.images && product.images.length > 0) {
-    images = product.images.map(function (item) {
-      return item.image_url;
-    });
-  }
-
-  if (images.length === 0) {
-    images = [product.image];
-
-    if (product.hover_image) {
-      images.push(product.hover_image);
-    }
-  }
-
-  return {
-    id: product.id,
-    slug: product.slug,
-    nameVi: product.name_vi,
-    nameEn: product.name_en,
-    categoryVi: product.category_vi,
-    categoryEn: product.category_en,
-    categorySlug: product.category_slug,
-    price: Number(product.price),
-    oldPrice: product.old_price ? Number(product.old_price) : null,
-    image: product.image,
-    hoverImage: product.hover_image,
-    images: images,
-    badge: product.badge,
-    descriptionVi: product.description_vi,
-    descriptionEn: product.description_en,
-    sizes: product.sizes || [],
-    sizeGuideImage: product.size_guide_image,
-  };
-}
-
 function getAbsoluteProductImageUrl(imageUrl) {
   const fallbackImage =
     "https://melaniemira.com.vn/assets/img/banners/banners-desktop.jpg";
@@ -360,69 +309,146 @@ function updateProductNotFoundSeo() {
     scriptElement.textContent = "{}";
   }
 }
-
 async function loadProductDetail() {
-  let slug = getProductSlugFromUrl();
-  let productId = getProductIdFromUrl();
+  const slug = getProductSlugFromUrl();
+  const productId = getProductIdFromUrl();
 
   currentProduct = null;
   productSource = [];
 
-  try {
+  /*
+    Trường hợp URL đã có slug:
+    lấy thẳng chi tiết sản phẩm, không tải danh sách trước.
+  */
+  if (slug) {
+    try {
+      currentProduct = await window.MelanieProductApi.getProductBySlug(slug);
+
+      return;
+    } catch (error) {
+      console.log("Cannot load product directly by slug:", error);
+    }
+
     /*
-      Load danh sách sản phẩm từ API trước.
-      Nhờ vậy nếu vào bằng ?id=8 vẫn tìm được slug từ database,
-      rồi tiếp tục lấy chi tiết theo slug.
+      API chi tiết lỗi thì thử tìm sản phẩm
+      trong danh sách API/cache trước khi fallback local.
     */
-    productSource = await loadPublicProductsFromApi();
+    try {
+      productSource = await window.MelanieProductApi.getProducts();
 
-    let targetSlug = slug;
+      currentProduct = findProductBySlugOrId(productSource, slug, null);
 
-    if (!targetSlug && productId) {
-      let productFromList = findProductBySlugOrId(
+      if (currentProduct) {
+        return;
+      }
+    } catch (error) {
+      console.log("Cannot find product from public products:", error);
+    }
+  }
+
+  /*
+    URL cũ dùng ?id=...
+    Cần lấy danh sách để tìm slug tương ứng.
+  */
+  if (!slug && productId) {
+    try {
+      productSource = await window.MelanieProductApi.getProducts();
+
+      const productFromList = findProductBySlugOrId(
         productSource,
         null,
         productId,
       );
 
       if (productFromList && productFromList.slug) {
-        targetSlug = productFromList.slug;
+        try {
+          currentProduct = await window.MelanieProductApi.getProductBySlug(
+            productFromList.slug,
+          );
+        } catch (error) {
+          /*
+            API chi tiết lỗi thì vẫn dùng dữ liệu
+            cơ bản từ danh sách sản phẩm.
+          */
+          currentProduct = productFromList;
+        }
+      } else {
+        currentProduct = productFromList;
       }
-    }
 
-    if (targetSlug) {
-      let response = await fetch(
-        API_BASE_URL + "/products/" + encodeURIComponent(targetSlug),
-      );
-
-      let result = await response.json();
-
-      if (response.ok && result.success) {
-        currentProduct = convertApiProduct(result.data);
+      if (currentProduct) {
+        return;
       }
+    } catch (error) {
+      console.log("Cannot load product detail by id:", error);
     }
-
-    /*
-      Nếu API chi tiết chưa lấy được, dùng danh sách API vừa load.
-      Vẫn là dữ liệu database, không phải ảnh cũ trong project.
-    */
-    if (!currentProduct) {
-      currentProduct = findProductBySlugOrId(productSource, slug, productId);
-    }
-
-    return;
-  } catch (error) {
-    console.log("Cannot load product detail from API:", error);
   }
 
   /*
-    Chỉ fallback local khi test local.
-    Trên domain thật không dùng products-data.js để tránh hiện ảnh cũ.
+    Chỉ dùng products-data.js khi chạy local.
+    Website online không hiện ảnh/dữ liệu cũ.
   */
   if (isLocalDevHost() && typeof products !== "undefined") {
     productSource = products;
+
     currentProduct = findProductBySlugOrId(products, slug, productId);
   }
+}
+
+async function loadRecommendProductsLater() {
+  if (!currentProduct) {
+    return;
+  }
+
+  try {
+    /*
+      Danh sách sản phẩm chỉ dùng cho phần gợi ý.
+      Sản phẩm chính đã được render trước đó.
+    */
+    productSource = await window.MelanieProductApi.getProducts();
+
+    renderRecommendProducts(currentProduct);
+  } catch (error) {
+    console.log("Cannot load recommended products:", error);
+
+    /*
+      Local có thể dùng dữ liệu mẫu để test.
+    */
+    if (isLocalDevHost() && typeof products !== "undefined") {
+      productSource = products;
+      renderRecommendProducts(currentProduct);
+      return;
+    }
+
+    $("#recommendProducts").empty();
+  }
+}
+
+function scheduleRecommendProductsLoad() {
+  if (!currentProduct) {
+    return;
+  }
+
+  /*
+    Chờ trình duyệt render sản phẩm chính trước,
+    sau đó mới tải danh sách gợi ý.
+  */
+  if ("requestIdleCallback" in window) {
+    window.requestIdleCallback(
+      function () {
+        loadRecommendProductsLater();
+      },
+      {
+        timeout: 1500,
+      },
+    );
+
+    return;
+  }
+
+  setTimeout(function () {
+    loadRecommendProductsLater();
+  }, 200);
 }
 
 function createProductImages(product) {
@@ -616,13 +642,31 @@ function animateProductToCart() {
 }
 
 function renderProductImages(product) {
-  let images = createProductImages(product);
+  const images = createProductImages(product);
+
+  const productName = escapeProductDetailHtml(getProductName(product));
+
   let html = "";
 
   for (let i = 0; i < images.length; i++) {
+    const imageUrl = escapeProductDetailHtml(images[i]);
+
+    /*
+      Ảnh đầu tiên hiển thị ngay khi mở trang.
+      Những ảnh còn lại chỉ tải khi người dùng cuộn gần tới.
+    */
+    const loadingMode = i === 0 ? "eager" : "lazy";
+    const fetchPriority = i === 0 ? "high" : "low";
+
     html += `
       <div class="product-detail-image-item">
-        <img src="${images[i]}" alt="${getProductName(product)}" />
+        <img
+          src="${imageUrl}"
+          alt="${productName}"
+          loading="${loadingMode}"
+          fetchpriority="${fetchPriority}"
+          decoding="async"
+        />
       </div>
     `;
   }
@@ -976,9 +1020,12 @@ function renderRecommendProducts(product) {
   for (let i = 0; i < suggestProducts.length; i++) {
     html += `
    <a href="${getProductDetailLink(suggestProducts[i])}" class="recommend-item">
-       <img
-  src="${suggestProducts[i].image}"
-  alt="${getProductName(suggestProducts[i])}"
+     <img
+  src="${escapeProductDetailHtml(suggestProducts[i].image)}"
+  alt="${escapeProductDetailHtml(getProductName(suggestProducts[i]))}"
+  loading="lazy"
+  fetchpriority="low"
+  decoding="async"
 />
 <h4>${getProductName(suggestProducts[i])}</h4>
         <p>${formatMoney(suggestProducts[i].price)}</p>
@@ -986,7 +1033,82 @@ function renderRecommendProducts(product) {
     `;
   }
 
-  $("#recommendProducts").html(html);
+  $("#recommendProducts").attr("aria-busy", "false").html(html);
+}
+
+function renderProductDetailSkeleton() {
+  /*
+    Khung ảnh chính.
+  */
+  $("#productDetailGallery").attr("aria-busy", "true").html(`
+      <div
+        class="product-detail-image-item product-detail-skeleton-image"
+        aria-hidden="true"
+      >
+        <div class="skeleton-block skeleton-detail-image"></div>
+      </div>
+    `);
+
+  /*
+    Khung tên và giá.
+  */
+  $("#detailName").html(`
+    <span class="skeleton-block skeleton-detail-title"></span>
+    <span class="skeleton-block skeleton-detail-title short"></span>
+  `);
+
+  $("#detailPrice").html(`
+    <div class="skeleton-block skeleton-detail-price"></div>
+  `);
+
+  /*
+    Khung nội dung chi tiết.
+  */
+  $("#detailInfoList").html(`
+    <div aria-hidden="true">
+      <div class="skeleton-block skeleton-detail-text"></div>
+      <div class="skeleton-block skeleton-detail-text"></div>
+      <div class="skeleton-block skeleton-detail-text short"></div>
+    </div>
+  `);
+
+  /*
+    Khung lựa chọn size.
+  */
+  $(".size-options").html(`
+    <span class="skeleton-block skeleton-detail-size"></span>
+    <span class="skeleton-block skeleton-detail-size"></span>
+    <span class="skeleton-block skeleton-detail-size"></span>
+  `);
+
+  $("#sizeMessage").html(`
+    <span class="skeleton-block skeleton-detail-message"></span>
+  `);
+
+  $("#btnOpenSizeGuide").hide();
+
+  $("#btnAddToCartDetail, #btnBuyNow").prop("disabled", true);
+
+  $(".product-detail-info").attr("aria-busy", "true");
+}
+
+function renderRecommendProductsSkeleton() {
+  let html = "";
+
+  for (let i = 0; i < 4; i++) {
+    html += `
+      <div
+        class="recommend-item recommend-skeleton-item"
+        aria-hidden="true"
+      >
+        <div class="skeleton-block recommend-skeleton-image"></div>
+        <div class="skeleton-block recommend-skeleton-name"></div>
+        <div class="skeleton-block recommend-skeleton-price"></div>
+      </div>
+    `;
+  }
+
+  $("#recommendProducts").attr("aria-busy", "true").html(html);
 }
 
 function renderProductDetail() {
@@ -1004,6 +1126,9 @@ function renderProductDetail() {
     return;
   }
 
+  $("#productDetailGallery").attr("aria-busy", "false");
+  $(".product-detail-info").attr("aria-busy", "false");
+
   /*
     Chuẩn hóa URL ?id=... thành ?slug=...
     mà không tải lại trang.
@@ -1016,7 +1141,12 @@ function renderProductDetail() {
 
   renderProductImages(currentProduct);
   renderProductInfo(currentProduct);
-  renderRecommendProducts(currentProduct);
+
+  /*
+  Phần gợi ý được tải riêng sau khi
+  sản phẩm chính đã hiển thị.
+*/
+  renderRecommendProductsSkeleton();
 }
 
 function addProductToCart() {
@@ -1212,6 +1342,8 @@ function initProductImageZoom() {
   });
 }
 $(document).ready(async function () {
+  renderProductDetailSkeleton();
+  renderRecommendProductsSkeleton();
   /*
     Trường hợp khách mở thẳng trang sản phẩm
     rồi mới bấm Đồng ý trên banner.
@@ -1229,6 +1361,8 @@ $(document).ready(async function () {
 
   await loadProductDetail();
   renderProductDetail();
+
+  scheduleRecommendProductsLoad();
 
   initProductImageZoom();
   initSizeGuideModal();
@@ -1272,9 +1406,12 @@ $(document).ready(async function () {
   $(document).on("melanie:order-created", async function () {
     selectedSize = "";
     currentProduct = null;
+    productSource = [];
 
     await loadProductDetail();
     renderProductDetail();
+
+    scheduleRecommendProductsLoad();
 
     $("#sizeMessage").text(t("product.sizeRequired"));
   });
