@@ -17,8 +17,18 @@ const { apiLimiter } = require("./middlewares/rateLimiter");
 const app = express();
 
 const allowedOrigins = [
+  /*
+    Website online.
+  */
   process.env.FRONTEND_URL,
   process.env.FRONTEND_URL_ALT,
+
+  /*
+    Frontend local dùng để test với
+    backend Render và database TiDB Cloud online.
+  */
+  process.env.FRONTEND_URL_LOCAL,
+  process.env.FRONTEND_URL_LOCAL_ALT,
 ].filter(Boolean);
 app.use(
   cors({
