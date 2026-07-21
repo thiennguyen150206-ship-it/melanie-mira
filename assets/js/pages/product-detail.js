@@ -826,6 +826,12 @@ function renderProductSizes(product) {
     $("#btnAddToCartDetail").prop("disabled", true);
     $("#btnBuyNow").prop("disabled", true);
   } else {
+    /*
+    Sản phẩm còn hàng và khách chưa thao tác:
+    không hiện thông báo hay skeleton.
+  */
+    $("#sizeMessage").empty();
+
     $("#btnAddToCartDetail").prop("disabled", false);
     $("#btnBuyNow").prop("disabled", false);
   }
@@ -1081,9 +1087,11 @@ function renderProductDetailSkeleton() {
     <span class="skeleton-block skeleton-detail-size"></span>
   `);
 
-  $("#sizeMessage").html(`
-    <span class="skeleton-block skeleton-detail-message"></span>
-  `);
+  /*
+  Không hiện skeleton ở khu vực thông báo size.
+  Khu vực này chỉ xuất hiện sau khi khách thao tác.
+*/
+  $("#sizeMessage").empty();
 
   $("#btnOpenSizeGuide").hide();
 
@@ -1413,6 +1421,6 @@ $(document).ready(async function () {
 
     scheduleRecommendProductsLoad();
 
-    $("#sizeMessage").text(t("product.sizeRequired"));
+    $("#sizeMessage").empty();
   });
 });

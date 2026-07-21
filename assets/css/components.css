@@ -1683,6 +1683,14 @@
   margin: 9px 0 0;
 }
 
+/*
+  Không chiếm khoảng trống khi khách
+  chưa chọn size hoặc chưa thao tác.
+*/
+.size-message:empty {
+  display: none;
+}
+
 /* Size guide link */
 .size-guide-row {
   display: flex;
@@ -5404,14 +5412,6 @@
 .skeleton-detail-size {
   width: 24px;
   height: 18px;
-  border-radius: 4px;
-}
-
-.skeleton-detail-message {
-  width: 230px;
-  max-width: 100%;
-  height: 13px;
-  margin-top: 9px;
   border-radius: 4px;
 }
 
