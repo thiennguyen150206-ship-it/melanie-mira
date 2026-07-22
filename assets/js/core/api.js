@@ -75,8 +75,16 @@ function normalizePublicProduct(product) {
   const mainImage = optimizePublicProductImageUrl(product.image);
 
   const hoverImage = optimizePublicProductImageUrl(product.hover_image);
+  /*
+  Chuẩn hóa danh sách ảnh ở trang chi tiết.
 
-  const images = rawImages
+  Quy tắc:
+  - Ảnh chính luôn đứng đầu.
+  - Chỉ thêm ảnh phụ do API trả về.
+  - Không đưa ảnh hover vào gallery.
+  - Không hiển thị ảnh trùng lặp.
+*/
+  const additionalImages = rawImages
     .map(function (item) {
       if (typeof item === "string") {
         return optimizePublicProductImageUrl(item);
@@ -92,12 +100,24 @@ function normalizePublicProduct(product) {
       return imageUrl !== "";
     });
 
-  if (images.length === 0 && mainImage) {
+  const images = [];
+
+  if (mainImage) {
     images.push(mainImage);
   }
 
-  if (hoverImage && !images.includes(hoverImage)) {
-    images.push(hoverImage);
+  for (const imageUrl of additionalImages) {
+    /*
+    Ảnh hover chỉ dùng trên card sản phẩm,
+    không được xuất hiện trong gallery chi tiết.
+  */
+    if (imageUrl === hoverImage) {
+      continue;
+    }
+
+    if (!images.includes(imageUrl)) {
+      images.push(imageUrl);
+    }
   }
   const sizes = Array.isArray(product.sizes)
     ? product.sizes.map(function (sizeItem) {
@@ -132,7 +152,11 @@ function normalizePublicProduct(product) {
 
     image: mainImage || images[0] || "",
 
-    hoverImage: hoverImage || images[1] || images[0] || "",
+    /*
+  Không dùng ảnh phụ làm ảnh hover dự phòng.
+  Không có ảnh hover thì giữ nguyên ảnh chính.
+*/
+    hoverImage: hoverImage || mainImage || images[0] || "",
     images: images,
 
     badge: product.badge,
