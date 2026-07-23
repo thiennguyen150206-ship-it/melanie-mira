@@ -119,21 +119,21 @@ INSERT INTO products (
     description_en
 )
 VALUES
-(1, 1, 'ARUL - Váy Đen Hai Dây Tafta', 'ARUL - Black Tafta Strappy Dress', 'arul', 488500, 520000, 'assets/img/products/ARUL/arul.webp', 'assets/img/products/ARUL/arul1.webp', 'New', 'Thiết kế dáng xòe thanh lịch, phù hợp đi tiệc và chụp ảnh.', 'An elegant flared design, perfect for parties and photoshoots.'),
+(1, 1, 'ARUL - Váy Đen Hai Dây Tafta', 'ARUL - Black Tafta Strappy Dress', 'arul', 488500, 520000, 'assets/img/products/ARUL/arul.jpg', 'assets/img/products/ARUL/arul1.jpg', 'New', 'Thiết kế dáng xòe thanh lịch, phù hợp đi tiệc và chụp ảnh.', 'An elegant flared design, perfect for parties and photoshoots.'),
 
-(2, 1, 'Đầm Nữ Đỏ LUNA Hai Dây Lụa', 'LUNA - Red Silk Strappy Dress', 'luna', 471500, 650000, 'assets/img/products/LUNA/luna.webp', 'assets/img/products/LUNA/luna1.webp', 'New', 'Chất liệu lụa mềm mại, phối ren nữ tính và nổi bật.', 'Soft silk fabric with feminine lace details for a standout look.'),
+(2, 1, 'Đầm Nữ Đỏ LUNA Hai Dây Lụa', 'LUNA - Red Silk Strappy Dress', 'luna', 471500, 650000, 'assets/img/products/LUNA/luna.jpg', 'assets/img/products/LUNA/luna1.jpg', 'New', 'Chất liệu lụa mềm mại, phối ren nữ tính và nổi bật.', 'Soft silk fabric with feminine lace details for a standout look.'),
 
-(3, 1, 'CAMI - Đầm Trắng Cúp Ngực Tafta', 'CAMI - White Tafta Bustier Dress', 'cami', 489562, 520000, 'assets/img/products/CAMI/cami.webp', 'assets/img/products/CAMI/cami1.webp', 'New', 'Dáng váy nhẹ nhàng, tôn dáng, phù hợp đi chơi và dự tiệc.', 'A soft and flattering dress style, suitable for outings and parties.'),
+(3, 1, 'CAMI - Đầm Trắng Cúp Ngực Tafta', 'CAMI - White Tafta Bustier Dress', 'cami', 489562, 520000, 'assets/img/products/CAMI/cami.jpg', 'assets/img/products/CAMI/cami1.jpg', 'New', 'Dáng váy nhẹ nhàng, tôn dáng, phù hợp đi chơi và dự tiệc.', 'A soft and flattering dress style, suitable for outings and parties.'),
 
-(4, 1, 'DONNA - Váy Xòe Nhiều Lớp Xếp Tầng', 'DONNA - Layered Flared Mini Dress', 'donna', 478895, 560000, 'assets/img/products/DONNA/donna.webp', 'assets/img/products/DONNA/donna1.webp', 'Sale', 'Thiết kế xếp tầng bồng bềnh, phù hợp phong cách nổi bật.', 'A layered flared design for a bold, feminine and eye-catching style.'),
+(4, 1, 'DONNA - Váy Xòe Nhiều Lớp Xếp Tầng', 'DONNA - Layered Flared Mini Dress', 'donna', 478895, 560000, 'assets/img/products/DONNA/donna.jpg', 'assets/img/products/DONNA/donna1.jpg', 'Sale', 'Thiết kế xếp tầng bồng bềnh, phù hợp phong cách nổi bật.', 'A layered flared design for a bold, feminine and eye-catching style.'),
 
-(5, 2, 'IVY - Áo Ren Cổ Vuông Tay Phồng', 'IVY - Square Neck Lace Puff Sleeve Top', 'ivy', 335187, 390000, 'assets/img/products/IVY/ivy.webp', 'assets/img/products/IVY/ivy1.webp', 'Hot', 'Áo ren nữ tính, dễ phối với chân váy hoặc quần dài.', 'A feminine lace top that pairs easily with skirts or trousers.'),
+(5, 2, 'IVY - Áo Ren Cổ Vuông Tay Phồng', 'IVY - Square Neck Lace Puff Sleeve Top', 'ivy', 335187, 390000, 'assets/img/products/IVY/ivy.jpg', 'assets/img/products/IVY/ivy1.jpg', 'Hot', 'Áo ren nữ tính, dễ phối với chân váy hoặc quần dài.', 'A feminine lace top that pairs easily with skirts or trousers.'),
 
-(6, 2, 'LIA - Áo Thun Trễ Vai Tay Dài', 'LIA - Off-Shoulder Long Sleeve Top', 'lia', 297687, 330000, 'assets/img/products/LIA/lia.webp', 'assets/img/products/LIA/lia1.webp', 'New', 'Chất vải co giãn, form ôm nhẹ, phù hợp mặc hằng ngày.', 'Stretchy fabric with a lightly fitted shape, suitable for everyday wear.'),
+(6, 2, 'LIA - Áo Thun Trễ Vai Tay Dài', 'LIA - Off-Shoulder Long Sleeve Top', 'lia', 297687, 330000, 'assets/img/products/LIA/lia.jpg', 'assets/img/products/LIA/lia1.jpg', 'New', 'Chất vải co giãn, form ôm nhẹ, phù hợp mặc hằng ngày.', 'Stretchy fabric with a lightly fitted shape, suitable for everyday wear.'),
 
-(7, 3, 'CHARVI SET - Set Gile Linen Cổ Yếm', 'CHARVI SET - Linen Halter Vest Set', 'charvi-set', 145250, 215000, 'assets/img/products/CHARVI SET/charvi.webp', 'assets/img/products/CHARVI SET/charvi1.webp', 'Office', 'Set quần áo thanh lịch, phù hợp đi làm hoặc gặp khách hàng.', 'An elegant set, suitable for work, meetings or polished daily outfits.'),
+(7, 3, 'CHARVI SET - Set Gile Linen Cổ Yếm', 'CHARVI SET - Linen Halter Vest Set', 'charvi-set', 145250, 215000, 'assets/img/products/CHARVI SET/charvi.jpg', 'assets/img/products/CHARVI SET/charvi1.jpg', 'Office', 'Set quần áo thanh lịch, phù hợp đi làm hoặc gặp khách hàng.', 'An elegant set, suitable for work, meetings or polished daily outfits.'),
 
-(8, 2, 'Áo Ống Croptop Nữ', 'Women''s Tube Croptop', 'croptop', 389000, 450000, 'assets/img/products/CROPTOP/croptop.webp', 'assets/img/products/CROPTOP/croptop1.webp', 'New', 'Áo croptop co giãn, dễ phối đồ, phù hợp đi chơi hoặc dạo phố.', 'A stretchy croptop that is easy to style for casual outings or streetwear looks.');
+(8, 2, 'Áo Ống Croptop Nữ', 'Women''s Tube Croptop', 'croptop', 389000, 450000, 'assets/img/products/CROPTOP/croptop.jpg', 'assets/img/products/CROPTOP/croptop1.jpg', 'New', 'Áo croptop co giãn, dễ phối đồ, phù hợp đi chơi hoặc dạo phố.', 'A stretchy croptop that is easy to style for casual outings or streetwear looks.');
 
 INSERT INTO product_sizes (product_id, size, stock)
 VALUES

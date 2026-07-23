@@ -13,33 +13,20 @@
     <meta name="robots" content="index, follow" />
 
     <link rel="canonical" href="https://melaniemira.com.vn/" />
-
-    <!-- Mobile chỉ tải kích thước phù hợp với màn hình -->
+    <!-- Mobile ưu tiên banner gốc dành riêng cho mobile -->
     <link
       rel="preload"
       as="image"
-      type="image/webp"
-      href="assets/img/banners/banners-mobile-720.webp"
-      imagesrcset="
-    assets/img/banners/banners-mobile-720.webp 720w,
-    assets/img/banners/banners-mobile-1080.webp 1080w
-  "
-      imagesizes="100vw"
+      href="assets/img/banners/banners-mobile.jpg"
       media="(max-width: 768px)"
       fetchpriority="high"
     />
 
-    <!-- Desktop ưu tiên hero đầu, không tải bản 3780px -->
+    <!-- Desktop ưu tiên banner gốc độ phân giải cao -->
     <link
       rel="preload"
       as="image"
-      type="image/webp"
-      href="assets/img/banners/banners-desktop-1920.webp"
-      imagesrcset="
-    assets/img/banners/banners-desktop-1280.webp 1280w,
-    assets/img/banners/banners-desktop-1920.webp 1920w
-  "
-      imagesizes="100vw"
+      href="assets/img/banners/banners-desktop.jpg"
       media="(min-width: 769px)"
       fetchpriority="high"
     />
@@ -297,26 +284,6 @@
         <div class="hero-slide">
           <picture>
             <source
-              type="image/webp"
-              media="(max-width: 768px)"
-              srcset="
-                assets/img/banners/banners-mobile-720.webp   720w,
-                assets/img/banners/banners-mobile-1080.webp 1080w
-              "
-              sizes="100vw"
-            />
-
-            <source
-              type="image/webp"
-              media="(min-width: 769px)"
-              srcset="
-                assets/img/banners/banners-desktop-1280.webp 1280w,
-                assets/img/banners/banners-desktop-1920.webp 1920w
-              "
-              sizes="100vw"
-            />
-
-            <source
               media="(max-width: 768px)"
               srcset="assets/img/banners/banners-mobile.jpg"
             />
@@ -334,26 +301,6 @@
         <!-- Banner 2 -->
         <div class="hero-slide">
           <picture>
-            <source
-              type="image/webp"
-              media="(max-width: 768px)"
-              srcset="
-                assets/img/banners/banners2-mobile-720.webp   720w,
-                assets/img/banners/banners2-mobile-1080.webp 1080w
-              "
-              sizes="100vw"
-            />
-
-            <source
-              type="image/webp"
-              media="(min-width: 769px)"
-              srcset="
-                assets/img/banners/banners2-desktop-1280.webp 1280w,
-                assets/img/banners/banners2-desktop-1920.webp 1920w
-              "
-              sizes="100vw"
-            />
-
             <source
               media="(max-width: 768px)"
               srcset="assets/img/banners/banners2-mobile.jpg"
@@ -373,26 +320,6 @@
         <div class="hero-slide">
           <picture>
             <source
-              type="image/webp"
-              media="(max-width: 768px)"
-              srcset="
-                assets/img/banners/banners3-mobile-720.webp   720w,
-                assets/img/banners/banners3-mobile-1080.webp 1080w
-              "
-              sizes="100vw"
-            />
-
-            <source
-              type="image/webp"
-              media="(min-width: 769px)"
-              srcset="
-                assets/img/banners/banners3-desktop-1280.webp 1280w,
-                assets/img/banners/banners3-desktop-1920.webp 1920w
-              "
-              sizes="100vw"
-            />
-
-            <source
               media="(max-width: 768px)"
               srcset="assets/img/banners/banners3-mobile.jpg"
             />
@@ -410,26 +337,6 @@
         <!-- Banner 1 clone: dùng để tạo hiệu ứng cuộn liên tục -->
         <div class="hero-slide hero-slide-clone">
           <picture>
-            <source
-              type="image/webp"
-              media="(max-width: 768px)"
-              srcset="
-                assets/img/banners/banners-mobile-720.webp   720w,
-                assets/img/banners/banners-mobile-1080.webp 1080w
-              "
-              sizes="100vw"
-            />
-
-            <source
-              type="image/webp"
-              media="(min-width: 769px)"
-              srcset="
-                assets/img/banners/banners-desktop-1280.webp 1280w,
-                assets/img/banners/banners-desktop-1920.webp 1920w
-              "
-              sizes="100vw"
-            />
-
             <source
               media="(max-width: 768px)"
               srcset="assets/img/banners/banners-mobile.jpg"
@@ -459,7 +366,7 @@
         playsinline
         webkit-playsinline
         preload="none"
-        data-poster="assets/img/banners/banner-ngang-960.webp"
+        data-poster="assets/img/banners/banner-ngang.jpg"
         data-src="assets/videos/home-video.mp4"
         tabindex="-1"
         aria-hidden="true"
@@ -473,14 +380,9 @@
     <!-- Extra horizontal banner 1 -->
     <section class="home-extra-banner home-horizontal-banner">
       <img
-        src="assets/img/banners/banner-ngang-960.webp"
-        srcset="
-          assets/img/banners/banner-ngang-960.webp   960w,
-          assets/img/banners/banner-ngang-1920.webp 1920w
-        "
-        sizes="100vw"
-        width="1920"
-        height="960"
+        src="assets/img/banners/banner-ngang.jpg"
+        width="3780"
+        height="1890"
         alt="Melanie Mira Banner"
         loading="lazy"
         decoding="async"
@@ -493,14 +395,9 @@
       class="home-extra-banner home-horizontal-banner home-horizontal-banner-secondary"
     >
       <img
-        src="assets/img/banners/banner-ngang-2-960.webp"
-        srcset="
-          assets/img/banners/banner-ngang-2-960.webp   960w,
-          assets/img/banners/banner-ngang-2-1920.webp 1920w
-        "
-        sizes="100vw"
-        width="1920"
-        height="960"
+        src="assets/img/banners/banner-ngang-2.jpg"
+        width="3780"
+        height="1890"
         alt="Melanie Mira Second Banner"
         loading="lazy"
         decoding="async"
@@ -511,12 +408,7 @@
     <!-- Extra vertical banner -->
     <section class="home-extra-banner home-vertical-banner">
       <img
-        src="assets/img/banners/banner-doc-720.webp"
-        srcset="
-          assets/img/banners/banner-doc-720.webp   720w,
-          assets/img/banners/banner-doc-1080.webp 1080w
-        "
-        sizes="100vw"
+        src="assets/img/banners/banner-doc.jpg"
         width="1080"
         height="1600"
         alt="Melanie Mira Vertical Banner"
@@ -540,7 +432,7 @@
             <picture>
               <source
                 media="(max-width: 768px)"
-                srcset="assets/img/products/CAMI/cami.webp"
+                srcset="assets/img/products/CAMI/cami.jpg"
               />
               <img
                 src="assets/img/categories/cateCAMI-desktop.jpg"
@@ -566,7 +458,7 @@
             <picture>
               <source
                 media="(max-width: 768px)"
-                srcset="assets/img/products/ARUL/arul.webp"
+                srcset="assets/img/products/ARUL/arul.jpg"
               />
               <img
                 src="assets/img/categories/cateARUL-desktop.jpg"
@@ -592,7 +484,7 @@
             <picture>
               <source
                 media="(max-width: 768px)"
-                srcset="assets/img/products/LIA/lia.webp"
+                srcset="assets/img/products/LIA/lia.jpg"
               />
               <img
                 src="assets/img/categories/cateLIA-desktop.jpg"
@@ -632,7 +524,7 @@
           data-index="0"
         >
           <img
-            src="assets/img/products/CHARVI SET/charvi.webp"
+            src="assets/img/products/CHARVI SET/charvi.jpg"
             alt="Bộ"
             loading="lazy"
             decoding="async"
@@ -655,7 +547,7 @@
           data-index="1"
         >
           <img
-            src="assets/img/products/LUNA/luna.webp"
+            src="assets/img/products/LUNA/luna.jpg"
             alt="Váy"
             loading="lazy"
             decoding="async"
@@ -678,7 +570,7 @@
           data-index="2"
         >
           <img
-            src="assets/img/products/LIA/lia.webp"
+            src="assets/img/products/LIA/lia.jpg"
             alt="Áo"
             loading="lazy"
             decoding="async"
@@ -783,7 +675,7 @@
               <p class="footer-slogan">"Design your own vibes"</p>
 
               <img
-                src="assets/img/banners/banner-footer.webp"
+                src="assets/img/banners/banner-footer.jpg"
                 alt="Melanie Mira"
                 class="footer-brand-img"
                 loading="lazy"
