@@ -452,11 +452,13 @@ function scheduleRecommendProductsLoad() {
 }
 
 function createProductImages(product) {
-  if (product.images && product.images.length > 0) {
-    return product.images;
+  if (!product || !Array.isArray(product.images)) {
+    return [];
   }
 
-  return [product.image];
+  return product.images.filter(function (imageUrl) {
+    return String(imageUrl || "").trim() !== "";
+  });
 }
 
 function getProductSizeStock(product, size) {

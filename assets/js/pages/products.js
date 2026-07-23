@@ -243,8 +243,7 @@ function updateProductsSeo(categorySlug, searchKeyword, pageInfo) {
 }
 
 function createProductItem(product, productIndex) {
-  const hoverImage = product.hoverImage || product.images?.[1] || product.image;
-
+  const hoverImage = product.hoverImage || product.image;
   const productSlug = product.slug || product.productSlug || "";
 
   const detailUrl = productSlug

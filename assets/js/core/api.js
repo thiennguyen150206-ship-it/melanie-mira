@@ -12,7 +12,11 @@ const API_BASE_URL = window.MELANIE_MIRA_CONFIG.API_BASE_URL;
   - Không gọi GET /products nhiều lần trên cùng một trang.
   - Khi chuyển giữa các trang, sessionStorage giúp tải nhanh hơn.
 */
-const PUBLIC_PRODUCTS_CACHE_KEY = "melaniePublicProductsCacheV1";
+/*
+  Đổi cache key sau khi thay đổi cấu trúc gallery,
+  tránh dùng dữ liệu cũ đã chèn ảnh chính vào images.
+*/
+const PUBLIC_PRODUCTS_CACHE_KEY = "melaniePublicProductsCacheV3";
 const PUBLIC_PRODUCTS_CACHE_TTL_MS = 5 * 60 * 1000;
 const PUBLIC_API_TIMEOUT_MS = 30000;
 
@@ -20,44 +24,13 @@ let publicProductsMemoryCache = null;
 let publicProductsRequestPromise = null;
 
 /*
-  Tối ưu đường dẫn ảnh sản phẩm.
+  Giữ nguyên đường dẫn và chất lượng ảnh nguồn.
 
-  - Ảnh nằm trong frontend:
-    chuyển JPG/JPEG sang WebP đã tạo sẵn.
-
-  - Ảnh Cloudinary:
-    thêm f_auto và q_auto để Cloudinary
-    tự chọn định dạng, chất lượng phù hợp.
+  Không đổi JPG sang WebP.
+  Không thêm f_auto hoặc q_auto vào Cloudinary.
 */
 function optimizePublicProductImageUrl(imageUrl) {
-  const image = String(imageUrl || "").trim();
-
-  if (image === "") {
-    return "";
-  }
-
-  /*
-    Chỉ đổi ảnh sản phẩm local.
-    Không đổi ảnh bảng size hoặc banner.
-  */
-  if (/^\/?assets\/img\/products\/.+\.(jpg|jpeg)$/i.test(image)) {
-    return image.replace(/\.(jpg|jpeg)$/i, ".webp");
-  }
-
-  /*
-    Không thêm transformation lần thứ hai
-    nếu URL Cloudinary đã được tối ưu trước đó.
-  */
-  if (
-    /^https:\/\/res\.cloudinary\.com\//i.test(image) &&
-    image.includes("/image/upload/") &&
-    !image.includes("f_auto") &&
-    !image.includes("q_auto")
-  ) {
-    return image.replace("/image/upload/", "/image/upload/f_auto,q_auto/");
-  }
-
-  return image;
+  return String(imageUrl || "").trim();
 }
 
 /*
@@ -79,8 +52,8 @@ function normalizePublicProduct(product) {
   Chuẩn hóa danh sách ảnh ở trang chi tiết.
 
   Quy tắc:
-  - Ảnh chính luôn đứng đầu.
-  - Chỉ thêm ảnh phụ do API trả về.
+  - Gallery chỉ chứa ảnh phụ do API trả về.
+  - Không đưa ảnh chính vào gallery.
   - Không đưa ảnh hover vào gallery.
   - Không hiển thị ảnh trùng lặp.
 */
@@ -99,19 +72,18 @@ function normalizePublicProduct(product) {
     .filter(function (imageUrl) {
       return imageUrl !== "";
     });
+  /*
+  Gallery trang chi tiết chỉ gồm ảnh phụ.
 
+  Không đưa vào gallery:
+  - Ảnh chính.
+  - Ảnh hover.
+  - Ảnh phụ bị trùng.
+*/
   const images = [];
 
-  if (mainImage) {
-    images.push(mainImage);
-  }
-
   for (const imageUrl of additionalImages) {
-    /*
-    Ảnh hover chỉ dùng trên card sản phẩm,
-    không được xuất hiện trong gallery chi tiết.
-  */
-    if (imageUrl === hoverImage) {
+    if (imageUrl === mainImage || imageUrl === hoverImage) {
       continue;
     }
 
@@ -150,13 +122,23 @@ function normalizePublicProduct(product) {
     price: Number(product.price || 0),
     oldPrice: oldPriceValue,
 
-    image: mainImage || images[0] || "",
+    /*
+  Ảnh chính chỉ lấy từ trường image của sản phẩm.
+  Không dùng ảnh phụ làm ảnh chính dự phòng.
+*/
+    image: mainImage,
 
     /*
+  Ảnh hover chỉ lấy từ trường hover_image.
+
+  Nếu không có ảnh hover thì card giữ nguyên ảnh chính.
   Không dùng ảnh phụ làm ảnh hover dự phòng.
-  Không có ảnh hover thì giữ nguyên ảnh chính.
 */
-    hoverImage: hoverImage || mainImage || images[0] || "",
+    hoverImage: hoverImage || mainImage,
+
+    /*
+  Gallery trang chi tiết chỉ chứa ảnh phụ.
+*/
     images: images,
 
     badge: product.badge,
