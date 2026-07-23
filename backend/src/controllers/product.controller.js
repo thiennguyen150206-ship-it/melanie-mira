@@ -1191,25 +1191,34 @@ AND products.deleted_at IS NULL
 
     const product = products[0];
 
-    const [images] = await pool.query(
-      `
-      SELECT image_url, sort_order
-      FROM product_images
-      WHERE product_id = ?
-      ORDER BY sort_order ASC
-      `,
-      [product.id],
-    );
+    /*
+  Gallery và size không phụ thuộc nhau,
+  nên chạy đồng thời để giảm thời gian phản hồi.
+*/
+    const [imagesResult, sizesResult] = await Promise.all([
+      pool.query(
+        `
+    SELECT image_url, sort_order
+    FROM product_images
+    WHERE product_id = ?
+    ORDER BY sort_order ASC
+    `,
+        [product.id],
+      ),
 
-    const [sizes] = await pool.query(
-      `
-      SELECT size, stock
-      FROM product_sizes
-      WHERE product_id = ?
-      ORDER BY id ASC
-      `,
-      [product.id],
-    );
+      pool.query(
+        `
+    SELECT size, stock
+    FROM product_sizes
+    WHERE product_id = ?
+    ORDER BY id ASC
+    `,
+        [product.id],
+      ),
+    ]);
+
+    const images = imagesResult[0];
+    const sizes = sizesResult[0];
 
     res.json({
       success: true,

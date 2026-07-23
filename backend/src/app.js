@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
+const compression = require("compression");
 
 const pool = require("./config/db");
 const sendServerError = require("./utils/errorResponse");
@@ -15,6 +16,11 @@ const couponRoutes = require("./routes/coupon.routes");
 const { apiLimiter } = require("./middlewares/rateLimiter");
 
 const app = express();
+/*
+  Render chạy phía sau reverse proxy.
+  Giúp rate limiter nhận đúng IP của khách.
+*/
+app.set("trust proxy", 1);
 
 const allowedOrigins = [
   /*
@@ -53,6 +59,11 @@ app.use(
   }),
 );
 app.use(helmet());
+/*
+  Nén JSON API trước khi gửi về trình duyệt.
+  Không liên quan đến chất lượng file ảnh.
+*/
+app.use(compression());
 
 app.use(express.json({ limit: "50kb" }));
 app.use(express.urlencoded({ extended: true, limit: "50kb" }));

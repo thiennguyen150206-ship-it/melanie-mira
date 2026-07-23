@@ -19,6 +19,14 @@ const pool = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
+
+  /*
+  Giữ kết nối TCP tới database hoạt động,
+  giảm việc phải tạo lại kết nối khi có request mới.
+*/
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
+  connectTimeout: 10000,
 });
 
 module.exports = pool;
