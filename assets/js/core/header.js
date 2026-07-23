@@ -2,10 +2,60 @@
    HEADER - MELANIE MIRA
    ========================= */
 
-function getCart() {
-  return JSON.parse(localStorage.getItem("cart")) || [];
+/*
+  Chuẩn hóa đường dẫn ảnh sản phẩm cũ trong giỏ hàng.
+
+  Chỉ đổi ảnh sản phẩm local từ WebP sang JPG.
+  Không thay đổi URL ảnh Cloudinary.
+*/
+function normalizeCartImagePath(imageUrl) {
+  const imagePath = String(imageUrl || "").trim();
+
+  if (
+    imagePath.startsWith("assets/img/products/") &&
+    /\.webp(?:[?#].*)?$/i.test(imagePath)
+  ) {
+    return imagePath.replace(/\.webp(?=([?#]|$))/i, ".jpg");
+  }
+
+  return imagePath;
 }
 
+function getCart() {
+  let cart;
+
+  try {
+    cart = JSON.parse(localStorage.getItem("cart")) || [];
+  } catch (error) {
+    return [];
+  }
+
+  if (!Array.isArray(cart)) {
+    return [];
+  }
+
+  let cartChanged = false;
+
+  for (let i = 0; i < cart.length; i++) {
+    const oldImage = String(cart[i].image || "").trim();
+    const newImage = normalizeCartImagePath(oldImage);
+
+    if (oldImage !== newImage) {
+      cart[i].image = newImage;
+      cartChanged = true;
+    }
+  }
+
+  /*
+    Cập nhật lại localStorage một lần để những lần mở sau
+    không còn sử dụng đường dẫn WebP cũ.
+  */
+  if (cartChanged) {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }
+
+  return cart;
+}
 function updateCartCount() {
   let cart = getCart();
   let total = 0;
@@ -1178,8 +1228,15 @@ async function prefillCheckoutModalFromAccount() {
   }
 
   try {
-    const profile = await fetchCheckoutProfile();
-    const addresses = await fetchCheckoutAddresses();
+    /*
+      Hai dữ liệu độc lập nên tải đồng thời,
+      giảm thời gian chờ khi mở checkout.
+    */
+    const [profile, addresses] = await Promise.all([
+      fetchCheckoutProfile(),
+      fetchCheckoutAddresses(),
+    ]);
+
     updateCheckoutAccountHint(profile);
 
     if (profile) {
@@ -1200,9 +1257,11 @@ async function prefillCheckoutModalFromAccount() {
       $("#modalCustomerName").val(
         defaultAddress.full_name || $("#modalCustomerName").val(),
       );
+
       $("#modalCustomerPhone").val(
         defaultAddress.phone || $("#modalCustomerPhone").val(),
       );
+
       $("#modalCustomerAddress").val(buildCheckoutAddressText(defaultAddress));
     }
   } catch (error) {
@@ -2490,7 +2549,6 @@ function updateAccountIconLink() {
 
 $(document).ready(function () {
   applyLanguageFont();
-  createSharedCartModal();
   updateCartCount();
   applyStaticLanguage();
   updateAccountIconLink();

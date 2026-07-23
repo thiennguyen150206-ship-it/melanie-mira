@@ -120,6 +120,7 @@
     const scriptElement = document.createElement("script");
 
     scriptElement.async = true;
+    scriptElement.fetchPriority = "low";
     scriptElement.dataset.melanieGa4 = "true";
 
     scriptElement.src =

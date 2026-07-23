@@ -61,6 +61,20 @@
       content="https://melaniemira.com.vn/assets/img/banners/banners-desktop.jpg"
     />
 
+    <!-- Kết nối sớm tới backend để giảm thời gian chờ API -->
+    <link
+      rel="preconnect"
+      href="https://melanie-mira-backend.onrender.com"
+      crossorigin
+    />
+
+    <link rel="dns-prefetch" href="//melanie-mira-backend.onrender.com" />
+
+    <!-- Kết nối sớm tới Cloudinary cho gallery ảnh phụ -->
+    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+
+    <link rel="dns-prefetch" href="//res.cloudinary.com" />
+
     <script id="productStructuredData" type="application/ld+json">
       {}
     </script>
@@ -82,12 +96,8 @@
     <script defer src="assets/js/core/api.js"></script>
     <script defer src="assets/js/core/header.js"></script>
     <script defer src="assets/js/pages/product-detail.js"></script>
-    <link
-    rel="icon"
-    type="image/png"
-    href="assets/img/logo/favicon.png"
-  />
-</head>
+    <link rel="icon" type="image/png" href="assets/img/logo/favicon.png" />
+  </head>
 
   <body class="lang-vi">
     <!-- Top bar -->
@@ -422,6 +432,11 @@
                 src="assets/img/banners/banner-footer.jpg"
                 alt="Melanie Mira"
                 class="footer-brand-img"
+                width="600"
+                height="220"
+                loading="lazy"
+                decoding="async"
+                fetchpriority="low"
               />
             </div>
           </div>

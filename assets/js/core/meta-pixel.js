@@ -87,6 +87,7 @@
 
       scriptElement = documentObject.createElement(tagName);
       scriptElement.async = true;
+      scriptElement.fetchPriority = "low";
       scriptElement.src = sourceUrl;
 
       firstScript = documentObject.getElementsByTagName(tagName)[0];
