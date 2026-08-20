@@ -7,25 +7,47 @@ function formatMoney(price) {
   return price.toLocaleString("vi-VN") + "đ";
 }
 
-/* =========================
-   Slider controls
-   Tạo nút trái/phải + 3 dots cho Hero và Best Seller
-   ========================= */
+
 
 function getHomeSliderControlHtml(type) {
+  /*
+    Hero hiện có 4 banner thật.
+    Best Seller vẫn giữ 3 slide.
+  */
+const totalDots = 4;
+
+  let dotsHtml = "";
+
+  for (let i = 0; i < totalDots; i++) {
+    dotsHtml += `
+      <button
+        type="button"
+        class="slider-dot ${type}-dot ${i === 0 ? "active" : ""}"
+        data-index="${i}"
+        aria-label="Chuyển đến slide ${i + 1}"
+      ></button>
+    `;
+  }
+
   return `
     <div class="slider-control ${type}-slider-control">
-      <button type="button" class="slider-arrow ${type}-prev" aria-label="Banner trước">
+      <button
+        type="button"
+        class="slider-arrow ${type}-prev"
+        aria-label="Banner trước"
+      >
         ‹
       </button>
 
       <div class="slider-dots">
-        <button type="button" class="slider-dot ${type}-dot active" data-index="0"></button>
-        <button type="button" class="slider-dot ${type}-dot" data-index="1"></button>
-        <button type="button" class="slider-dot ${type}-dot" data-index="2"></button>
+        ${dotsHtml}
       </div>
 
-      <button type="button" class="slider-arrow ${type}-next" aria-label="Banner sau">
+      <button
+        type="button"
+        class="slider-arrow ${type}-next"
+        aria-label="Banner sau"
+      >
         ›
       </button>
     </div>
@@ -533,11 +555,11 @@ function goToNextHeroSlide() {
   currentHeroIndex++;
   updateHeroSlider(true);
 
-  /*
-    index 0,1,2 là 3 banner thật.
-    index 3 là banner clone.
-    Khi tới clone thì reset về banner 0.
-  */
+/*
+  index 0,1,2,3 là 4 banner thật.
+  index 4 là banner clone.
+  Khi tới clone thì reset về banner 0.
+*/
   if (currentHeroIndex === heroRealTotal) {
     heroIsResetting = true;
 
