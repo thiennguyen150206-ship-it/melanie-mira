@@ -253,10 +253,12 @@ function createProductItem(product, productIndex) {
       : "products.html";
 
   /*
-    Bốn sản phẩm đầu thường nằm trong màn hình đầu tiên.
-    Các sản phẩm còn lại được lazy load.
-  */
-  const isPriorityProduct = productIndex < 4;
+  Desktop ưu tiên 4 sản phẩm đầu.
+  Mobile chỉ ưu tiên 2 sản phẩm đầu.
+*/
+  const priorityProductCount = window.innerWidth <= 768 ? 2 : 4;
+
+  const isPriorityProduct = productIndex < priorityProductCount;
 
   const loadingMode = isPriorityProduct ? "eager" : "lazy";
 
@@ -266,22 +268,26 @@ function createProductItem(product, productIndex) {
     <div class="col-lg-3 col-md-4 col-6">
       <a href="${detailUrl}" class="shop-product-item">
         <div class="shop-product-image">
-          <img
-            class="shop-product-img-main"
-            src="${product.image}"
-            alt="${getProductName(product)}"
-            loading="${loadingMode}"
-            fetchpriority="${fetchPriority}"
-            decoding="async"
-          />
+        <img
+  class="shop-product-img-main"
+  src="${product.image}"
+  alt="${getProductName(product)}"
+  width="900"
+  height="1200"
+  loading="${loadingMode}"
+  fetchpriority="${fetchPriority}"
+  decoding="async"
+/>
 
-          <img
-            class="shop-product-img-hover"
-            data-hover-src="${hoverImage}"
-            alt=""
-            aria-hidden="true"
-            decoding="async"
-          />
+       <img
+  class="shop-product-img-hover"
+  data-hover-src="${hoverImage}"
+  alt=""
+  width="900"
+  height="1200"
+  aria-hidden="true"
+  decoding="async"
+/>
         </div>
 
         <div class="shop-product-info">
